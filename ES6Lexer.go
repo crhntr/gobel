@@ -15,7 +15,6 @@ type tokenType int
 type Token struct {
 	Type  tokenType
 	Value string
-	Err   error
 }
 
 func (tok Token) String() string {
@@ -36,8 +35,7 @@ func (tok Token) equals(otherTok Token) bool {
 	tok.Err.Error() == otherTok.Err.Error()
 	*/
 	return tok.Type == otherTok.Type &&
-		tok.Value == otherTok.Value &&
-		((tok.Err == nil) == (otherTok.Err == nil))
+		tok.Value == otherTok.Value
 }
 
 const eof rune = -1
@@ -160,8 +158,9 @@ func (l *lexer) run() {
 	close(l.tokens)
 }
 
+// emit passes an item back to the client.
 func (l *lexer) emit(tok tokenType) {
-	l.tokens <- Token{tok, l.input[l.start:l.pos], nil}
+	l.tokens <- Token{tok, l.input[l.start:l.pos]}
 	l.start = l.pos
 }
 
@@ -176,10 +175,30 @@ func (l *lexer) next() rune {
 	return r
 }
 
+// peek returns but does not consume the next
+// next rune in the input
 func (l *lexer) peek() rune {
 	r := l.next()
 	l.backup()
 	return r
+}
+
+// accept consumes the next rune if it is from
+// a valid set
+func (l *lexer) accept(valid string) bool {
+	if strings.IndexRune(valid, l.next()) >= 1 {
+		return true
+	}
+	l.backup()
+	return false
+}
+
+// acceptRun consumes a run of runes from the
+// valid set
+func (l *lexer) acceptRun(valid string) {
+	for strings.IndexRune(valid, l.next()) >= 0 {
+	}
+	l.backup()
 }
 
 // ignore steps over the pending input before
@@ -195,11 +214,26 @@ func (l *lexer) backup() {
 }
 
 func (l *lexer) error(err error) stateFunc {
-	l.tokens <- Token{Error, l.input[l.start:l.pos], err}
+	l.tokens <- Token{Error, l.input[l.start:l.pos]}
+	return nil
+}
+
+// error returns an error token and terminates the scan
+// by passing back a nil pointer that will be the next
+// state, terminating l.run.
+func (l *lexer) errorf(format string, args ...interface{}) stateFunc {
+	l.tokens <- Token{
+		Error,
+		fmt.Sprintf(format, args...),
+	}
 	return nil
 }
 
 func lexInputElementDiv(l *lexer) stateFunc {
+	if state, valid := lexNumericLiteral(l); valid {
+		return state
+	}
+
 	switch {
 	case strings.HasPrefix(l.input[l.pos:], "//"): // SingleLineComment
 		return lexSingleLineComment
@@ -412,20 +446,57 @@ func lexStringLiteralDouble(l *lexer) stateFunc {
 	}
 	l.emit(StringLiteral)
 	l.ignore()
-	return lexDivPunctuator
+	return lexInputElementDiv
 }
 func lexStringLiteralSingle(l *lexer) stateFunc {
 	l.next()
 	l.ignore()
 	for {
-		if strings.HasPrefix(l.input[l.pos:], "\"") {
+		if strings.HasPrefix(l.input[l.pos:], "'") {
 			break
 		}
 		l.next()
 	}
 	l.emit(StringLiteral)
 	l.ignore()
-	return lexDivPunctuator
+	return lexInputElementDiv
+}
+
+func lexNumber(l *lexer) stateFunc {
+	// Optional leading sign.
+	l.accept("+-")
+	// Is it hex?
+	digits := "0123456789"
+	if l.accept("0") && l.accept("xX") {
+		digits = "0123456789abcdefABCDEF"
+	}
+	l.acceptRun(digits)
+	if l.accept(".") {
+		l.acceptRun(digits)
+	}
+	if l.accept("eE") {
+		l.accept("+-")
+		l.acceptRun("0123456789")
+	}
+	// Is it imaginary?
+	// Is it imaginary?
+	l.accept("i")
+	// Next thing mustn't be alphanumeric.
+	if isAlphaNumeric(l.peek()) {
+		l.next()
+		return l.errorf("bad number syntax: %q",
+			l.input[l.start:l.pos])
+	}
+	l.emit(NumericLiteral)
+	return lexInputElementDiv
+}
+
+func lexNumericLiteral(l *lexer) (stateFunc, bool) {
+	return nil, false
+}
+
+func isAlphaNumeric(r rune) bool {
+	return unicode.IsNumber(r) || unicode.IsLetter(r)
 }
 
 // InputElementDiv ::

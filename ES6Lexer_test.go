@@ -37,9 +37,6 @@ func Test_error(t *testing.T) {
 	}()
 
 	for tok := range c {
-		if tok.Err == nil || tok.Err.Error() != errNotNull.Error() {
-			t.Error("l.error(err error) should set the l.Err")
-		}
 		if tok.Type != Error {
 			t.Error("l.error(err error) should send Token with tokenType Error")
 		}
@@ -51,7 +48,7 @@ func Test_error(t *testing.T) {
 
 func TestLex_MultiLineComment1(t *testing.T) {
 	expected := []Token{
-		Token{MultiLineComment, "Hello World!", nil},
+		Token{MultiLineComment, "Hello World!"},
 	}
 	js := "/*Hello World!*/"
 	_, tokens := lex("", js, true)
@@ -60,7 +57,7 @@ func TestLex_MultiLineComment1(t *testing.T) {
 
 func TestLex_MultiLineComment2(t *testing.T) {
 	expected := []Token{
-		Token{Error, "Hello World!", errNotNull},
+		Token{Error, "Hello World!"},
 	}
 	js := "/*Hello World!"
 	_, tokens := lex("", js, true)
@@ -69,7 +66,7 @@ func TestLex_MultiLineComment2(t *testing.T) {
 
 func TestLex_MultiLineComment3(t *testing.T) {
 	expected := []Token{
-		Token{Error, " \"", errNotNull},
+		Token{Error, " \""},
 	}
 	js := "/* \""
 	_, tokens := lex("", js, true)
@@ -78,7 +75,7 @@ func TestLex_MultiLineComment3(t *testing.T) {
 
 func TestLex_SingleLineComment1(t *testing.T) {
 	expected := []Token{
-		Token{SingleLineComment, " Hello World!", nil},
+		Token{SingleLineComment, " Hello World!"},
 	}
 	js := "// Hello World!"
 	_, tokens := lex("", js, true)
@@ -86,7 +83,7 @@ func TestLex_SingleLineComment1(t *testing.T) {
 }
 func TestLex_SingleLineComment2(t *testing.T) {
 	expected := []Token{
-		Token{SingleLineComment, " Hello World!", nil},
+		Token{SingleLineComment, " Hello World!"},
 	}
 	js := "// Hello World!\n"
 	_, tokens := lex("", js, true)
@@ -94,8 +91,8 @@ func TestLex_SingleLineComment2(t *testing.T) {
 }
 func TestLex_Comments(t *testing.T) {
 	expected := []Token{
-		Token{SingleLineComment, " Hello World!", nil},
-		Token{MultiLineComment, "This is a multi\nline comment ", nil},
+		Token{SingleLineComment, " Hello World!"},
+		Token{MultiLineComment, "This is a multi\nline comment "},
 	}
 	js := "// Hello World!\n/*This is a multi\nline comment */"
 	_, tokens := lex("", js, true)
@@ -105,7 +102,7 @@ func TestLex_Comments(t *testing.T) {
 func TestLex_Whitespace1(t *testing.T) {
 	js := " \t"
 	expected := []Token{
-		Token{WhiteSpace, js, nil},
+		Token{WhiteSpace, js},
 	}
 	_, tokens := lex("", js, true)
 	expectedTokens(t, expected, tokens)
@@ -114,7 +111,7 @@ func TestLex_Whitespace1(t *testing.T) {
 func TestLex_Whitespace2(t *testing.T) {
 	js := " "
 	expected := []Token{
-		Token{WhiteSpace, js, nil},
+		Token{WhiteSpace, js},
 	}
 
 	_, tokens := lex("", js, true)
@@ -123,8 +120,8 @@ func TestLex_Whitespace2(t *testing.T) {
 
 func TestLex_Whitespace_AND_SingleLineComment(t *testing.T) {
 	expected := []Token{
-		Token{WhiteSpace, " \t", nil},
-		Token{SingleLineComment, " Hello World!", nil},
+		Token{WhiteSpace, " \t"},
+		Token{SingleLineComment, " Hello World!"},
 	}
 	js := " \t// Hello World!"
 	_, tokens := lex("", js, true)
@@ -134,7 +131,7 @@ func TestLex_Whitespace_AND_SingleLineComment(t *testing.T) {
 func TestLex_LineTerminator1(t *testing.T) {
 	js := "\n"
 	expected := []Token{
-		Token{LineTerminator, js, nil},
+		Token{LineTerminator, js},
 	}
 
 	_, tokens := lex("", js, true)
@@ -144,8 +141,8 @@ func TestLex_LineTerminator1(t *testing.T) {
 func TestLex_LineTerminator2(t *testing.T) {
 	js := "\n\n"
 	expected := []Token{
-		Token{LineTerminator, "\n", nil},
-		Token{LineTerminator, "\n", nil},
+		Token{LineTerminator, "\n"},
+		Token{LineTerminator, "\n"},
 	}
 
 	_, tokens := lex("", js, true)
@@ -155,9 +152,9 @@ func TestLex_LineTerminator2(t *testing.T) {
 func TestLex_Terminator_And_Whitespace(t *testing.T) {
 	js := "\n\t\n"
 	expected := []Token{
-		Token{LineTerminator, "\n", nil},
-		Token{WhiteSpace, "\t", nil},
-		Token{LineTerminator, "\n", nil},
+		Token{LineTerminator, "\n"},
+		Token{WhiteSpace, "\t"},
+		Token{LineTerminator, "\n"},
 	}
 
 	_, tokens := lex("", js, true)
@@ -176,8 +173,8 @@ func TestLex_ReservedWord1(t *testing.T) {
 	}
 	l, tokens := lex("", js, true)
 	for _, word := range l.reservedWords {
-		expected = append(expected, Token{ReservedWord, word, nil})
-		expected = append(expected, Token{WhiteSpace, ws, nil})
+		expected = append(expected, Token{ReservedWord, word})
+		expected = append(expected, Token{WhiteSpace, ws})
 	}
 
 	expectedTokens(t, expected, tokens)
@@ -196,8 +193,8 @@ func TestLex_ReservedWord2(t *testing.T) {
 
 	l, tokens := lex("", js, false)
 	for _, word := range l.reservedWords {
-		expected = append(expected, Token{ReservedWord, word, nil})
-		expected = append(expected, Token{WhiteSpace, ws, nil})
+		expected = append(expected, Token{ReservedWord, word})
+		expected = append(expected, Token{WhiteSpace, ws})
 	}
 
 	expectedTokens(t, expected, tokens)
@@ -209,8 +206,8 @@ func TestLex_Punctuator1(t *testing.T) {
 	ws := " "
 
 	for _, punct := range punctuators {
-		expected = append(expected, Token{Punctuator, punct, nil})
-		expected = append(expected, Token{WhiteSpace, ws, nil})
+		expected = append(expected, Token{Punctuator, punct})
+		expected = append(expected, Token{WhiteSpace, ws})
 		js += punct + ws
 	}
 
@@ -220,9 +217,9 @@ func TestLex_Punctuator1(t *testing.T) {
 
 func TestLex_DivPunctuator1(t *testing.T) {
 	expected := []Token{
-		Token{DivPunctuator, "/", nil},
-		Token{WhiteSpace, " ", nil},
-		Token{DivPunctuator, "/=", nil},
+		Token{DivPunctuator, "/"},
+		Token{WhiteSpace, " "},
+		Token{DivPunctuator, "/="},
 	}
 	js := "/ /="
 	_, tokens := lex("", js, true)
@@ -231,8 +228,8 @@ func TestLex_DivPunctuator1(t *testing.T) {
 
 func TestLex_RightBracePunctuator1(t *testing.T) {
 	expected := []Token{
-		Token{Punctuator, "{", nil},
-		Token{RightBracePunctuator, "}", nil},
+		Token{Punctuator, "{"},
+		Token{RightBracePunctuator, "}"},
 	}
 	js := "{}"
 	_, tokens := lex("", js, true)
@@ -241,11 +238,11 @@ func TestLex_RightBracePunctuator1(t *testing.T) {
 
 func TestLex_Identifier1(t *testing.T) {
 	expected := []Token{
-		Token{IdentifierName, "$", nil},
-		Token{Punctuator, "=", nil},
-		Token{IdentifierName, "_", nil},
-		Token{Punctuator, "=", nil},
-		Token{IdentifierName, "foo", nil},
+		Token{IdentifierName, "$"},
+		Token{Punctuator, "="},
+		Token{IdentifierName, "_"},
+		Token{Punctuator, "="},
+		Token{IdentifierName, "foo"},
 	}
 	js := "$=_=foo"
 	_, tokens := lex("", js, true)
@@ -254,22 +251,10 @@ func TestLex_Identifier1(t *testing.T) {
 
 func TestLex_Identifier2(t *testing.T) {
 	expected := []Token{
-		Token{IdentifierName, "X", nil},
-		Token{Punctuator, "&", nil},
-		Token{IdentifierName, "ooooooooooooo___", nil},
-		Token{LineTerminator, "\n", nil},
-	}
-	js := "X&ooooooooooooo___\n"
-	_, tokens := lex("", js, true)
-	expectedTokens(t, expected, tokens)
-}
-
-func TestLex_Identifier2(t *testing.T) {
-	expected := []Token{
-		Token{IdentifierName, "X", nil},
-		Token{Punctuator, "&", nil},
-		Token{IdentifierName, "ooooooooooooo___", nil},
-		Token{LineTerminator, "\n", nil},
+		Token{IdentifierName, "X"},
+		Token{Punctuator, "&"},
+		Token{IdentifierName, "ooooooooooooo___"},
+		Token{LineTerminator, "\n"},
 	}
 	js := "X&ooooooooooooo___\n"
 	_, tokens := lex("", js, true)
@@ -278,14 +263,14 @@ func TestLex_Identifier2(t *testing.T) {
 
 func TestLex1(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWord, "function", nil},
-		Token{WhiteSpace, " ", nil},
-		Token{Punctuator, "(", nil},
-		Token{Punctuator, ")", nil},
-		Token{Punctuator, "{", nil},
-		Token{RightBracePunctuator, "}", nil},
-		Token{Punctuator, "(", nil},
-		Token{Punctuator, ")", nil},
+		Token{ReservedWord, "function"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "("},
+		Token{Punctuator, ")"},
+		Token{Punctuator, "{"},
+		Token{RightBracePunctuator, "}"},
+		Token{Punctuator, "("},
+		Token{Punctuator, ")"},
 	}
 
 	js := "function (){}()"
@@ -295,16 +280,16 @@ func TestLex1(t *testing.T) {
 
 func TestLex2(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWord, "function", nil},
-		Token{WhiteSpace, " ", nil},
-		Token{IdentifierName, "foo", nil},
-		Token{WhiteSpace, " ", nil},
-		Token{Punctuator, "(", nil},
-		Token{Punctuator, ")", nil},
-		Token{Punctuator, "{", nil},
-		Token{RightBracePunctuator, "}", nil},
-		Token{Punctuator, "(", nil},
-		Token{Punctuator, ")", nil},
+		Token{ReservedWord, "function"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "foo"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "("},
+		Token{Punctuator, ")"},
+		Token{Punctuator, "{"},
+		Token{RightBracePunctuator, "}"},
+		Token{Punctuator, "("},
+		Token{Punctuator, ")"},
 	}
 
 	js := "function foo (){}()"
@@ -314,26 +299,26 @@ func TestLex2(t *testing.T) {
 
 func TestLex3(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWord, "function", nil},
-		Token{WhiteSpace, " ", nil},
-		Token{IdentifierName, "add", nil},
-		Token{WhiteSpace, " ", nil},
-		Token{Punctuator, "(", nil},
-		Token{IdentifierName, "a", nil},
-		Token{Punctuator, ",", nil},
-		Token{WhiteSpace, " ", nil},
-		Token{IdentifierName, "b", nil},
-		Token{Punctuator, ")", nil},
-		Token{Punctuator, "{", nil},
-		Token{LineTerminator, "\n", nil},
-		Token{WhiteSpace, "\t", nil},
-		Token{ReservedWord, "return", nil},
-		Token{WhiteSpace, " ", nil},
-		Token{IdentifierName, "a", nil},
-		Token{Punctuator, "+", nil},
-		Token{IdentifierName, "b", nil},
-		Token{LineTerminator, "\n", nil},
-		Token{RightBracePunctuator, "}", nil},
+		Token{ReservedWord, "function"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "add"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "a"},
+		Token{Punctuator, ","},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "b"},
+		Token{Punctuator, ")"},
+		Token{Punctuator, "{"},
+		Token{LineTerminator, "\n"},
+		Token{WhiteSpace, "\t"},
+		Token{ReservedWord, "return"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "a"},
+		Token{Punctuator, "+"},
+		Token{IdentifierName, "b"},
+		Token{LineTerminator, "\n"},
+		Token{RightBracePunctuator, "}"},
 	}
 
 	js := "function add (a, b){\n\treturn a+b\n}"
@@ -342,15 +327,15 @@ func TestLex3(t *testing.T) {
 }
 
 func TestToken_String(t *testing.T) {
-	t1 := Token{tokenType(-1), "", nil}
+	t1 := Token{tokenType(-1), ""}
 	if t1.String() == "" {
 		t.Error("t1.String() string returns empty string")
 	}
-	t2 := Token{LineTerminator, "", nil}
+	t2 := Token{LineTerminator, ""}
 	if t2.String() == "" {
 		t.Error("t2.String() string returns empty string")
 	}
-	t3 := Token{MultiLineComment, " MultiLineComment", nil}
+	t3 := Token{MultiLineComment, " MultiLineComment"}
 	if t3.String() == "" {
 		t.Error("t3.String() string returns empty string")
 	}
