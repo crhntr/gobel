@@ -19,33 +19,6 @@ func Test_peek(t *testing.T) {
 	}
 }
 
-func Test_error(t *testing.T) {
-	c := make(chan Token)
-	l := &lexer{
-		name:   "",
-		input:  "3zzz",
-		tokens: c,
-	}
-
-	go func() {
-		l.next()
-		l.next()
-		l.next()
-		l.next()
-		l.error(errNotNull)
-		close(c)
-	}()
-
-	for tok := range c {
-		if tok.Type != Error {
-			t.Error("l.error(err error) should send Token with tokenType Error")
-		}
-		if tok.Value != l.input {
-			t.Error("l.error(err error) should set Value to offending string")
-		}
-	}
-}
-
 func TestLex_MultiLineComment1(t *testing.T) {
 	expected := []Token{
 		Token{MultiLineComment, "Hello World!"},

@@ -213,11 +213,6 @@ func (l *lexer) backup() {
 	l.pos -= l.width
 }
 
-func (l *lexer) error(err error) stateFunc {
-	l.tokens <- Token{Error, l.input[l.start:l.pos]}
-	return nil
-}
-
 // error returns an error token and terminates the scan
 // by passing back a nil pointer that will be the next
 // state, terminating l.run.
@@ -285,7 +280,7 @@ func lexPunctuator(l *lexer) stateFunc {
 			return lexInputElementDiv
 		}
 	}
-	return l.error(fmt.Errorf("punctuator word not found")) // Paranoic (should never happen)
+	return l.errorf("punctuator word not found") // Paranoic (should never happen)
 }
 
 func lexDivPunctuator(l *lexer) stateFunc {
@@ -336,7 +331,7 @@ func lexReservedWord(l *lexer) stateFunc {
 			return lexInputElementDiv
 		}
 	}
-	return l.error(fmt.Errorf("reserved word not found")) // Paranoic (should never happen)
+	return l.errorf("reserved word not found") // Paranoic (should never happen)
 }
 
 func hasWhiteSpacePrefix(str string) bool {
@@ -392,7 +387,7 @@ func lexMultiLineComment(l *lexer) stateFunc {
 			break
 		}
 	}
-	return l.error(fmt.Errorf("no multi line comment terminator \"*/\""))
+	return l.errorf("no multi line comment terminator \"*/\"")
 }
 
 func lexSingleLineComment(l *lexer) stateFunc {
