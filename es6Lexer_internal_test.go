@@ -2,6 +2,7 @@ package ecgo
 
 import (
 	"fmt"
+	"io/ioutil"
 	"testing"
 )
 
@@ -460,6 +461,138 @@ func TestLex3(t *testing.T) {
 	expectedTokens(t, expected, tokens)
 }
 
+func TestLexJS(t *testing.T) {
+	expected := []Token{
+		Token{ReservedWord, "function"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "fibonacci"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "n"},
+		Token{Punctuator, ")"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "{"},
+		Token{LineTerminator, "\n"},
+		Token{WhiteSpace, "  "},
+		Token{ReservedWord, "if"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "n"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, ">="},
+		Token{WhiteSpace, " "},
+		Token{NumericLiteral, "2"},
+		Token{Punctuator, ")"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "{"},
+		Token{LineTerminator, "\n"},
+		Token{WhiteSpace, "    "},
+		Token{ReservedWord, "return"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "fibonacci"},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "n"},
+		Token{NumericLiteral, "-1"},
+		Token{Punctuator, ")"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "+"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "fibonacci"},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "n"},
+		Token{NumericLiteral, "-2"},
+		Token{Punctuator, ")"},
+		Token{LineTerminator, "\n"},
+		Token{WhiteSpace, "  "},
+		Token{RightBracePunctuator, "}"},
+		Token{LineTerminator, "\n"},
+		Token{WhiteSpace, "  "},
+		Token{ReservedWord, "return"},
+		Token{WhiteSpace, " "},
+		Token{NumericLiteral, "1"},
+		Token{LineTerminator, "\n"},
+		Token{RightBracePunctuator, "}"},
+		Token{LineTerminator, "\n"},
+		Token{LineTerminator, "\n"},
+		Token{IdentifierName, "console"},
+		Token{Punctuator, "."},
+		Token{IdentifierName, "log"},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "fibonacci"},
+		Token{Punctuator, "("},
+		Token{NumericLiteral, "7"},
+		Token{Punctuator, ")"},
+		Token{Punctuator, ")"},
+		Token{LineTerminator, "\n"},
+	}
+
+	testData, err := ioutil.ReadFile("testdata/index01.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	js := string(testData)
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLexJS2(t *testing.T) {
+	expected := []Token{
+		Token{ReservedWord, "function"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "fibonacci"},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "n"},
+		Token{Punctuator, ")"},
+		Token{Punctuator, "{"},
+		Token{ReservedWord, "if"},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "n"},
+		Token{Punctuator, ">="},
+		Token{NumericLiteral, "2"},
+		Token{Punctuator, ")"},
+		Token{Punctuator, "{"},
+		Token{ReservedWord, "return"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "fibonacci"},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "n"},
+		Token{NumericLiteral, "-1"},
+		Token{Punctuator, ")"},
+		Token{Punctuator, "+"},
+		Token{IdentifierName, "fibonacci"},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "n"},
+		Token{NumericLiteral, "-2"},
+		Token{Punctuator, ")"},
+		Token{RightBracePunctuator, "}"},
+		Token{ReservedWord, "return"},
+		Token{WhiteSpace, " "},
+		Token{NumericLiteral, "1"},
+		Token{RightBracePunctuator, "}"},
+		Token{Punctuator, ";"},
+		Token{IdentifierName, "console"},
+		Token{Punctuator, "."},
+		Token{IdentifierName, "log"},
+		Token{Punctuator, "("},
+		Token{IdentifierName, "fibonacci"},
+		Token{Punctuator, "("},
+		Token{NumericLiteral, "7"},
+		Token{Punctuator, ")"},
+		Token{Punctuator, ")"},
+		Token{LineTerminator, "\n"},
+	}
+
+	testData, err := ioutil.ReadFile("testdata/index02.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	js := string(testData)
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
 func TestToken_String(t *testing.T) {
 	t1 := Token{tokenType(-1), ""}
 	if t1.String() == "" {
@@ -481,7 +614,7 @@ func expectedTokens(t *testing.T, expectedTokens []Token, tokens chan Token) {
 		if i >= len(expectedTokens) {
 			t.Errorf("expected fewer tokens (expected: %d, got %d %s)", len(expectedTokens), i, tok)
 		} else {
-			t.Logf("%d: %s %s\n", i, expectedTokens[i], tok)
+			// t.Logf("%d: %s %s\n", i, expectedTokens[i], tok)
 			if !expectedTokens[i].equals(tok) {
 				t.Errorf("expected and recived tokens do not match [%d](%s != %s)", i, tok, expectedTokens[i])
 			}

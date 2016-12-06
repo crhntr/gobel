@@ -298,7 +298,7 @@ func lexInputElement(l *lexer) stateFunc {
 		return lexReservedWord(l)
 	case hasNumericLiteral(l):
 		return lexNumericLiteral(l)
-	case hasPunctuator(l.input[l.pos:]):
+	case hasPunctuator(l):
 		return lexPunctuator(l)
 	case hasIdentifierNameStartPrefix(l): // IdentifierName
 		return lexIdentifierName(l)
@@ -327,13 +327,9 @@ var punctuators = []string{
 	"*", "?", ":", "=", "+", ">", "<", ",",
 	";", ".", "]", "["}
 
-func hasPunctuator(str string) bool {
-	for _, punct := range punctuators {
-		if strings.HasPrefix(str, punct) {
-			return true
-		}
-	}
-	return false
+func hasPunctuator(l *lexer) bool {
+	defer l.reset()
+	return l.acceptAnyString(punctuators)
 }
 
 func lexPunctuator(l *lexer) stateFunc {
