@@ -30,7 +30,7 @@ func TestLex_MultiLineComment1(t *testing.T) {
 
 func TestLex_MultiLineComment2(t *testing.T) {
 	expected := []Token{
-		Token{Error, "Hello World!"},
+		Token{Error, "no multi line comment terminator \"*/\""},
 	}
 	js := "/*Hello World!"
 	_, tokens := lex("", js, true)
@@ -39,7 +39,7 @@ func TestLex_MultiLineComment2(t *testing.T) {
 
 func TestLex_MultiLineComment3(t *testing.T) {
 	expected := []Token{
-		Token{Error, " \""},
+		Token{Error, "no multi line comment terminator \"*/\""},
 	}
 	js := "/* \""
 	_, tokens := lex("", js, true)
@@ -209,6 +209,167 @@ func TestLex_RightBracePunctuator1(t *testing.T) {
 	expectedTokens(t, expected, tokens)
 }
 
+func TestLex_StringLiteralSingleQuote1(t *testing.T) {
+	expected := []Token{
+		Token{ReservedWord, "var"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "foo"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "="},
+		Token{WhiteSpace, " "},
+		Token{StringLiteral, "'foo'"},
+	}
+	js := "var foo = 'foo'"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_StringLiteralSingleQuote2(t *testing.T) {
+	expected := []Token{
+		Token{ReservedWord, "var"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "foo"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "="},
+		Token{WhiteSpace, " "},
+		Token{Error, "did not reach end of string literal reached eof"},
+		Token{StringLiteral, "'foo"},
+	}
+	js := "var foo = 'foo"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_StringLiteralDoubleQuote1(t *testing.T) {
+	expected := []Token{
+		Token{ReservedWord, "var"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "foo"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "="},
+		Token{WhiteSpace, " "},
+		Token{StringLiteral, "\"foo\""},
+	}
+	js := "var foo = \"foo\""
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_StringLiteralDoubleQuote2(t *testing.T) {
+	expected := []Token{
+		Token{ReservedWord, "var"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "foo"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "="},
+		Token{WhiteSpace, " "},
+		Token{Error, "did not reach end of string literal reached eof"},
+		Token{StringLiteral, "\"foo"},
+	}
+	js := "var foo = \"foo"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral0(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "0"},
+	}
+	js := "0"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral1(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "1"},
+	}
+	js := "1"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral2(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "10"},
+	}
+	js := "10"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral3(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "0xAB10"},
+	}
+	js := "0xAB10"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral4(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "0b0100"},
+	}
+	js := "0b0100"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral5(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "0O0005"},
+	}
+	js := "0O0005"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral6(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "-6"},
+	}
+	js := "-6"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral7(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "0.0007"},
+	}
+	js := "0.0007"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral8(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "8.08"},
+	}
+	js := "8.08"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral9(t *testing.T) {
+	expected := []Token{
+		Token{NumericLiteral, "3e2"},
+	}
+	js := "3e2"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
+func TestLex_NumericLiteral10(t *testing.T) {
+	expected := []Token{
+		Token{Error, "bad number syntax: \"1o\""},
+	}
+	js := "1o"
+	_, tokens := lex("", js, true)
+	expectedTokens(t, expected, tokens)
+}
+
 func TestLex_Identifier1(t *testing.T) {
 	expected := []Token{
 		Token{IdentifierName, "$"},
@@ -308,7 +469,7 @@ func TestToken_String(t *testing.T) {
 	if t2.String() == "" {
 		t.Error("t2.String() string returns empty string")
 	}
-	t3 := Token{MultiLineComment, " MultiLineComment"}
+	t3 := Token{MultiLineComment, " some string value "}
 	if t3.String() == "" {
 		t.Error("t3.String() string returns empty string")
 	}
@@ -317,16 +478,17 @@ func TestToken_String(t *testing.T) {
 func expectedTokens(t *testing.T, expectedTokens []Token, tokens chan Token) {
 	i := 0
 	for tok := range tokens {
-		t.Logf("%d: %s %s\n", i, expectedTokens[i], tok)
-		if i+1 > len(expectedTokens) {
-			t.Errorf("expected fewer tokens (expected: %d, got %d)", len(expectedTokens), i+1)
+		if i >= len(expectedTokens) {
+			t.Errorf("expected fewer tokens (expected: %d, got %d %s)", len(expectedTokens), i, tok)
+		} else {
+			t.Logf("%d: %s %s\n", i, expectedTokens[i], tok)
+			if !expectedTokens[i].equals(tok) {
+				t.Errorf("expected and recived tokens do not match [%d](%s != %s)", i, tok, expectedTokens[i])
+			}
+			i++
 		}
-		if !expectedTokens[i].equals(tok) {
-			t.Errorf("expected and recived tokens do not match [%d](%s != %s)", i, tok, expectedTokens[i])
-		}
-		i++
 	}
-	if i+1 < len(expectedTokens) {
-		t.Errorf("expected more tokens (expected: %d, got %d)", len(expectedTokens), i+1)
+	if i < len(expectedTokens) {
+		t.Errorf("expected more tokens (expected: %d, got %d)", len(expectedTokens), i)
 	}
 }

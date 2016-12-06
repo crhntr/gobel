@@ -93,6 +93,11 @@ type lexer struct {
 	tokens        chan Token // channel if scanned tokens
 	reservedWords []string
 	strict        bool
+	flags         struct {
+		div          bool
+		regExp       bool
+		templateTail bool
+	}
 }
 
 // func (l lexer) String() string {
@@ -132,6 +137,13 @@ func (l *lexer) unsetStrict() {
 
 type stateFunc func(*lexer) stateFunc
 
+// state may be used in refactor to improve
+// switch logic
+// type state interface {
+// 	lex(*lexer) stateFunc
+// 	canBeNext(string) bool
+// }
+
 func lex(name, input string, safe bool) (*lexer, chan Token) {
 	l := &lexer{
 		name:   name,
@@ -139,6 +151,7 @@ func lex(name, input string, safe bool) (*lexer, chan Token) {
 		tokens: make(chan Token),
 		strict: true,
 	}
+	l.flags.div = true
 	if safe {
 		l.setStrict()
 	} else {
@@ -152,7 +165,7 @@ func lex(name, input string, safe bool) (*lexer, chan Token) {
 // run lexes the input by executing state functions
 // until the state is nil
 func (l *lexer) run() {
-	for state := lexInputElementDiv; state != nil; {
+	for state := lexInputElement; state != nil; {
 		state = state(l)
 	}
 	close(l.tokens)
@@ -164,8 +177,7 @@ func (l *lexer) emit(tok tokenType) {
 	l.start = l.pos
 }
 
-func (l *lexer) next() rune {
-	var r rune
+func (l *lexer) next() (r rune) {
 	if l.pos >= len(l.input) {
 		l.width = 0
 		return eof
@@ -173,6 +185,15 @@ func (l *lexer) next() rune {
 	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])
 	l.pos += l.width
 	return r
+
+}
+
+func (l *lexer) nextN(n int) string {
+	str := ""
+	for i := 0; i < n; i++ {
+		str += string(l.next())
+	}
+	return str
 }
 
 // peek returns but does not consume the next
@@ -185,8 +206,8 @@ func (l *lexer) peek() rune {
 
 // accept consumes the next rune if it is from
 // a valid set
-func (l *lexer) accept(valid string) bool {
-	if strings.IndexRune(valid, l.next()) >= 1 {
+func (l *lexer) accept(validSet string) bool {
+	if strings.IndexRune(validSet, l.next()) >= 0 {
 		return true
 	}
 	l.backup()
@@ -195,16 +216,47 @@ func (l *lexer) accept(valid string) bool {
 
 // acceptRun consumes a run of runes from the
 // valid set
-func (l *lexer) acceptRun(valid string) {
-	for strings.IndexRune(valid, l.next()) >= 0 {
+func (l *lexer) acceptRun(validSet string) {
+	for strings.IndexRune(validSet, l.next()) >= 0 {
 	}
 	l.backup()
+}
+
+// acceptString consumes a string
+func (l *lexer) acceptString(str string) bool {
+	if strings.HasPrefix(l.input[l.pos:], str) {
+		for _, r := range str {
+			l.accept(string(r))
+		}
+		return true
+	}
+	return false
+}
+
+// acceptAnyString consumes any one of a slice of strings
+func (l *lexer) acceptAnyString(valids []string) bool {
+	for _, valid := range valids {
+		if l.acceptString(valid) {
+			return true
+		}
+	}
+	return false
+}
+
+// accepted
+func (l *lexer) accepted() bool {
+	return l.pos > l.start
 }
 
 // ignore steps over the pending input before
 // this point.
 func (l *lexer) ignore() {
 	l.start = l.pos
+}
+
+// reset
+func (l *lexer) reset() {
+	l.pos = l.start
 }
 
 // backup steps back once per rune
@@ -224,42 +276,56 @@ func (l *lexer) errorf(format string, args ...interface{}) stateFunc {
 	return nil
 }
 
-func lexInputElementDiv(l *lexer) stateFunc {
-	if state, valid := lexNumericLiteral(l); valid {
-		return state
-	}
-
+// lexInputElement multiplexes the various states based on
+// input prefix checks. it follows the following rules from
+// the specification when determinint what states are allowed
+//
+// InputElementDiv :: WhiteSpace | LineTerminator | Comment | CommonToken | DivPunctuator | RightBracePunctuator
+// InputElementRegExp :: WhiteSpace | LineTerminator | Comment | CommonToken | RightBracePunctuator | RegularExpressionLiteral
+// InputElementRegExpOrTemplateTail :: WhiteSpace | LineTerminator | Comment | CommonToken | RegularExpressionLiteral | TemplateSubstitutionTail
+// InputElementTemplateTail :: | WhiteSpace | LineTerminator | Comment | CommonToken | DivPunctuator | TemplateSubstitutionTail
+func lexInputElement(l *lexer) stateFunc {
 	switch {
-	case strings.HasPrefix(l.input[l.pos:], "//"): // SingleLineComment
-		return lexSingleLineComment
-	case strings.HasPrefix(l.input[l.pos:], "/*"): // MultiLineComment
-		return lexMultiLineComment
 	case hasWhiteSpacePrefix(l.input[l.pos:]):
 		return lexWhiteSpace
 	case hasLineTerminatorPrefix(l.input[l.pos:]):
 		return lexLineTerminator
+	case strings.HasPrefix(l.input[l.pos:], "//"): // SingleLineComment
+		return lexSingleLineComment
+	case strings.HasPrefix(l.input[l.pos:], "/*"): // MultiLineComment
+		return lexMultiLineComment
 	case hasReservedWord(l, l.input[l.pos:]):
 		return lexReservedWord(l)
+	case hasNumericLiteral(l):
+		return lexNumericLiteral(l)
 	case hasPunctuator(l.input[l.pos:]):
 		return lexPunctuator(l)
-	case strings.HasPrefix(l.input[l.pos:], "/="): // DivPunctuator
-		return lexDivPunctuator(l)
-	case strings.HasPrefix(l.input[l.pos:], "/"): // DivPunctuator
-		return lexDivPunctuator(l)
-	case strings.HasPrefix(l.input[l.pos:], "}"): // RightBracePunctuator
-		return lexRightBracePunctuator(l)
 	case hasIdentifierNameStartPrefix(l): // IdentifierName
 		return lexIdentifierName(l)
 	case strings.HasPrefix(l.input[l.pos:], "\""): // StringLiteral
 		return lexStringLiteralDouble(l)
 	case strings.HasPrefix(l.input[l.pos:], "'"): // StringLiteral
 		return lexStringLiteralSingle(l)
-	default:
-		return nil
+	case l.flags.div && hasDivPunctuator(l): // DivPunctuator
+		return lexDivPunctuator(l)
+	case !l.flags.templateTail && strings.HasPrefix(l.input[l.pos:], "}"): // RightBracePunctuator
+		return lexRightBracePunctuator(l)
 	}
+	return nil
 }
 
-var punctuators = []string{"{", "(", ")", ">>>=", "<<=", "!==", "===", ">>>", "...", ">>=", ">=", "%=", "*=", "-=", "<=", "&=", "==", "!=", "|=", "^=", "+=", "<<", "||", "&&", "++", "--", "=>", ">>", "-", "&", "|", "^", "!", "~", "%", "*", "?", ":", "=", "+", ">", "<", ",", ";", ".", "]", "["}
+// func f(l *lexer) (stateFunc, bool) {
+// 	return nil, false
+// }
+
+var punctuators = []string{
+	"{", "(", ")",
+	">>>=", "<<=", "!==", "===", ">>>", "...", ">>=", ">=",
+	"%=", "*=", "-=", "<=", "&=", "==", "!=", "|=",
+	"^=", "+=", "<<", "||", "&&", "++", "--", "=>",
+	">>", "-", "&", "|", "^", "!", "~", "%",
+	"*", "?", ":", "=", "+", ">", "<", ",",
+	";", ".", "]", "["}
 
 func hasPunctuator(str string) bool {
 	for _, punct := range punctuators {
@@ -271,43 +337,41 @@ func hasPunctuator(str string) bool {
 }
 
 func lexPunctuator(l *lexer) stateFunc {
-	for _, punct := range punctuators {
-		if strings.HasPrefix(l.input[l.pos:], punct) {
-			for i := len(punct); i > 0; i-- {
-				l.next()
-			}
-			l.emit(Punctuator)
-			return lexInputElementDiv
-		}
-	}
-	return l.errorf("punctuator word not found") // Paranoic (should never happen)
+	l.acceptAnyString(punctuators)
+	l.emit(Punctuator)
+	return lexInputElement
+}
+
+func hasDivPunctuator(l *lexer) bool {
+	defer l.reset()
+	return l.acceptAnyString([]string{"/=", "/"})
 }
 
 func lexDivPunctuator(l *lexer) stateFunc {
-	if strings.HasPrefix(l.input[l.pos:], "/=") {
-		l.next()
-		l.next()
-		l.emit(DivPunctuator)
-		return lexInputElementDiv
-	}
-	// if strings.HasPrefix(l.input[l.pos:], "/") {
-	l.next()
+	l.acceptAnyString([]string{"/=", "/"})
 	l.emit(DivPunctuator)
-	return lexInputElementDiv
+	return lexInputElement
 	// }
 }
 
 func lexRightBracePunctuator(l *lexer) stateFunc {
 	// if strings.HasPrefix(l.input[l.pos:], "}") {
-	l.next()
+	l.accept("}")
 	l.emit(RightBracePunctuator)
-	return lexInputElementDiv
+	return lexInputElement
 	// }
 	// return l.error(fmt.Errorf("div punctuator not found")) // Paranoic (should never happen)
 }
 
 var currentReservedWords = []string{
-	"break", "do", "instanceof", "in", "typeof", "case", "else", "var", "catch", "export", "new", "void", "class", "extends", "return", "while", "const", "finally", "super", "with", "continue", "for", "switch", "yield", "debugger", "function", "this", "default", "if", "throw", "delete", "import", "try"}
+	"break", "do", "instanceof", "in",
+	"typeof", "case", "else", "var",
+	"catch", "export", "new", "void",
+	"class", "extends", "return", "while",
+	"const", "finally", "super", "with",
+	"continue", "for", "switch", "yield",
+	"debugger", "function", "this", "default",
+	"if", "throw", "delete", "import", "try"}
 var futureReservedWords = []string{"enum", "await"}
 var futureResdervedWordsStrict = []string{"implements", "package", "protected", "interface", "private", "public"}
 var literals = []string{"null", "true", "false"}
@@ -322,16 +386,9 @@ func hasReservedWord(l *lexer, str string) bool {
 }
 
 func lexReservedWord(l *lexer) stateFunc {
-	for _, word := range l.reservedWords {
-		if strings.HasPrefix(l.input[l.pos:], word) {
-			for i := len(word); i > 0; i-- {
-				l.next()
-			}
-			l.emit(ReservedWord)
-			return lexInputElementDiv
-		}
-	}
-	return l.errorf("reserved word not found") // Paranoic (should never happen)
+	l.acceptAnyString(l.reservedWords)
+	l.emit(ReservedWord)
+	return lexInputElement
 }
 
 func hasWhiteSpacePrefix(str string) bool {
@@ -345,14 +402,9 @@ func hasWhiteSpacePrefix(str string) bool {
 }
 
 func lexWhiteSpace(l *lexer) stateFunc {
-	for {
-		if !hasWhiteSpacePrefix(l.input[l.pos:]) {
-			break
-		}
-		l.next()
-	}
+	l.acceptRun("\u0009\u000B\u000C\u0020\u00A0\uFEFF\uFEFF")
 	l.emit(WhiteSpace)
-	return lexInputElementDiv
+	return lexInputElement
 }
 
 func hasLineTerminatorPrefix(str string) bool {
@@ -365,12 +417,11 @@ func hasLineTerminatorPrefix(str string) bool {
 func lexLineTerminator(l *lexer) stateFunc {
 	l.next()
 	l.emit(LineTerminator)
-	return lexInputElementDiv
+	return lexInputElement
 }
 
 func lexMultiLineComment(l *lexer) stateFunc {
-	l.next() // /
-	l.next() // *
+	l.acceptString("/*")
 	l.ignore()
 	var r rune
 	for {
@@ -378,10 +429,9 @@ func lexMultiLineComment(l *lexer) stateFunc {
 			if l.pos > l.start {
 				l.emit(MultiLineComment)
 			}
-			l.next() // *
-			l.next() // /
+			l.nextN(2) // */
 			l.ignore()
-			return lexInputElementDiv
+			return lexInputElement
 		}
 		if r = l.next(); r == eof {
 			break
@@ -391,18 +441,14 @@ func lexMultiLineComment(l *lexer) stateFunc {
 }
 
 func lexSingleLineComment(l *lexer) stateFunc {
-	l.start += 2
+	l.acceptString("//")
+	l.ignore()
 	for {
-		if strings.HasPrefix(l.input[l.pos:], "\n") {
-			if l.pos > l.start {
-				l.emit(SingleLineComment)
-				l.pos++
-				return lexInputElementDiv
-			}
-		}
-		if l.next() == eof {
+		if strings.HasPrefix(l.input[l.pos:], "\n") || l.next() == eof {
 			l.emit(SingleLineComment)
-			return nil
+			l.accept("\n")
+			l.ignore()
+			return lexInputElement
 		}
 	}
 }
@@ -424,101 +470,97 @@ func lexIdentifierName(l *lexer) stateFunc {
 	for {
 		if !hasIdentifierNameContinuePrefix(l) {
 			l.emit(IdentifierName)
-			return lexInputElementDiv
+			return lexInputElement
 		}
 		l.next()
 	}
 }
 
+// lexStringLiteralDouble consumes a string literal surounded by
+// a double quotation marks
 func lexStringLiteralDouble(l *lexer) stateFunc {
-	l.next()
-	l.ignore()
+	l.accept("\"")
+	var r rune
 	for {
 		if strings.HasPrefix(l.input[l.pos:], "\"") {
 			break
 		}
-		l.next()
+		if r = l.next(); r == eof {
+			l.errorf("did not reach end of string literal reached eof")
+			break
+		}
 	}
+	l.accept("\"")
 	l.emit(StringLiteral)
-	l.ignore()
-	return lexInputElementDiv
+	return lexInputElement
 }
+
+// lexStringLiteralSingle consumes a string literal surounded by
+// a single quotation marks
 func lexStringLiteralSingle(l *lexer) stateFunc {
-	l.next()
-	l.ignore()
+	l.accept("'")
+	var r rune
 	for {
 		if strings.HasPrefix(l.input[l.pos:], "'") {
 			break
 		}
-		l.next()
+		if r = l.next(); r == eof {
+			l.errorf("did not reach end of string literal reached eof")
+			break
+		}
 	}
+	l.accept("'")
 	l.emit(StringLiteral)
-	l.ignore()
-	return lexInputElementDiv
+	return lexInputElement
 }
 
-func lexNumber(l *lexer) stateFunc {
+func hasNumericLiteral(l *lexer) bool {
+	defer l.reset()
+	l.accept("-")
+	return l.accept("123456789") || (l.accept(".") && l.accept("0123456789")) || (l.accept("0") && (l.accept("oOxXbB") || !hasIdentifierNameStartPrefix(l)))
+}
+
+// lexNumericLiteral inspired by Rob Pike's talk
+func lexNumericLiteral(l *lexer) stateFunc {
+	const decDigits = "0123456789"
 	// Optional leading sign.
-	l.accept("+-")
+	l.accept("-")
 	// Is it hex?
-	digits := "0123456789"
-	if l.accept("0") && l.accept("xX") {
-		digits = "0123456789abcdefABCDEF"
+	if l.accept("0") {
+		if l.accept("xX") {
+			l.acceptRun("0123456789abcdefABCDEF")
+			l.emit(NumericLiteral)
+			return lexInputElement
+		} else if l.accept("oO") { // Is it octal?
+			l.acceptRun("01234567")
+			l.emit(NumericLiteral)
+			return lexInputElement
+		} else if l.accept("bB") { // Is it bin?
+			l.acceptRun("01")
+			l.emit(NumericLiteral)
+			return lexInputElement
+		}
 	}
-	l.acceptRun(digits)
+
+	if l.accept("123456789") {
+		l.acceptRun(decDigits)
+	}
+
 	if l.accept(".") {
-		l.acceptRun(digits)
+		l.acceptRun(decDigits)
 	}
-	if l.accept("eE") {
+
+	if l.accepted() && l.accept("eE") {
 		l.accept("+-")
-		l.acceptRun("0123456789")
+		l.acceptRun(decDigits)
 	}
-	// Is it imaginary?
-	// Is it imaginary?
-	l.accept("i")
+
 	// Next thing mustn't be alphanumeric.
-	if isAlphaNumeric(l.peek()) {
+	if unicode.IsLetter(l.peek()) {
 		l.next()
 		return l.errorf("bad number syntax: %q",
 			l.input[l.start:l.pos])
 	}
 	l.emit(NumericLiteral)
-	return lexInputElementDiv
+	return lexInputElement
 }
-
-func lexNumericLiteral(l *lexer) (stateFunc, bool) {
-	return nil, false
-}
-
-func isAlphaNumeric(r rune) bool {
-	return unicode.IsNumber(r) || unicode.IsLetter(r)
-}
-
-// InputElementDiv ::
-//  WhiteSpace
-//  LineTerminator
-//  Comment
-//  CommonToken
-//  DivPunctuator
-//  RightBracePunctuator
-// InputElementRegExp ::
-//  WhiteSpace
-//  LineTerminator
-//  Comment
-//  CommonToken
-//  RightBracePunctuator
-//  RegularExpressionLiteral
-// InputElementRegExpOrTemplateTail ::
-//  WhiteSpace
-//  LineTerminator
-//  Comment
-//  CommonToken
-//  RegularExpressionLiteral
-//  TemplateSubstitutionTail
-// InputElementTemplateTail ::
-//  WhiteSpace
-//  LineTerminator
-//  Comment
-//  CommonToken
-//  DivPunctuator
-//  TemplateSubstitutionTail
