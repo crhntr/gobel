@@ -214,12 +214,24 @@ func (l *lexer) accept(validSet string) bool {
 	return false
 }
 
+// acceptN consumes the next runes n times
+func (l *lexer) acceptRunN(validSet string, n int) bool {
+	i := 1
+	for ; i <= n; i++ {
+		l.accept(validSet)
+	}
+	return i == n
+}
+
 // acceptRun consumes a run of runes from the
 // valid set
-func (l *lexer) acceptRun(validSet string) {
+func (l *lexer) acceptRun(validSet string) bool {
+	n := 0
 	for strings.IndexRune(validSet, l.next()) >= 0 {
+		n++
 	}
 	l.backup()
+	return n > 0
 }
 
 // acceptString consumes a string
@@ -317,6 +329,8 @@ func lexMux(l *lexer) stateFunc {
 	}
 	return nil
 }
+
+const decimalDigits = "0123456789"
 
 // func f(l *lexer) (stateFunc, bool) {
 // 	return nil, false
@@ -513,9 +527,41 @@ func hasNumericLiteral(l *lexer) bool {
 	return l.accept("123456789") || (l.accept(".") && l.accept("0123456789")) || (l.accept("0") && (l.accept("oOxXbB") || !hasIdentifierNameStartPrefix(l)))
 }
 
+// EscapeSequence :: CharacterEscapeSequence || 0 [lookahead ∉ DecimalDigit] || HexEscapeSequence || UnicodeEscapeSequence
+func lexEscapeSequence(l *lexer) {
+	// CharacterEscapeSequence
+
+	// SingleEscapeCharacter :: ' " \ b f n r t v
+	if l.accept("'\"\bfnrtv") {
+		return
+	}
+	l.reset()
+
+	// 0 [lookahead ∉ DecimalDigit]
+	if l.accept("0") && !l.accept(decimalDigits) {
+		return
+	}
+
+	// HexEscapeSequence :: x HexDigit HexDigit
+	if l.accept("x") && l.acceptRunN(decimalDigits[:8], 2) {
+		return
+	}
+
+	// UnicodeEscapeSequence :: u Hex4Digits
+	if l.accept("u") && l.acceptRunN(decimalDigits[:8], 4) {
+		return
+	}
+	l.reset()
+
+	// UnicodeEscapeSequence :: u{ HexDigits }
+	if l.accept("u") && l.accept("{") && l.acceptRunN(decimalDigits[:8], 4) && l.accept("}") {
+		return
+	}
+	l.reset()
+}
+
 // lexNumericLiteral inspired by Rob Pike's talk
 func lexNumericLiteral(l *lexer) stateFunc {
-	const decDigits = "0123456789"
 
 	// Next thing mustn't be alphanumeric.
 	mustNotHaveNextAlpha := func(l *lexer) stateFunc {
@@ -535,7 +581,7 @@ func lexNumericLiteral(l *lexer) stateFunc {
 			l.acceptRun("0123456789abcdefABCDEF")
 			return mustNotHaveNextAlpha(l)
 		} else if l.accept("oO") { // Is it octal?
-			l.acceptRun("01234567")
+			l.acceptRun(decimalDigits[:8])
 			return mustNotHaveNextAlpha(l)
 		} else if l.accept("bB") { // Is it bin?
 			l.acceptRun("01")
@@ -543,17 +589,17 @@ func lexNumericLiteral(l *lexer) stateFunc {
 		}
 	}
 
-	if l.accept("123456789") {
-		l.acceptRun(decDigits)
+	if l.accept(decimalDigits[1:]) {
+		l.acceptRun(decimalDigits)
 	}
 
 	if l.accept(".") {
-		l.acceptRun(decDigits)
+		l.acceptRun(decimalDigits)
 	}
 
 	if l.accepted() && l.accept("eE") {
 		l.accept("+-")
-		l.acceptRun(decDigits)
+		l.acceptRun(decimalDigits)
 	}
 
 	return mustNotHaveNextAlpha(l)
