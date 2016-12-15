@@ -188,13 +188,13 @@ func (l *lexer) next() (r rune) {
 
 }
 
-func (l *lexer) nextN(n int) string {
-	str := ""
-	for i := 0; i < n; i++ {
-		str += string(l.next())
-	}
-	return str
-}
+// func (l *lexer) nextN(n int) string {
+// 	str := ""
+// 	for i := 0; i < n; i++ {
+// 		str += string(l.next())
+// 	}
+// 	return str
+// }
 
 // peek returns but does not consume the next
 // next rune in the input
@@ -226,10 +226,7 @@ func (l *lexer) acceptRun(validSet string) {
 func (l *lexer) acceptString(str string) bool {
 	if strings.HasPrefix(l.input[l.pos:], str) {
 		for _, r := range str {
-			if ok := l.accept(string(r)); !ok {
-				l.reset()
-				return false
-			}
+			l.accept(string(r))
 		}
 		return true
 	}
@@ -283,7 +280,7 @@ func (l *lexer) errorf(format string, args ...interface{}) stateFunc {
 	return nil
 }
 
-// lexInputElement multiplexes the various states based on
+// lexMux multiplexes the various states based on
 // input prefix checks. it follows the following rules from
 // the specification when determinint what states are allowed
 //
