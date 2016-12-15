@@ -1,4 +1,4 @@
-package ecgo
+package gobel
 
 import (
 	"fmt"
