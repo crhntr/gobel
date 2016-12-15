@@ -165,7 +165,7 @@ func lex(name, input string, safe bool) (*lexer, chan Token) {
 // run lexes the input by executing state functions
 // until the state is nil
 func (l *lexer) run() {
-	for state := lexInputElement; state != nil; {
+	for state := lexMux; state != nil; {
 		state = state(l)
 	}
 	close(l.tokens)
@@ -226,7 +226,10 @@ func (l *lexer) acceptRun(validSet string) {
 func (l *lexer) acceptString(str string) bool {
 	if strings.HasPrefix(l.input[l.pos:], str) {
 		for _, r := range str {
-			l.accept(string(r))
+			if ok := l.accept(string(r)); !ok {
+				l.reset()
+				return false
+			}
 		}
 		return true
 	}
@@ -252,6 +255,10 @@ func (l *lexer) accepted() bool {
 // this point.
 func (l *lexer) ignore() {
 	l.start = l.pos
+}
+
+func (l *lexer) ignoreN(n int) {
+	l.start += n
 }
 
 // reset
@@ -284,7 +291,7 @@ func (l *lexer) errorf(format string, args ...interface{}) stateFunc {
 // InputElementRegExp :: WhiteSpace | LineTerminator | Comment | CommonToken | RightBracePunctuator | RegularExpressionLiteral
 // InputElementRegExpOrTemplateTail :: WhiteSpace | LineTerminator | Comment | CommonToken | RegularExpressionLiteral | TemplateSubstitutionTail
 // InputElementTemplateTail :: | WhiteSpace | LineTerminator | Comment | CommonToken | DivPunctuator | TemplateSubstitutionTail
-func lexInputElement(l *lexer) stateFunc {
+func lexMux(l *lexer) stateFunc {
 	switch {
 	case hasWhiteSpacePrefix(l):
 		return lexWhiteSpace
@@ -335,7 +342,7 @@ func hasPunctuator(l *lexer) bool {
 func lexPunctuator(l *lexer) stateFunc {
 	l.acceptAnyString(punctuators)
 	l.emit(Punctuator)
-	return lexInputElement
+	return lexMux
 }
 
 func hasDivPunctuator(l *lexer) bool {
@@ -346,7 +353,7 @@ func hasDivPunctuator(l *lexer) bool {
 func lexDivPunctuator(l *lexer) stateFunc {
 	l.acceptAnyString([]string{"/=", "/"})
 	l.emit(DivPunctuator)
-	return lexInputElement
+	return lexMux
 	// }
 }
 
@@ -354,7 +361,7 @@ func lexRightBracePunctuator(l *lexer) stateFunc {
 	// if strings.HasPrefix(l.input[l.pos:], "}") {
 	l.accept("}")
 	l.emit(RightBracePunctuator)
-	return lexInputElement
+	return lexMux
 	// }
 	// return l.error(fmt.Errorf("div punctuator not found")) // Paranoic (should never happen)
 }
@@ -384,7 +391,7 @@ func hasReservedWord(l *lexer, str string) bool {
 func lexReservedWord(l *lexer) stateFunc {
 	l.acceptAnyString(l.reservedWords)
 	l.emit(ReservedWord)
-	return lexInputElement
+	return lexMux
 }
 
 func hasWhiteSpacePrefix(l *lexer) bool {
@@ -395,7 +402,7 @@ func hasWhiteSpacePrefix(l *lexer) bool {
 func lexWhiteSpace(l *lexer) stateFunc {
 	l.acceptRun("\u0009\u000B\u000C\u0020\u00A0\uFEFF\uFEFF")
 	l.emit(WhiteSpace)
-	return lexInputElement
+	return lexMux
 }
 
 func hasLineTerminatorPrefix(l *lexer) bool {
@@ -406,21 +413,21 @@ func hasLineTerminatorPrefix(l *lexer) bool {
 func lexLineTerminator(l *lexer) stateFunc {
 	l.next()
 	l.emit(LineTerminator)
-	return lexInputElement
+	return lexMux
 }
 
 func lexMultiLineComment(l *lexer) stateFunc {
 	l.acceptString("/*")
-	l.ignore()
+	l.ignoreN(len("/*"))
 	var r rune
 	for {
 		if l.acceptString("*/") {
-			if l.pos > l.start {
+			l.pos -= len("*/")
+			if l.pos >= l.start {
 				l.emit(MultiLineComment)
 			}
-			l.nextN(2) // */
-			l.ignore()
-			return lexInputElement
+			l.ignoreN(len("*/"))
+			return lexMux
 		}
 		if r = l.next(); r == eof {
 			break
@@ -437,7 +444,7 @@ func lexSingleLineComment(l *lexer) stateFunc {
 			l.emit(SingleLineComment)
 			l.accept("\n")
 			l.ignore()
-			return lexInputElement
+			return lexMux
 		}
 	}
 }
@@ -459,7 +466,7 @@ func lexIdentifierName(l *lexer) stateFunc {
 	for {
 		if !hasIdentifierNameContinuePrefix(l) {
 			l.emit(IdentifierName)
-			return lexInputElement
+			return lexMux
 		}
 		l.next()
 	}
@@ -481,7 +488,7 @@ func lexStringLiteralDouble(l *lexer) stateFunc {
 	}
 	l.accept("\"")
 	l.emit(StringLiteral)
-	return lexInputElement
+	return lexMux
 }
 
 // lexStringLiteralSingle consumes a string literal surounded by
@@ -500,7 +507,7 @@ func lexStringLiteralSingle(l *lexer) stateFunc {
 	}
 	l.accept("'")
 	l.emit(StringLiteral)
-	return lexInputElement
+	return lexMux
 }
 
 func hasNumericLiteral(l *lexer) bool {
@@ -519,7 +526,8 @@ func lexNumericLiteral(l *lexer) stateFunc {
 			l.next()
 			return l.errorf("bad number syntax: %q", l.input[l.start:l.pos])
 		}
-		return lexInputElement
+		l.emit(NumericLiteral)
+		return lexMux
 	}
 
 	// Optional leading sign.
@@ -528,15 +536,12 @@ func lexNumericLiteral(l *lexer) stateFunc {
 	if l.accept("0") {
 		if l.accept("xX") {
 			l.acceptRun("0123456789abcdefABCDEF")
-			l.emit(NumericLiteral)
 			return mustNotHaveNextAlpha(l)
 		} else if l.accept("oO") { // Is it octal?
 			l.acceptRun("01234567")
-			l.emit(NumericLiteral)
 			return mustNotHaveNextAlpha(l)
 		} else if l.accept("bB") { // Is it bin?
 			l.acceptRun("01")
-			l.emit(NumericLiteral)
 			return mustNotHaveNextAlpha(l)
 		}
 	}
@@ -554,6 +559,5 @@ func lexNumericLiteral(l *lexer) stateFunc {
 		l.acceptRun(decDigits)
 	}
 
-	l.emit(NumericLiteral)
 	return mustNotHaveNextAlpha(l)
 }
