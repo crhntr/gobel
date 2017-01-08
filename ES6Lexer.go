@@ -18,8 +18,13 @@ type Token struct {
 }
 
 func (tok Token) String() string {
-	val, tokTypStr := "", ""
-	var ok bool
+	var (
+		ok bool
+
+		val       string
+		tokTypStr string
+	)
+
 	if tokTypStr, ok = tokenTypeStrings[tok.Type]; !ok {
 		tokTypStr = "UNKOWN_TOKEN_TYPE"
 	}
