@@ -396,6 +396,18 @@ func TestLex_Identifier2(t *testing.T) {
 	expectedTokens(t, expected, tokens)
 }
 
+// func TestLex_EscapeSequence0(t *testing.T) {
+// 	expected := []Token{
+// 		Token{IdentifierName, "X"},
+// 		Token{Punctuator, "&"},
+// 		Token{IdentifierName, "ooooooooooooo___"},
+// 		Token{LineTerminator, "\n"},
+// 	}
+// 	js := `"\n"`
+// 	_, tokens := lex("", js, true)
+// 	expectedTokens(t, expected, tokens)
+// }
+
 func TestLex1(t *testing.T) {
 	expected := []Token{
 		Token{ReservedWord, "function"},

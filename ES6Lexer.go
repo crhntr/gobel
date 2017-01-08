@@ -219,14 +219,14 @@ func (l *lexer) accept(validSet string) bool {
 	return false
 }
 
-// acceptN consumes the next runes n times
-func (l *lexer) acceptRunN(validSet string, n int) bool {
-	i := 1
-	for ; i <= n; i++ {
-		l.accept(validSet)
-	}
-	return i == n
-}
+// // acceptN consumes the next runes n times
+// func (l *lexer) acceptRunN(validSet string, n int) bool {
+// 	i := 1
+// 	for ; i <= n; i++ {
+// 		l.accept(validSet)
+// 	}
+// 	return i == n
+// }
 
 // acceptRun consumes a run of runes from the
 // valid set
@@ -532,38 +532,38 @@ func hasNumericLiteral(l *lexer) bool {
 	return l.accept("123456789") || (l.accept(".") && l.accept("0123456789")) || (l.accept("0") && (l.accept("oOxXbB") || !hasIdentifierNameStartPrefix(l)))
 }
 
-// EscapeSequence :: CharacterEscapeSequence || 0 [lookahead ∉ DecimalDigit] || HexEscapeSequence || UnicodeEscapeSequence
-func lexEscapeSequence(l *lexer) {
-	// CharacterEscapeSequence
-
-	// SingleEscapeCharacter :: ' " \ b f n r t v
-	if l.accept("'\"\bfnrtv") {
-		return
-	}
-	l.reset()
-
-	// 0 [lookahead ∉ DecimalDigit]
-	if l.accept("0") && !l.accept(decimalDigits) {
-		return
-	}
-
-	// HexEscapeSequence :: x HexDigit HexDigit
-	if l.accept("x") && l.acceptRunN(decimalDigits[:8], 2) {
-		return
-	}
-
-	// UnicodeEscapeSequence :: u Hex4Digits
-	if l.accept("u") && l.acceptRunN(decimalDigits[:8], 4) {
-		return
-	}
-	l.reset()
-
-	// UnicodeEscapeSequence :: u{ HexDigits }
-	if l.accept("u") && l.accept("{") && l.acceptRunN(decimalDigits[:8], 4) && l.accept("}") {
-		return
-	}
-	l.reset()
-}
+// // EscapeSequence :: CharacterEscapeSequence || 0 [lookahead ∉ DecimalDigit] || HexEscapeSequence || UnicodeEscapeSequence
+// func lexEscapeSequence(l *lexer) {
+// 	// CharacterEscapeSequence
+//
+// 	// SingleEscapeCharacter :: ' " \ b f n r t v
+// 	if l.accept("'\"\\bfnrtv") {
+// 		return
+// 	}
+// 	l.reset()
+//
+// 	// 0 [lookahead ∉ DecimalDigit]
+// 	if l.accept("0") && !l.accept(decimalDigits) {
+// 		return
+// 	}
+//
+// 	// HexEscapeSequence :: x HexDigit HexDigit
+// 	if l.accept("x") && l.acceptRunN(decimalDigits[:8], 2) {
+// 		return
+// 	}
+//
+// 	// UnicodeEscapeSequence :: u Hex4Digits
+// 	if l.accept("u") && l.acceptRunN(decimalDigits[:8], 4) {
+// 		return
+// 	}
+// 	l.reset()
+//
+// 	// UnicodeEscapeSequence :: u{ HexDigits }
+// 	if l.accept("u") && l.accept("{") && l.acceptRunN(decimalDigits[:8], 4) && l.accept("}") {
+// 		return
+// 	}
+// 	l.reset()
+// }
 
 // lexNumericLiteral inspired by Rob Pike's talk
 func lexNumericLiteral(l *lexer) stateFunc {
