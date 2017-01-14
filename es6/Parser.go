@@ -1,4 +1,4 @@
-package gobel
+package es6
 
 import (
 	"io"
@@ -6,8 +6,10 @@ import (
 	"log"
 )
 
+// Safe is a bool
 var Safe bool
 
+// ParseES6 is a func
 func ParseES6(r io.Reader) (*ASTNode, error) {
 	root := ASTNode{}
 	all, err := ioutil.ReadAll(r)

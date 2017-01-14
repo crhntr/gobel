@@ -1,4 +1,4 @@
-package gobel
+package es6
 
 import (
 	"fmt"
@@ -323,6 +323,8 @@ func lexMux(l *lexer) stateFunc {
 		return lexPunctuator(l)
 	case hasIdentifierNameStartPrefix(l): // IdentifierName
 		return lexIdentifierName(l)
+	case strings.HasPrefix(l.input[l.pos:], "`"): // TemplateLiteral
+		return lexTemplateLiteral(l)
 	case strings.HasPrefix(l.input[l.pos:], "\""): // StringLiteral
 		return lexStringLiteralDouble(l)
 	case strings.HasPrefix(l.input[l.pos:], "'"): // StringLiteral
@@ -608,4 +610,10 @@ func lexNumericLiteral(l *lexer) stateFunc {
 	}
 
 	return mustNotHaveNextAlpha(l)
+}
+
+func lexTemplateLiteral(l *lexer) stateFunc {
+	l.accept("`")
+	l.
+	return nil
 }

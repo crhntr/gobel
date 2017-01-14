@@ -1,4 +1,4 @@
-package gobel
+package es6
 
 import (
 	"os"
