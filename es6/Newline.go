@@ -10,7 +10,7 @@ func hasLineTerminatorPrefix(l *lexer) bool {
 }
 
 func lexLineTerminator(l *lexer) stateFunc {
-	l.next()
+	l.accept("\u000A\u000D\u2028\u2029")
 	l.emit(LineTerminator)
 	return lexMux
 }
