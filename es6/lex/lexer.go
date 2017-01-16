@@ -7,6 +7,24 @@ import (
 	"unicode/utf8"
 )
 
+func Lex(name, input string, safe bool) (*lexer, chan Token) {
+	l := &lexer{
+		name:   name,
+		input:  input,
+		tokens: make(chan Token),
+		strict: true,
+	}
+	l.flags.div = true
+	if safe {
+		l.setStrict()
+	} else {
+		l.unsetStrict()
+	}
+
+	go l.run()
+	return l, l.tokens
+}
+
 type lexer struct {
 	name          string     // used for error reports
 	input         string     // the string being scanned
@@ -127,24 +145,6 @@ func (l *lexer) unsetStrict() {
 }
 
 type stateFunc func(*lexer) stateFunc
-
-func Lex(name, input string, safe bool) (*lexer, chan Token) {
-	l := &lexer{
-		name:   name,
-		input:  input,
-		tokens: make(chan Token),
-		strict: true,
-	}
-	l.flags.div = true
-	if safe {
-		l.setStrict()
-	} else {
-		l.unsetStrict()
-	}
-
-	go l.run()
-	return l, l.tokens
-}
 
 // run lexes the input by executing state functions
 // until the state is nil
