@@ -4,17 +4,17 @@ import "unicode"
 
 const decimalDigits = "0123456789"
 
-func hasNumericLiteral(l *lexer) bool {
+func hasNumericLiteral(l *Lexer) bool {
 	defer l.reset()
 	l.accept("-")
 	return l.accept("123456789") || (l.accept(".") && l.accept("0123456789")) || (l.accept("0") && (l.accept("oOxXbB") || !hasIdentifierNameStartPrefix(l)))
 }
 
 // lexNumericLiteral inspired by Rob Pike's talk
-func lexNumericLiteral(l *lexer) stateFunc {
+func lexNumericLiteral(l *Lexer) stateFunc {
 
 	// Next thing mustn't be alphanumeric.
-	mustNotHaveNextAlpha := func(l *lexer) stateFunc {
+	mustNotHaveNextAlpha := func(l *Lexer) stateFunc {
 		if unicode.IsLetter(l.peek()) {
 			l.next()
 			return l.errorf("bad number syntax: %q", l.input[l.start:l.pos])

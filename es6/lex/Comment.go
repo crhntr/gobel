@@ -2,7 +2,7 @@ package lex
 
 import "strings"
 
-func lexMultiLineComment(l *lexer) stateFunc {
+func lexMultiLineComment(l *Lexer) stateFunc {
 	l.acceptString("/*")
 	l.ignoreN(len("/*"))
 	var r rune
@@ -22,7 +22,7 @@ func lexMultiLineComment(l *lexer) stateFunc {
 	return l.errorf("no multi line comment terminator \"*/\"")
 }
 
-func lexSingleLineComment(l *lexer) stateFunc {
+func lexSingleLineComment(l *Lexer) stateFunc {
 	l.acceptString("//")
 	l.ignore()
 	for {

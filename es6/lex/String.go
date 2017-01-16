@@ -4,7 +4,7 @@ import "strings"
 
 // lexStringLiteralDouble consumes a string literal surounded by
 // a double quotation marks
-func lexStringLiteralDouble(l *lexer) stateFunc {
+func lexStringLiteralDouble(l *Lexer) stateFunc {
 	l.accept("\"")
 	var r rune
 	for {
@@ -23,7 +23,7 @@ func lexStringLiteralDouble(l *lexer) stateFunc {
 
 // lexStringLiteralSingle consumes a string literal surounded by
 // a single quotation marks
-func lexStringLiteralSingle(l *lexer) stateFunc {
+func lexStringLiteralSingle(l *Lexer) stateFunc {
 	l.accept("'")
 	var r rune
 	for {

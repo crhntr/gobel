@@ -15,7 +15,7 @@ var futureReservedWords = []string{"enum", "await"}
 var futureResdervedWordsStrict = []string{"implements", "package", "protected", "interface", "private", "public"}
 var literals = []string{"null", "true", "false"}
 
-func hasReservedWord(l *lexer, str string) bool {
+func hasReservedWord(l *Lexer, str string) bool {
 	for _, word := range l.reservedWords {
 		if strings.HasPrefix(str, word) {
 			return true
@@ -24,7 +24,7 @@ func hasReservedWord(l *lexer, str string) bool {
 	return false
 }
 
-func lexReservedWord(l *lexer) stateFunc {
+func lexReservedWord(l *Lexer) stateFunc {
 	l.acceptAnyString(l.reservedWords)
 	l.emit(ReservedWord)
 	return lexMux

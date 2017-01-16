@@ -47,7 +47,7 @@ func TestLex_ReservedWord1(t *testing.T) {
 	js := ""
 	ws := " "
 
-	lJs := lexer{}
+	lJs := Lexer{}
 	lJs.setStrict()
 	for _, word := range lJs.reservedWords {
 		js += word + ws
@@ -66,7 +66,7 @@ func TestLex_ReservedWord2(t *testing.T) {
 	js := ""
 	ws := " "
 
-	lJs := lexer{}
+	lJs := Lexer{}
 	lJs.unsetStrict()
 	for _, word := range lJs.reservedWords {
 		js += word + ws

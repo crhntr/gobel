@@ -7,8 +7,8 @@ import (
 	"unicode/utf8"
 )
 
-func Lex(name, input string, safe bool) (*lexer, chan Token) {
-	l := &lexer{
+func Lex(name, input string, safe bool) (*Lexer, chan Token) {
+	l := &Lexer{
 		name:   name,
 		input:  input,
 		tokens: make(chan Token),
@@ -25,7 +25,7 @@ func Lex(name, input string, safe bool) (*lexer, chan Token) {
 	return l, l.tokens
 }
 
-type lexer struct {
+type Lexer struct {
 	name          string     // used for error reports
 	input         string     // the string being scanned
 	start         int        // start position of this item
@@ -127,7 +127,7 @@ var tokenTypeStrings = map[tokenType]string{
 // 		l.name, l.start, l.pos, l.width, l.input)
 // }
 
-func (l *lexer) setStrict() {
+func (l *Lexer) setStrict() {
 	l.strict = true
 	l.reservedWords = []string{}
 	l.reservedWords = append(currentReservedWords, futureReservedWords...)
@@ -136,7 +136,7 @@ func (l *lexer) setStrict() {
 	sort.Sort(keywordSorter(l.reservedWords))
 }
 
-func (l *lexer) unsetStrict() {
+func (l *Lexer) unsetStrict() {
 	l.strict = false
 	l.reservedWords = []string{}
 	l.reservedWords = append(currentReservedWords, futureReservedWords...)
@@ -144,11 +144,11 @@ func (l *lexer) unsetStrict() {
 	sort.Sort(keywordSorter(l.reservedWords))
 }
 
-type stateFunc func(*lexer) stateFunc
+type stateFunc func(*Lexer) stateFunc
 
 // run lexes the input by executing state functions
 // until the state is nil
-func (l *lexer) run() {
+func (l *Lexer) run() {
 	for state := lexMux; state != nil; {
 		state = state(l)
 	}
@@ -156,12 +156,12 @@ func (l *lexer) run() {
 }
 
 // emit passes an item back to the client.
-func (l *lexer) emit(tok tokenType) {
+func (l *Lexer) emit(tok tokenType) {
 	l.tokens <- Token{tok, l.input[l.start:l.pos]}
 	l.start = l.pos
 }
 
-func (l *lexer) next() (r rune) {
+func (l *Lexer) next() (r rune) {
 	if l.pos >= len(l.input) {
 		l.width = 0
 		return eof
@@ -182,7 +182,7 @@ func (l *lexer) next() (r rune) {
 
 // peek returns but does not consume the next
 // next rune in the input
-func (l *lexer) peek() rune {
+func (l *Lexer) peek() rune {
 	r := l.next()
 	l.backup()
 	return r
@@ -190,7 +190,7 @@ func (l *lexer) peek() rune {
 
 // accept consumes the next rune if it is from
 // a valid set
-func (l *lexer) accept(validSet string) bool {
+func (l *Lexer) accept(validSet string) bool {
 	if strings.IndexRune(validSet, l.next()) >= 0 {
 		return true
 	}
@@ -209,7 +209,7 @@ func (l *lexer) accept(validSet string) bool {
 
 // acceptRun consumes a run of runes from the
 // valid set
-func (l *lexer) acceptRun(validSet string) bool {
+func (l *Lexer) acceptRun(validSet string) bool {
 	n := 0
 	for strings.IndexRune(validSet, l.next()) >= 0 {
 		n++
@@ -219,7 +219,7 @@ func (l *lexer) acceptRun(validSet string) bool {
 }
 
 // acceptString consumes a string
-func (l *lexer) acceptString(str string) bool {
+func (l *Lexer) acceptString(str string) bool {
 	if strings.HasPrefix(l.input[l.pos:], str) {
 		for _, r := range str {
 			l.accept(string(r))
@@ -230,7 +230,7 @@ func (l *lexer) acceptString(str string) bool {
 }
 
 // acceptAnyString consumes any one of a slice of strings
-func (l *lexer) acceptAnyString(valids []string) bool {
+func (l *Lexer) acceptAnyString(valids []string) bool {
 	for _, valid := range valids {
 		if l.acceptString(valid) {
 			return true
@@ -240,35 +240,35 @@ func (l *lexer) acceptAnyString(valids []string) bool {
 }
 
 // accepted
-func (l *lexer) accepted() bool {
+func (l *Lexer) accepted() bool {
 	return l.pos > l.start
 }
 
 // ignore steps over the pending input before
 // this point.
-func (l *lexer) ignore() {
+func (l *Lexer) ignore() {
 	l.start = l.pos
 }
 
-func (l *lexer) ignoreN(n int) {
+func (l *Lexer) ignoreN(n int) {
 	l.start += n
 }
 
 // reset
-func (l *lexer) reset() {
+func (l *Lexer) reset() {
 	l.pos = l.start
 }
 
 // backup steps back once per rune
 // Can be called once per call of next
-func (l *lexer) backup() {
+func (l *Lexer) backup() {
 	l.pos -= l.width
 }
 
 // error returns an error token and terminates the scan
 // by passing back a nil pointer that will be the next
 // state, terminating l.run.
-func (l *lexer) errorf(format string, args ...interface{}) stateFunc {
+func (l *Lexer) errorf(format string, args ...interface{}) stateFunc {
 	l.tokens <- Token{
 		Error,
 		fmt.Sprintf(format, args...),
@@ -284,7 +284,7 @@ func (l *lexer) errorf(format string, args ...interface{}) stateFunc {
 // InputElementRegExp :: WhiteSpace | LineTerminator | Comment | CommonToken | RightBracePunctuator | RegularExpressionLiteral
 // InputElementRegExpOrTemplateTail :: WhiteSpace | LineTerminator | Comment | CommonToken | RegularExpressionLiteral | TemplateSubstitutionTail
 // InputElementTemplateTail :: | WhiteSpace | LineTerminator | Comment | CommonToken | DivPunctuator | TemplateSubstitutionTail
-func lexMux(l *lexer) stateFunc {
+func lexMux(l *Lexer) stateFunc {
 	switch {
 	case hasWhiteSpacePrefix(l):
 		return lexWhiteSpace
@@ -329,30 +329,30 @@ var punctuators = []string{
 	"*", "?", ":", "=", "+", ">", "<", ",",
 	";", ".", "]", "["}
 
-func hasPunctuator(l *lexer) bool {
+func hasPunctuator(l *Lexer) bool {
 	defer l.reset()
 	return l.acceptAnyString(punctuators)
 }
 
-func lexPunctuator(l *lexer) stateFunc {
+func lexPunctuator(l *Lexer) stateFunc {
 	l.acceptAnyString(punctuators)
 	l.emit(Punctuator)
 	return lexMux
 }
 
-func hasDivPunctuator(l *lexer) bool {
+func hasDivPunctuator(l *Lexer) bool {
 	defer l.reset()
 	return l.acceptAnyString([]string{"/=", "/"})
 }
 
-func lexDivPunctuator(l *lexer) stateFunc {
+func lexDivPunctuator(l *Lexer) stateFunc {
 	l.acceptAnyString([]string{"/=", "/"})
 	l.emit(DivPunctuator)
 	return lexMux
 	// }
 }
 
-func lexRightBracePunctuator(l *lexer) stateFunc {
+func lexRightBracePunctuator(l *Lexer) stateFunc {
 	// if strings.HasPrefix(l.input[l.pos:], "}") {
 	l.accept("}")
 	l.emit(RightBracePunctuator)
@@ -394,7 +394,7 @@ func lexRightBracePunctuator(l *lexer) stateFunc {
 // 	l.reset()
 // }
 
-func lexTemplateLiteral(l *lexer) stateFunc {
+func lexTemplateLiteral(l *Lexer) stateFunc {
 	l.accept("`")
 	return nil
 }
