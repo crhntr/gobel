@@ -9,7 +9,7 @@ import (
 var errNotNull = fmt.Errorf("not null")
 
 func Test_peek(t *testing.T) {
-	l, _ := lex("", "101", false)
+	l, _ := Lex("", "101", false)
 
 	n1 := l.next()
 	p0 := l.peek()
@@ -26,7 +26,7 @@ func TestLex_Whitespace_AND_SingleLineComment(t *testing.T) {
 		Token{SingleLineComment, " Hello World!"},
 	}
 	js := " \t// Hello World!"
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -38,7 +38,7 @@ func TestLex_Terminator_And_Whitespace(t *testing.T) {
 		Token{LineTerminator, "\n"},
 	}
 
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -52,7 +52,7 @@ func TestLex_ReservedWord1(t *testing.T) {
 	for _, word := range lJs.reservedWords {
 		js += word + ws
 	}
-	l, tokens := lex("", js, true)
+	l, tokens := Lex("", js, true)
 	for _, word := range l.reservedWords {
 		expected = append(expected, Token{ReservedWord, word})
 		expected = append(expected, Token{WhiteSpace, ws})
@@ -72,7 +72,7 @@ func TestLex_ReservedWord2(t *testing.T) {
 		js += word + ws
 	}
 
-	l, tokens := lex("", js, false)
+	l, tokens := Lex("", js, false)
 	for _, word := range l.reservedWords {
 		expected = append(expected, Token{ReservedWord, word})
 		expected = append(expected, Token{WhiteSpace, ws})
@@ -92,7 +92,7 @@ func TestLex_Punctuator1(t *testing.T) {
 		js += punct + ws
 	}
 
-	_, tokens := lex("", js, false)
+	_, tokens := Lex("", js, false)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -103,7 +103,7 @@ func TestLex_DivPunctuator1(t *testing.T) {
 		Token{DivPunctuator, "/="},
 	}
 	js := "/ /="
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -113,7 +113,7 @@ func TestLex_RightBracePunctuator1(t *testing.T) {
 		Token{RightBracePunctuator, "}"},
 	}
 	js := "{}"
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -142,7 +142,7 @@ func TestLex1(t *testing.T) {
 	}
 
 	js := "function (){}()"
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -161,7 +161,7 @@ func TestLex2(t *testing.T) {
 	}
 
 	js := "function foo (){}()"
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -190,7 +190,7 @@ func TestLex3(t *testing.T) {
 	}
 
 	js := "function add (a, b){\n\treturn a+b\n}"
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -265,7 +265,7 @@ func TestLexJS(t *testing.T) {
 	}
 
 	js := string(testData)
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -322,7 +322,7 @@ func TestLexJS2(t *testing.T) {
 	}
 
 	js := string(testData)
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 

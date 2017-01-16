@@ -13,7 +13,7 @@ func TestLex_StringLiteralSingleQuote1(t *testing.T) {
 		Token{StringLiteral, "'foo'"},
 	}
 	js := "var foo = 'foo'"
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -29,7 +29,7 @@ func TestLex_StringLiteralSingleQuote2(t *testing.T) {
 		Token{StringLiteral, "'foo"},
 	}
 	js := "var foo = 'foo"
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -44,7 +44,7 @@ func TestLex_StringLiteralDoubleQuote1(t *testing.T) {
 		Token{StringLiteral, "\"foo\""},
 	}
 	js := "var foo = \"foo\""
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -60,6 +60,6 @@ func TestLex_StringLiteralDoubleQuote2(t *testing.T) {
 		Token{StringLiteral, "\"foo"},
 	}
 	js := "var foo = \"foo"
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }

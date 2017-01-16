@@ -7,7 +7,7 @@ func TestLex_Whitespace1(t *testing.T) {
 	expected := []Token{
 		Token{WhiteSpace, js},
 	}
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }
 
@@ -17,6 +17,6 @@ func TestLex_Whitespace2(t *testing.T) {
 		Token{WhiteSpace, js},
 	}
 
-	_, tokens := lex("", js, true)
+	_, tokens := Lex("", js, true)
 	expectedTokens(t, expected, tokens)
 }

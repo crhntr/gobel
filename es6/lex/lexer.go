@@ -128,7 +128,7 @@ func (l *lexer) unsetStrict() {
 
 type stateFunc func(*lexer) stateFunc
 
-func lex(name, input string, safe bool) (*lexer, chan Token) {
+func Lex(name, input string, safe bool) (*lexer, chan Token) {
 	l := &lexer{
 		name:   name,
 		input:  input,
