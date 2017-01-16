@@ -1,4 +1,4 @@
-package es6
+package lex
 
 func hasWhiteSpacePrefix(l *lexer) bool {
 	defer l.reset()
