@@ -4,10 +4,6 @@ import "unicode"
 
 const decimalDigits = "0123456789"
 
-//
-// lexer
-//
-
 func hasNumericLiteral(l *lexer) bool {
 	defer l.reset()
 	l.accept("-")
