@@ -7,6 +7,7 @@ import (
 	"unicode/utf8"
 )
 
+// Lex lexes a string into tokens
 func Lex(name, input string, safe bool) (*Lexer, chan Token) {
 	l := &Lexer{
 		name:   name,
@@ -25,6 +26,7 @@ func Lex(name, input string, safe bool) (*Lexer, chan Token) {
 	return l, l.tokens
 }
 
+// A Lexer represents the state of the lexing algorithm
 type Lexer struct {
 	name          string     // used for error reports
 	input         string     // the string being scanned
