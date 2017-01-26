@@ -1,4 +1,4 @@
-package lex
+package es6lexer
 
 import (
 	"fmt"

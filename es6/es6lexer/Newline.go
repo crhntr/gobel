@@ -1,4 +1,4 @@
-package lex
+package es6lexer
 
 func hasLineTerminatorPrefix(l *Lexer) bool {
 	defer l.reset()
