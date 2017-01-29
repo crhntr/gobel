@@ -2,6 +2,8 @@ package es6lexer
 
 import "strings"
 
+// see 11.4
+
 func lexMultiLineComment(l *Lexer) stateFunc {
 	l.acceptString("/*")
 	l.ignoreN(len("/*"))

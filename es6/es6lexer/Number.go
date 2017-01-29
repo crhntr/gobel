@@ -2,6 +2,8 @@ package es6lexer
 
 import "unicode"
 
+// see See 11.8.3
+
 const decimalDigits = "0123456789"
 
 func hasNumericLiteral(l *Lexer) bool {

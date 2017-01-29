@@ -2,6 +2,8 @@ package es6lexer
 
 import "strings"
 
+// See 11.8.4
+
 // lexStringLiteralDouble consumes a string literal surounded by
 // a double quotation marks
 func lexStringLiteralDouble(l *Lexer) stateFunc {
