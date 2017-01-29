@@ -1,221 +1,169 @@
 A.1 Lexical Grammar
 
+SourceCharacter (See 10.1) ::
+  any Unicode code point
 
-(See 10.1)
-SourceCharacter ::
-any Unicode code point
 
+InputElementDiv (See clause 11) ::
+  WhiteSpace
+  LineTerminator
+  Comment
+  CommonToken
+  DivPunctuator
+  RightBracePunctuator
 
 
-(See clause 11)
-InputElementDiv ::
-WhiteSpace
-LineTerminator
-Comment
-CommonToken
-DivPunctuator
-RightBracePunctuator
+InputElementRegExp (See clause 11) ::
+  WhiteSpace
+  LineTerminator
+  Comment
+  CommonToken
+  RightBracePunctuator
+  RegularExpressionLiteral
 
 
+InputElementRegExpOrTemplateTail (See clause 11) ::
+  WhiteSpace
+  LineTerminator
+  Comment
+  CommonToken
+  RegularExpressionLiteral
+  TemplateSubstitutionTail
 
-(See clause 11)
-InputElementRegExp ::
-WhiteSpace
-LineTerminator
-Comment
-CommonToken
-RightBracePunctuator
-RegularExpressionLiteral
 
+InputElementTemplateTail (See clause 11) ::
+  WhiteSpace
+  LineTerminator
+  Comment
+  CommonToken
+  DivPunctuator
+  TemplateSubstitutionTail
 
 
-(See clause 11)
-InputElementRegExpOrTemplateTail ::
-WhiteSpace
-LineTerminator
-Comment
-CommonToken
-RegularExpressionLiteral
-TemplateSubstitutionTail
+WhiteSpace (See 11.2) ::
+  <TAB>
+  <VT>
+  <FF>
+  <SP>
+  <NBSP>
+  <ZWNBSP>
+  <USP>
 
 
+LineTerminator (See 11.3) ::
+  <LF>
+  <CR>
+  <LS>
+  <PS>
 
-(See clause 11)
-InputElementTemplateTail ::
-WhiteSpace
-LineTerminator
-Comment
-CommonToken
-DivPunctuator
-TemplateSubstitutionTail
 
+LineTerminatorSequence (See 11.3) ::
+  <LF>
+  <CR> [lookahead ≠ <LF> ]
+  <LS>
+  <PS>
+  <CR> <LF>
 
 
-(See 11.2)
-WhiteSpace ::
-<TAB>
-<VT>
-<FF>
-<SP>
-<NBSP>
-<ZWNBSP>
-<USP>
+Comment (See 11.4) ::
+  MultiLineComment
+  SingleLineComment
 
 
+MultiLineComment (See 11.4) ::
+  /* MultiLineCommentCharsopt */
 
-(See 11.3)
-LineTerminator ::
-<LF>
-<CR>
-<LS>
-<PS>
 
+MultiLineCommentChars (See 11.4) ::
+  MultiLineNotAsteriskChar MultiLineCommentCharsopt
+  * PostAsteriskCommentCharsopt
 
 
-(See 11.3)
-LineTerminatorSequence ::
-<LF>
-<CR> [lookahead ≠ <LF> ]
-<LS>
-<PS>
-<CR> <LF>
+PostAsteriskCommentChars (See 11.4) ::
+  MultiLineNotForwardSlashOrAsteriskChar MultiLineCommentCharsopt
+  * PostAsteriskCommentCharsopt
 
 
+MultiLineNotAsteriskChar (See 11.4) ::
+  SourceCharacter but not *
 
-(See 11.4)
-Comment ::
-MultiLineComment
-SingleLineComment
 
+MultiLineNotForwardSlashOrAsteriskChar (See 11.4) ::
+  SourceCharacter but not one of / or *
 
 
-(See 11.4)
-MultiLineComment ::
-/* MultiLineCommentCharsopt */
+SingleLineComment (See 11.4) ::
+  // SingleLineCommentCharsopt
 
 
+SingleLineCommentChars (See 11.4) ::
+  SingleLineCommentChar SingleLineCommentCharsopt
 
-(See 11.4)
-MultiLineCommentChars ::
-MultiLineNotAsteriskChar MultiLineCommentCharsopt
-* PostAsteriskCommentCharsopt
 
+SingleLineCommentChar (See 11.4) ::
+  SourceCharacter but not LineTerminator
 
 
-(See 11.4)
-PostAsteriskCommentChars ::
-MultiLineNotForwardSlashOrAsteriskChar MultiLineCommentCharsopt
-* PostAsteriskCommentCharsopt
+CommonToken (See 11.5) ::
+  IdentifierName
+  Punctuator
+  NumericLiteral
+  StringLiteral
+  Template
 
 
+IdentifierName (See 11.6) ::
+  IdentifierStart
+  IdentifierName IdentifierPart
 
-(See 11.4)
-MultiLineNotAsteriskChar ::
-SourceCharacter but not *
 
+IdentifierStart (See 11.6) ::
+  UnicodeIDStart
+  $
+  _
+  \ UnicodeEscapeSequence
 
 
-(See 11.4)
-MultiLineNotForwardSlashOrAsteriskChar ::
-SourceCharacter but not one of / or *
+IdentifierPart (See 11.6) ::
+  UnicodeIDContinue
+  $
+  _
+  \ UnicodeEscapeSequence
+  <ZWNJ>
+  <ZWJ>
 
 
+UnicodeIDStart (See 11.6) ::
+  any Unicode code point with the Unicode property “ID_Start” or “Other_ID_Start”
 
-(See 11.4)
-SingleLineComment ::
-// SingleLineCommentCharsopt
 
+UnicodeIDContinue (See 11.6) ::
+  any Unicode code point with the Unicode property “ID_Continue”, “Other_ID_Continue”, or “Other_ID_Start”
 
 
-(See 11.4)
-SingleLineCommentChars ::
-SingleLineCommentChar SingleLineCommentCharsopt
+ReservedWord (See 11.6.2) ::
+  Keyword
+  FutureReservedWord
+  NullLiteral
+  BooleanLiteral
 
 
+Keyword (See 11.6.2.1) ::  one of
+  break	do	in	typeof
+  case	else	instanceof	var
+  catch	export	new	void
+  class	extends	return	while
+  const	finally	super	with
+  continue	for	switch	yield
+  debugger	function	this
+  default	if	throw
+  delete	import	try
 
-(See 11.4)
-SingleLineCommentChar ::
-SourceCharacter but not LineTerminator
 
-
-
-(See 11.5)
-CommonToken ::
-IdentifierName
-Punctuator
-NumericLiteral
-StringLiteral
-Template
-
-
-
-(See 11.6)
-IdentifierName ::
-IdentifierStart
-IdentifierName IdentifierPart
-
-
-
-(See 11.6)
-IdentifierStart ::
-UnicodeIDStart
-$
-_
-\ UnicodeEscapeSequence
-
-
-
-(See 11.6)
-IdentifierPart ::
-UnicodeIDContinue
-$
-_
-\ UnicodeEscapeSequence
-<ZWNJ>
-<ZWJ>
-
-
-
-(See 11.6)
-UnicodeIDStart ::
-any Unicode code point with the Unicode property “ID_Start” or “Other_ID_Start”
-
-
-
-(See 11.6)
-UnicodeIDContinue ::
-any Unicode code point with the Unicode property “ID_Continue”, “Other_ID_Continue”, or “Other_ID_Start”
-
-
-
-(See 11.6.2)
-ReservedWord ::
-Keyword
-FutureReservedWord
-NullLiteral
-BooleanLiteral
-
-
-
-(See 11.6.2.1)
-Keyword :: one of
-break	do	in	typeof
-case	else	instanceof	var
-catch	export	new	void
-class	extends	return	while
-const	finally	super	with
-continue	for	switch	yield
-debugger	function	this
-default	if	throw
-delete	import	try
-
-
-
-(See 11.6.2.2)
-FutureReservedWord ::
-enum
-await
-await is only treated as a FutureReservedWord when Module is the goal symbol of the syntactic grammar.
+FutureReservedWord (See 11.6.2.2) ::
+  enum
+  await
+  await is only treated as a FutureReservedWord when Module is the goal symbol of the syntactic grammar.
 
 The following tokens are also considered to be FutureReservedWords when parsing strict mode code (see 10.2.1).
 
@@ -223,388 +171,276 @@ implements	package	protected
 interface	private	public
 
 
+Punctuator (See 11.7) ::   one of
+  {	}	(	)	[	]
+  .	;	,	<	>	<=
+  >=	==	!=	===	!==
+  +	-	*	%	++	--
+  <<	>>	>>>	&	|	^
+  !	~	&&	||	?	:
+  =	+=	-=	*=	%=	<<=
+  >>=	>>>=	&=	|=	^=	=>
 
-(See 11.7)
-Punctuator :: one of
-{	}	(	)	[	]
-.	;	,	<	>	<=
->=	==	!=	===	!==
-+	-	*	%	++	--
-<<	>>	>>>	&	|	^
-!	~	&&	||	?	:
-=	+=	-=	*=	%=	<<=
->>=	>>>=	&=	|=	^=	=>
 
+DivPunctuator (See 11.7) ::  one of
+  /
+  /=
 
 
-(See 11.7)
-DivPunctuator :: one of
-/
-/=
+RightBracePunctuator (See 11.7) ::   one of
+  }
 
 
+NullLiteral (See 11.8.1) ::
+  null
 
-(See 11.7)
-RightBracePunctuator :: one of
-}
 
+BooleanLiteral (See 11.8.2) ::
+  true
+  false
 
 
-(See 11.8.1)
-NullLiteral ::
-null
+NumericLiteral (See 11.8.3) ::
+  DecimalLiteral
+  BinaryIntegerLiteral
+  OctalIntegerLiteral
+  HexIntegerLiteral
 
 
+DecimalLiteral (See 11.8.3) ::
+  DecimalIntegerLiteral . DecimalDigitsopt ExponentPartopt
+  . DecimalDigits ExponentPartopt
+  DecimalIntegerLiteral ExponentPartopt
 
-(See 11.8.2)
-BooleanLiteral ::
-true
-false
 
+DecimalIntegerLiteral (See 11.8.3) ::
+  0
+  NonZeroDigit DecimalDigitsopt
 
 
-(See 11.8.3)
-NumericLiteral ::
-DecimalLiteral
-BinaryIntegerLiteral
-OctalIntegerLiteral
-HexIntegerLiteral
+DecimalDigits (See 11.8.3) ::
+  DecimalDigit
+  DecimalDigits DecimalDigit
 
 
+DecimalDigit (See 11.8.3) ::   one of
+  0 1 2 3 4 5 6 7 8 9
 
-(See 11.8.3)
-DecimalLiteral ::
-DecimalIntegerLiteral . DecimalDigitsopt ExponentPartopt
-. DecimalDigits ExponentPartopt
-DecimalIntegerLiteral ExponentPartopt
 
+NonZeroDigit (See 11.8.3) ::   one of
+  1 2 3 4 5 6 7 8 9
 
 
-(See 11.8.3)
-DecimalIntegerLiteral ::
-0
-NonZeroDigit DecimalDigitsopt
+ExponentPart (See 11.8.3) ::
+  ExponentIndicator SignedInteger
 
 
+ExponentIndicator (See 11.8.3) ::  one of
+  e E
 
-(See 11.8.3)
-DecimalDigits ::
-DecimalDigit
-DecimalDigits DecimalDigit
 
+SignedInteger (See 11.8.3) ::
+  DecimalDigits
+  + DecimalDigits
+  - DecimalDigits
 
 
-(See 11.8.3)
-DecimalDigit :: one of
-0 1 2 3 4 5 6 7 8 9
+BinaryIntegerLiteral (See 11.8.3) ::
+  0b BinaryDigits
+  0B BinaryDigits
 
 
+BinaryDigits (See 11.8.3) ::
+  BinaryDigit
+  BinaryDigits BinaryDigit
 
-(See 11.8.3)
-NonZeroDigit :: one of
-1 2 3 4 5 6 7 8 9
 
+BinaryDigit (See 11.8.3) ::  one of
+  0 1
 
 
-(See 11.8.3)
-ExponentPart ::
-ExponentIndicator SignedInteger
+OctalIntegerLiteral (See 11.8.3) ::
+  0o OctalDigits
+  0O OctalDigits
 
 
+OctalDigits (See 11.8.3) ::
+  OctalDigit
+  OctalDigits OctalDigit
 
-(See 11.8.3)
-ExponentIndicator :: one of
-e E
 
+OctalDigit (See 11.8.3) ::   one of
+  0 1 2 3 4 5 6 7
 
 
-(See 11.8.3)
-SignedInteger ::
-DecimalDigits
-+ DecimalDigits
-- DecimalDigits
+HexIntegerLiteral (See 11.8.3) ::
+  0x HexDigits
+  0X HexDigits
 
 
+HexDigits (See 11.8.3) ::
+  HexDigit
+  HexDigits HexDigit
 
-(See 11.8.3)
-BinaryIntegerLiteral ::
-0b BinaryDigits
-0B BinaryDigits
 
+HexDigit (See 11.8.3) ::   one of
+  0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F
 
 
-(See 11.8.3)
-BinaryDigits ::
-BinaryDigit
-BinaryDigits BinaryDigit
+StringLiteral (See 11.8.4) ::
+  " DoubleStringCharactersopt "
+  ' SingleStringCharactersopt '
 
 
+DoubleStringCharacters (See 11.8.4) ::
+  DoubleStringCharacter DoubleStringCharactersopt
 
-(See 11.8.3)
-BinaryDigit :: one of
-0 1
 
+SingleStringCharacters (See 11.8.4) ::
+  SingleStringCharacter SingleStringCharactersopt
 
 
-(See 11.8.3)
-OctalIntegerLiteral ::
-0o OctalDigits
-0O OctalDigits
+DoubleStringCharacter (See 11.8.4) ::
+  SourceCharacter but not one of " or \ or LineTerminator
+  \ EscapeSequence
+  LineContinuation
 
 
+SingleStringCharacter (See 11.8.4) ::
+  SourceCharacter but not one of ' or \ or LineTerminator
+  \ EscapeSequence
+  LineContinuation
 
-(See 11.8.3)
-OctalDigits ::
-OctalDigit
-OctalDigits OctalDigit
 
+LineContinuation (See 11.8.4) ::
+  \ LineTerminatorSequence
 
 
-(See 11.8.3)
-OctalDigit :: one of
-0 1 2 3 4 5 6 7
+EscapeSequence (See 11.8.4) ::
+  CharacterEscapeSequence
+  0 [lookahead ∉ DecimalDigit]
+  HexEscapeSequence
+  UnicodeEscapeSequence
 
 
+CharacterEscapeSequence (See 11.8.4) ::
+  SingleEscapeCharacter
+  NonEscapeCharacter
 
-(See 11.8.3)
-HexIntegerLiteral ::
-0x HexDigits
-0X HexDigits
 
+SingleEscapeCharacter (See 11.8.4) ::  one of
+  ' " \ b f n r t v
 
 
-(See 11.8.3)
-HexDigits ::
-HexDigit
-HexDigits HexDigit
+NonEscapeCharacter (See 11.8.4) ::
+  SourceCharacter but not one of EscapeCharacter or LineTerminator
 
 
+EscapeCharacter (See 11.8.4) ::
+  SingleEscapeCharacter
+  DecimalDigit
+  x
+  u
 
-(See 11.8.3)
-HexDigit :: one of
-0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F
 
+HexEscapeSequence (See 11.8.4) ::
+  x HexDigit HexDigit
 
 
-(See 11.8.4)
-StringLiteral ::
-" DoubleStringCharactersopt "
-' SingleStringCharactersopt '
+UnicodeEscapeSequence (See 11.8.4) ::
+  u Hex4Digits
+  u{ HexDigits }
 
 
+Hex4Digits (See 11.8.4) ::
+  HexDigit HexDigit HexDigit HexDigit
 
-(See 11.8.4)
-DoubleStringCharacters ::
-DoubleStringCharacter DoubleStringCharactersopt
 
+RegularExpressionLiteral (See 11.8.5) ::
+  / RegularExpressionBody / RegularExpressionFlags
 
 
-(See 11.8.4)
-SingleStringCharacters ::
-SingleStringCharacter SingleStringCharactersopt
+RegularExpressionBody (See 11.8.5) ::
+  RegularExpressionFirstChar RegularExpressionChars
 
 
+RegularExpressionChars (See 11.8.5) ::
+  [empty]
+  RegularExpressionChars RegularExpressionChar
 
-(See 11.8.4)
-DoubleStringCharacter ::
-SourceCharacter but not one of " or \ or LineTerminator
-\ EscapeSequence
-LineContinuation
 
+RegularExpressionFirstChar (See 11.8.5) ::
+  RegularExpressionNonTerminator but not one of * or \ or / or [
+  RegularExpressionBackslashSequence
+  RegularExpressionClass
 
 
-(See 11.8.4)
-SingleStringCharacter ::
-SourceCharacter but not one of ' or \ or LineTerminator
-\ EscapeSequence
-LineContinuation
+RegularExpressionChar (See 11.8.5) ::
+  RegularExpressionNonTerminator but not one of \ or / or [
+  RegularExpressionBackslashSequence
+  RegularExpressionClass
 
 
+RegularExpressionBackslashSequence (See 11.8.5) ::
+  \ RegularExpressionNonTerminator
 
-(See 11.8.4)
-LineContinuation ::
-\ LineTerminatorSequence
 
+RegularExpressionNonTerminator (See 11.8.5) ::
+  SourceCharacter but not LineTerminator
 
 
-(See 11.8.4)
-EscapeSequence ::
-CharacterEscapeSequence
-0 [lookahead ∉ DecimalDigit]
-HexEscapeSequence
-UnicodeEscapeSequence
+RegularExpressionClass (See 11.8.5) ::
+  [ RegularExpressionClassChars ]
 
 
+RegularExpressionClassChars (See 11.8.5) ::
+  [empty]
+  RegularExpressionClassChars RegularExpressionClassChar
 
-(See 11.8.4)
-CharacterEscapeSequence ::
-SingleEscapeCharacter
-NonEscapeCharacter
 
+RegularExpressionClassChar (See 11.8.5) ::
+  RegularExpressionNonTerminator but not one of ] or \
+  RegularExpressionBackslashSequence
 
 
-(See 11.8.4)
-SingleEscapeCharacter :: one of
-' " \ b f n r t v
+RegularExpressionFlags (See 11.8.5) ::
+  [empty]
+  RegularExpressionFlags IdentifierPart
 
 
+Template (See 11.8.6) ::
+  NoSubstitutionTemplate
+  TemplateHead
 
-(See 11.8.4)
-NonEscapeCharacter ::
-SourceCharacter but not one of EscapeCharacter or LineTerminator
 
+NoSubstitutionTemplate (See 11.8.6) ::
+  ` TemplateCharactersopt `
 
 
-(See 11.8.4)
-EscapeCharacter ::
-SingleEscapeCharacter
-DecimalDigit
-x
-u
+TemplateHead (See 11.8.6) ::
+  ` TemplateCharactersopt ${
 
 
+TemplateSubstitutionTail (See 11.8.6) ::
+  TemplateMiddle
+  TemplateTail
 
-(See 11.8.4)
-HexEscapeSequence ::
-x HexDigit HexDigit
 
+TemplateMiddle (See 11.8.6) ::
+  } TemplateCharactersopt ${
 
 
-(See 11.8.4)
-UnicodeEscapeSequence ::
-u Hex4Digits
-u{ HexDigits }
+TemplateTail (See 11.8.6) ::
+  } TemplateCharactersopt `
 
 
+TemplateCharacters (See 11.8.6) ::
+  TemplateCharacter TemplateCharactersopt
 
-(See 11.8.4)
-Hex4Digits ::
-HexDigit HexDigit HexDigit HexDigit
 
-
-
-(See 11.8.5)
-RegularExpressionLiteral ::
-/ RegularExpressionBody / RegularExpressionFlags
-
-
-
-(See 11.8.5)
-RegularExpressionBody ::
-RegularExpressionFirstChar RegularExpressionChars
-
-
-
-(See 11.8.5)
-RegularExpressionChars ::
-[empty]
-RegularExpressionChars RegularExpressionChar
-
-
-
-(See 11.8.5)
-RegularExpressionFirstChar ::
-RegularExpressionNonTerminator but not one of * or \ or / or [
-RegularExpressionBackslashSequence
-RegularExpressionClass
-
-
-
-(See 11.8.5)
-RegularExpressionChar ::
-RegularExpressionNonTerminator but not one of \ or / or [
-RegularExpressionBackslashSequence
-RegularExpressionClass
-
-
-
-(See 11.8.5)
-RegularExpressionBackslashSequence ::
-\ RegularExpressionNonTerminator
-
-
-
-(See 11.8.5)
-RegularExpressionNonTerminator ::
-SourceCharacter but not LineTerminator
-
-
-
-(See 11.8.5)
-RegularExpressionClass ::
-[ RegularExpressionClassChars ]
-
-
-
-(See 11.8.5)
-RegularExpressionClassChars ::
-[empty]
-RegularExpressionClassChars RegularExpressionClassChar
-
-
-
-(See 11.8.5)
-RegularExpressionClassChar ::
-RegularExpressionNonTerminator but not one of ] or \
-RegularExpressionBackslashSequence
-
-
-
-(See 11.8.5)
-RegularExpressionFlags ::
-[empty]
-RegularExpressionFlags IdentifierPart
-
-
-
-(See 11.8.6)
-Template ::
-NoSubstitutionTemplate
-TemplateHead
-
-
-
-(See 11.8.6)
-NoSubstitutionTemplate ::
-` TemplateCharactersopt `
-
-
-
-(See 11.8.6)
-TemplateHead ::
-` TemplateCharactersopt ${
-
-
-
-(See 11.8.6)
-TemplateSubstitutionTail ::
-TemplateMiddle
-TemplateTail
-
-
-
-(See 11.8.6)
-TemplateMiddle ::
-} TemplateCharactersopt ${
-
-
-
-(See 11.8.6)
-TemplateTail ::
-} TemplateCharactersopt `
-
-
-
-(See 11.8.6)
-TemplateCharacters ::
-TemplateCharacter TemplateCharactersopt
-
-
-
-(See 11.8.6)
-TemplateCharacter ::
-$ [lookahead ≠ { ]
-\ EscapeSequence
-LineContinuation
-LineTerminatorSequence
-SourceCharacter but not one of ` or \ or $ or LineTerminator
+TemplateCharacter (See 11.8.6) ::
+  $ [lookahead ≠ { ]
+  \ EscapeSequence
+  LineContinuation
+  LineTerminatorSequence
+  SourceCharacter but not one of ` or \ or $ or LineTerminator
