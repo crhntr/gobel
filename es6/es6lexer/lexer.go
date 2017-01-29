@@ -15,7 +15,7 @@ func Lex(name, input string, safe bool) (*Lexer, chan Token) {
 		tokens: make(chan Token),
 		strict: true,
 	}
-	l.flags.div = true
+	l.Flags.Div = true
 	if safe {
 		l.setStrict()
 	} else {
@@ -36,10 +36,10 @@ type Lexer struct {
 	tokens        chan Token // channel if scanned tokens
 	reservedWords []string
 	strict        bool
-	flags         struct {
-		div          bool
-		regExp       bool
-		templateTail bool
+	Flags         struct {
+		Div          bool
+		RegExp       bool
+		TemplateTail bool
 	}
 }
 
@@ -240,9 +240,9 @@ func lexMux(l *Lexer) stateFunc {
 		return lexStringLiteralDouble(l)
 	case strings.HasPrefix(l.input[l.pos:], "'"): // StringLiteral
 		return lexStringLiteralSingle(l)
-	case l.flags.div && hasDivPunctuator(l): // DivPunctuator
+	case l.Flags.Div && hasDivPunctuator(l): // DivPunctuator
 		return lexDivPunctuator(l)
-	case !l.flags.templateTail && strings.HasPrefix(l.input[l.pos:], "}"): // RightBracePunctuator
+	case !l.Flags.TemplateTail && strings.HasPrefix(l.input[l.pos:], "}"): // RightBracePunctuator
 		return lexRightBracePunctuator(l)
 	}
 	return nil
@@ -291,42 +291,4 @@ func lexRightBracePunctuator(l *Lexer) stateFunc {
 	return lexMux
 	// }
 	// return l.error(fmt.Errorf("div punctuator not found")) // Paranoic (should never happen)
-}
-
-// // EscapeSequence :: CharacterEscapeSequence || 0 [lookahead ∉ DecimalDigit] || HexEscapeSequence || UnicodeEscapeSequence
-// func lexEscapeSequence(l *lexer) {
-// 	// CharacterEscapeSequence
-//
-// 	// SingleEscapeCharacter :: ' " \ b f n r t v
-// 	if l.accept("'\"\\bfnrtv") {
-// 		return
-// 	}
-// 	l.reset()
-//
-// 	// 0 [lookahead ∉ DecimalDigit]
-// 	if l.accept("0") && !l.accept(decimalDigits) {
-// 		return
-// 	}
-//
-// 	// HexEscapeSequence :: x HexDigit HexDigit
-// 	if l.accept("x") && l.acceptRunN(decimalDigits[:8], 2) {
-// 		return
-// 	}
-//
-// 	// UnicodeEscapeSequence :: u Hex4Digits
-// 	if l.accept("u") && l.acceptRunN(decimalDigits[:8], 4) {
-// 		return
-// 	}
-// 	l.reset()
-//
-// 	// UnicodeEscapeSequence :: u{ HexDigits }
-// 	if l.accept("u") && l.accept("{") && l.acceptRunN(decimalDigits[:8], 4) && l.accept("}") {
-// 		return
-// 	}
-// 	l.reset()
-// }
-
-func lexTemplateLiteral(l *Lexer) stateFunc {
-	l.accept("`")
-	return nil
 }

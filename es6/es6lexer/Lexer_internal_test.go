@@ -327,7 +327,7 @@ func TestLexJS2(t *testing.T) {
 }
 
 func TestToken_String(t *testing.T) {
-	t1 := Token{tokenType(-1), ""}
+	t1 := Token{Type(-1), ""}
 	if t1.String() == "" {
 		t.Error("t1.String() string returns empty string")
 	}
