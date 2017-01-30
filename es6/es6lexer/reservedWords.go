@@ -27,7 +27,7 @@ func hasReservedWord(l *Lexer, str string) bool {
 func lexReservedWord(l *Lexer) stateFunc {
 	l.acceptAnyString(l.reservedWords)
 	l.emit(ReservedWord)
-	return lexMux
+	return l.state
 }
 
 //
