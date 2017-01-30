@@ -1,6 +1,7 @@
 package es6lexer_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/crhntr/gobel/es6/es6lexer"
@@ -111,5 +112,20 @@ func TestLexer_Next02(t *testing.T) {
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
+	}
+}
+
+func TestLexerGoal_String(t *testing.T) {
+	if fmt.Sprintf("%s", es6lexer.InputElementDiv) == "" {
+		t.Fail()
+	}
+	if fmt.Sprintf("%s", es6lexer.InputElementRegExp) == "" {
+		t.Fail()
+	}
+	if fmt.Sprintf("%s", es6lexer.InputElementRegExpOrTemplateTail) == "" {
+		t.Fail()
+	}
+	if fmt.Sprintf("%s", es6lexer.InputElementTemplateTail) == "" {
+		t.Fail()
 	}
 }
