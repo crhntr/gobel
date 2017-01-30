@@ -1,6 +1,8 @@
 package es6lexer
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLex_TemplateLiteral01(t *testing.T) {
 	expected := []Token{
@@ -60,18 +62,16 @@ func TestLex_TemplateLiteral04(t *testing.T) {
 }
 
 func TestLex_TemplateLiteral05(t *testing.T) {
-	t.Skip()
-	expected := []Token{
-		Token{ReservedWord, "var"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "foo"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "="},
-		Token{WhiteSpace, " "},
-		Token{TemplateHead, "`Hello ${"},
-		Token{IdentifierName, "friend"},
-		Token{TemplateTail, "}!`"},
+	expected := []TokenTest{
+		TokenTest{Token{ReservedWord, "var"}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{IdentifierName, "foo"}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{Punctuator, "="}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{TemplateHead, "`Hello ${"}, InputElementDiv},
+		TokenTest{Token{IdentifierName, "friend"}, InputElementDiv},
+		TokenTest{Token{TemplateTail, "}!`"}, InputElementRegExpOrTemplateTail},
 	}
-	js := "var foo = `Hello ${friend}!`"
-	expectedTokens(t, expected, Lex("", js, true))
+	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}!`", true))
 }
