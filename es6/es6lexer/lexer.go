@@ -13,7 +13,7 @@ func Lex(name, input string, safe bool) *Lexer {
 		name:   name,
 		input:  input,
 		state:  lexInputElement,
-		tokens: make(chan Token, 2),
+		tokens: []Token{},
 		strict: true,
 		goal:   InputElementDiv,
 	}
@@ -30,11 +30,11 @@ func Lex(name, input string, safe bool) *Lexer {
 type Lexer struct {
 	name          string // used for error reports
 	state         stateFunc
-	input         string     // the string being scanned
-	start         int        // start position of this item
-	pos           int        // current position of this input
-	width         int        // width of last rune read
-	tokens        chan Token // channel if scanned tokens
+	input         string  // the string being scanned
+	start         int     // start position of this item
+	pos           int     // current position of this input
+	width         int     // width of last rune read
+	tokens        []Token // chan Token // channel if scanned tokens
 	reservedWords []string
 	strict        bool
 	goal          LexerGoal
@@ -83,14 +83,12 @@ func (goal LexerGoal) String() string {
 func (l *Lexer) Next(goal LexerGoal) Token {
 	l.goal = goal
 	l.state = lexInputElement
-	for {
-		select {
-		case tok := <-l.tokens:
-			return tok
-		default:
-			l.state = l.state(l)
-		}
+	for len(l.tokens) < 1 {
+		l.state = l.state(l)
 	}
+	tok := l.tokens[0]
+	l.tokens = l.tokens[1:]
+	return tok
 }
 
 const eof rune = -1
@@ -122,7 +120,8 @@ type stateFunc func(*Lexer) stateFunc
 // emit passes an item back to the client.
 func (l *Lexer) emit(typ Type) {
 	val := l.input[l.start:l.pos]
-	l.tokens <- Token{typ, val}
+	// l.tokens <- Token{typ, val}
+	l.tokens = append(l.tokens, Token{typ, val})
 	l.start = l.pos
 }
 
@@ -249,9 +248,13 @@ func (l *Lexer) backup() {
 // by passing back a nil pointer that will be the next
 // state, terminating l.run.
 func (l *Lexer) errorf(format string, args ...interface{}) stateFunc {
-	l.tokens <- Token{
+	// l.tokens <- Token{
+	// 	Error,
+	// 	fmt.Sprintf(format, args...),
+	// }
+	l.tokens = append(l.tokens, Token{
 		Error,
 		fmt.Sprintf(format, args...),
-	}
+	})
 	return nil
 }
