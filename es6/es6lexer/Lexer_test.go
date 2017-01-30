@@ -16,7 +16,6 @@ func TestLexer_Next01(t *testing.T) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
-
 	{
 		next := l.Next(es6lexer.InputElementDiv)
 		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
@@ -24,7 +23,6 @@ func TestLexer_Next01(t *testing.T) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
-
 	{
 		next := l.Next(es6lexer.InputElementDiv)
 		expected := es6lexer.Token{es6lexer.IdentifierName, "foo"}
@@ -32,7 +30,6 @@ func TestLexer_Next01(t *testing.T) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
-
 	{
 		next := l.Next(es6lexer.InputElementDiv)
 		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
@@ -40,7 +37,6 @@ func TestLexer_Next01(t *testing.T) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
-
 	{
 		next := l.Next(es6lexer.InputElementDiv)
 		expected := es6lexer.Token{es6lexer.Punctuator, "="}
@@ -48,7 +44,6 @@ func TestLexer_Next01(t *testing.T) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
-
 	{
 		next := l.Next(es6lexer.InputElementDiv)
 		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
@@ -56,7 +51,6 @@ func TestLexer_Next01(t *testing.T) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
-
 	{
 		next := l.Next(es6lexer.InputElementDiv)
 		expected := es6lexer.Token{es6lexer.NumericLiteral, "123"}
@@ -64,7 +58,6 @@ func TestLexer_Next01(t *testing.T) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
-
 	{
 		next := l.Next(es6lexer.InputElementDiv)
 		expected := es6lexer.Token{es6lexer.Punctuator, ";"}
