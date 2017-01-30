@@ -319,3 +319,23 @@ func expectedTokens(t *testing.T, expectedTokens []Token, l *Lexer) {
 		t.Errorf("expected more tokens (expected: %d, got %d)", len(expectedTokens), i)
 	}
 }
+
+type TokenTest struct {
+	Token Token
+	Goal  LexerGoal
+}
+
+func expectedTokensTable(t *testing.T, expectedTokenRows []TokenTest, l *Lexer) {
+	i := 0
+	for _, expected := range expectedTokenRows {
+		tok := l.Next(expected.Goal)
+		t.Logf("%d: %s %s\n", i, expected.Token, tok)
+		if !expected.Token.Equals(tok) {
+			t.Errorf("expected and recived tokens do not match [%d](%s != %s)", i, expected.Token, tok)
+		}
+		i++
+	}
+	if i < len(expectedTokenRows) {
+		t.Errorf("expected more tokens (expected: %d, got %d)", len(expectedTokenRows), i)
+	}
+}
