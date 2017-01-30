@@ -22,7 +22,6 @@ func Lex(name, input string, safe bool) *Lexer {
 	} else {
 		l.unsetStrict()
 	}
-
 	return l
 }
 
