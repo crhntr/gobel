@@ -1,9 +1,6 @@
 package es6lexer
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
 // lexMux multiplexes the various states based on
 // input prefix checks. it follows the following rules from
@@ -13,8 +10,9 @@ import (
 // InputElementRegExp :: 								WhiteSpace | LineTerminator | Comment | CommonToken | 								RightBracePunctuator | 	RegularExpressionLiteral
 // InputElementRegExpOrTemplateTail :: 	WhiteSpace | LineTerminator | Comment | CommonToken | 																				RegularExpressionLiteral | 	TemplateSubstitutionTail
 // InputElementTemplateTail ::  				WhiteSpace | LineTerminator | Comment | CommonToken | DivPunctuator | 																										TemplateSubstitutionTail
-func lexMux(l *Lexer) stateFunc {
-	fmt.Println(l.goal)
+//
+// CommonToken :: IdentifierName | Punctuator | NumericLiteral | StringLiteral | Template
+func lexInputElement(l *Lexer) stateFunc {
 	switch {
 	case hasWhiteSpacePrefix(l):
 		return lexWhiteSpace
@@ -25,29 +23,41 @@ func lexMux(l *Lexer) stateFunc {
 	case strings.HasPrefix(l.input[l.pos:], "/*"): // MultiLineComment
 		return lexMultiLineComment
 	case hasReservedWord(l, l.input[l.pos:]):
-		return lexReservedWord(l)
+		return lexReservedWord
 	case hasNumericLiteral(l):
-		return lexNumericLiteral(l)
+		return lexNumericLiteral
 	case hasPunctuator(l):
-		return lexPunctuator(l)
+		return lexPunctuator
 	case hasIdentifierNameStartPrefix(l): // IdentifierName
-		return lexIdentifierName(l)
-	case strings.HasPrefix(l.input[l.pos:], "`"): // TemplateLiteral
-		return lexTemplateLiteral(l)
+		return lexIdentifierName
 	case strings.HasPrefix(l.input[l.pos:], "\""): // StringLiteral
-		return lexStringLiteralDouble(l)
+		return lexStringLiteralDouble
 	case strings.HasPrefix(l.input[l.pos:], "'"): // StringLiteral
-		return lexStringLiteralSingle(l)
-	case (l.goal == InputElementRegExpOrTemplateTail || l.goal == InputElementTemplateTail) &&
-		strings.HasPrefix(l.input[l.pos:], "}"): // TemplateSubstitutionTail
-		return lexTemplateSubstitutionTail(l)
-	case (l.goal == InputElementDiv || l.goal == InputElementTemplateTail) &&
-		hasDivPunctuator(l): // DivPunctuator
-		return lexDivPunctuator(l)
-	case (l.goal == InputElementDiv || l.goal == InputElementRegExp) &&
-		!(l.goal == InputElementRegExpOrTemplateTail || l.goal == InputElementTemplateTail) &&
-		strings.HasPrefix(l.input[l.pos:], "}"): // RightBracePunctuator
-		return lexRightBracePunctuator(l)
+		return lexStringLiteralSingle
+	case strings.HasPrefix(l.input[l.pos:], "`"): // TemplateLiteral
+		return lexTemplateLiteral
+	default:
+		switch l.goal {
+		case InputElementRegExp:
+			if strings.HasPrefix(l.input[l.pos:], "}") { // RightBracePunctuator
+				return lexRightBracePunctuator
+			}
+		case InputElementRegExpOrTemplateTail:
+			if strings.HasPrefix(l.input[l.pos:], "}") { // TemplateSubstitutionTail
+				return lexTemplateSubstitutionTail
+			}
+		case InputElementTemplateTail:
+			if strings.HasPrefix(l.input[l.pos:], "}") { // TemplateSubstitutionTail
+				return lexTemplateSubstitutionTail
+			}
+		case InputElementDiv:
+			if hasDivPunctuator(l) {
+				return lexDivPunctuator
+			}
+			if strings.HasPrefix(l.input[l.pos:], "}") { // RightBracePunctuator
+				return lexRightBracePunctuator
+			}
+		}
 	}
 	return nil
 }

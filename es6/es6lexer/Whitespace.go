@@ -10,5 +10,5 @@ func hasWhiteSpacePrefix(l *Lexer) bool {
 func lexWhiteSpace(l *Lexer) stateFunc {
 	l.acceptRun("\u0009\u000B\u000C\u0020\u00A0\uFEFF\uFEFF")
 	l.emit(WhiteSpace)
-	return lexMux
+	return l.state
 }

@@ -22,7 +22,7 @@ func lexNumericLiteral(l *Lexer) stateFunc {
 			return l.errorf("bad number syntax: %q", l.input[l.start:l.pos])
 		}
 		l.emit(NumericLiteral)
-		return lexMux
+		return l.state
 	}
 
 	// Optional leading sign.
