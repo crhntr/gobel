@@ -128,4 +128,7 @@ func TestLexerGoal_String(t *testing.T) {
 	if fmt.Sprintf("%s", es6lexer.InputElementTemplateTail) == "" {
 		t.Fail()
 	}
+	if fmt.Sprintf("%s", es6lexer.LexerGoal(-1)) == "" {
+		t.Fail()
+	}
 }
