@@ -16,7 +16,7 @@ func hasPunctuator(l *Lexer) bool {
 func lexPunctuator(l *Lexer) stateFunc {
 	l.acceptAnyString(punctuators)
 	l.emit(Punctuator)
-	return lexMux
+	return l.state
 }
 
 func hasDivPunctuator(l *Lexer) bool {
@@ -27,15 +27,12 @@ func hasDivPunctuator(l *Lexer) bool {
 func lexDivPunctuator(l *Lexer) stateFunc {
 	l.acceptAnyString([]string{"/=", "/"})
 	l.emit(DivPunctuator)
-	return lexMux
+	return l.state
 	// }
 }
 
 func lexRightBracePunctuator(l *Lexer) stateFunc {
-	// if strings.HasPrefix(l.input[l.pos:], "}") {
 	l.accept("}")
 	l.emit(RightBracePunctuator)
-	return lexMux
-	// }
-	// return l.error(fmt.Errorf("div punctuator not found")) // Paranoic (should never happen)
+	return l.state
 }
