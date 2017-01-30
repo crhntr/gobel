@@ -9,7 +9,6 @@ func lexTemplateLiteral(l *Lexer) stateFunc {
 		if strings.HasPrefix(l.input[l.pos:], "${") {
 			l.acceptString("${")
 			l.emit(TemplateHead)
-			l.goal = InputElementRegExpOrTemplateTail
 			return l.state
 		}
 		if strings.HasPrefix(l.input[l.pos:], "`") {
