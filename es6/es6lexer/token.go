@@ -80,6 +80,7 @@ func (typ Type) String() string {
 	}
 }
 
+// Equals checks if the token is equal to another token
 func (tok Token) Equals(tok2 Token) bool {
 	return tok.Type == tok2.Type && tok.Value == tok2.Value
 }
