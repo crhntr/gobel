@@ -90,3 +90,26 @@ func TestLex_TemplateLiteral06(t *testing.T) {
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}! ", true))
 }
+
+func TestLex_TemplateLiteral07(t *testing.T) {
+	expected := []TokenTest{
+		TokenTest{Token{ReservedWord, "var"}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{IdentifierName, "foo"}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{Punctuator, "="}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{TemplateHead, "`Hello ${"}, InputElementDiv},
+		TokenTest{Token{IdentifierName, "friend"}, InputElementDiv},
+		TokenTest{Token{TemplateMiddle, "}! ${"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{TemplateHead, "` ${"}, InputElementDiv},
+		TokenTest{Token{NumericLiteral, "4"}, InputElementDiv},
+		TokenTest{Token{TemplateTail, "}`"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{Punctuator, "+"}, InputElementDiv},
+		TokenTest{Token{TemplateHead, "`${"}, InputElementDiv},
+		TokenTest{Token{NumericLiteral, "2"}, InputElementDiv},
+		TokenTest{Token{TemplateTail, "} `"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{TemplateTail, "}`"}, InputElementRegExpOrTemplateTail},
+	}
+	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}! ${` ${4}`+`${2} `}`", true))
+}
