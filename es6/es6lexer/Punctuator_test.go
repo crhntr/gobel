@@ -19,11 +19,13 @@ func TestLex_Punctuator1(t *testing.T) {
 
 func TestLex_DivPunctuator1(t *testing.T) {
 	expected := []Token{
-		Token{DivPunctuator, "/"},
-		Token{WhiteSpace, " "},
+		Token{IdentifierName, "i"},
 		Token{DivPunctuator, "/="},
+		Token{IdentifierName, "j"},
+		Token{DivPunctuator, "/"},
+		Token{NumericLiteral, "2"},
 	}
-	js := "/ /="
+	js := "i/=j/2"
 	l := Lex("", js, true)
 	expectedTokens(t, expected, l)
 }
