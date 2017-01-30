@@ -115,6 +115,25 @@ func TestLexer_Next02(t *testing.T) {
 	}
 }
 
+func TestLexer_Next03(t *testing.T) {
+	l := es6lexer.Lex("", "i", true)
+
+	{
+		next := l.Next(es6lexer.InputElementDiv)
+		expected := es6lexer.Token{es6lexer.IdentifierName, "i"}
+		if !next.Equals(expected) {
+			t.Errorf("expected token: %s, but got %s", expected, next)
+		}
+	}
+	{
+		next := l.Next(es6lexer.InputElementDiv)
+		expected := es6lexer.Token{es6lexer.EOF, ""}
+		if !next.Equals(expected) {
+			t.Errorf("expected token: %s, but got %s", expected, next)
+		}
+	}
+}
+
 func TestLexerGoal_String(t *testing.T) {
 	if fmt.Sprintf("%s", es6lexer.InputElementDiv) == "" {
 		t.Fail()

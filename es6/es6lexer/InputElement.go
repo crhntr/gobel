@@ -59,5 +59,10 @@ func lexInputElement(l *Lexer) stateFunc {
 			}
 		}
 	}
+	if l.pos != len(l.input) {
+		l.errorf("unexpected end of input")
+		return nil
+	}
+	l.emit(EOF)
 	return nil
 }
