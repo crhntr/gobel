@@ -15,7 +15,7 @@ func lexMultiLineComment(l *Lexer) stateFunc {
 				l.emit(MultiLineComment)
 			}
 			l.ignoreN(len("*/"))
-			return lexMux
+			return l.state
 		}
 		if r = l.next(); r == eof {
 			break
@@ -32,7 +32,7 @@ func lexSingleLineComment(l *Lexer) stateFunc {
 			l.emit(SingleLineComment)
 			l.accept("\n")
 			l.ignore()
-			return lexMux
+			return l.state
 		}
 	}
 }
