@@ -2,35 +2,28 @@ package es6lexer
 
 func lexRegex(l *Lexer) stateFunc {
 	l.accept("/")
-
-	i := 0
 	var r rune
 	for r = l.next(); ; r = l.next() {
-		if l.accept("/") {
-			break
+		if r == eof {
+			l.errorf("regex did not close with '/' ")
+			return nil
 		}
 		if isLineTerminator(r) {
 			l.errorf("regex can't have new lines")
+			return nil
+		}
+		if l.accept("/") {
 			break
 		}
 		if !isIdentifierPart(r) {
-			l.errorf("invalid character [%c] in regex", r)
-			break
-		}
-		i++
-		if r == eof {
-			l.errorf("regex did not close with /")
-			break
-		}
-
-		if i > 100 {
-			panic("should not reach 100")
+			l.errorf("invalid character '%c' in regex", r)
+			return nil
 		}
 	}
 
-	for hasIdentifierNameContinuePrefix(l) {
-		if r = l.next(); r == eof {
-			l.errorf("did not reach end of string literal reached eof")
+	for {
+		r = l.next()
+		if r == eof || !isIdentifierPart(r) {
 			break
 		}
 	}
