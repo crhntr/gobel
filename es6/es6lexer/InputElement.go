@@ -42,9 +42,15 @@ func lexInputElement(l *Lexer) stateFunc {
 			if strings.HasPrefix(l.input[l.pos:], "}") { // RightBracePunctuator
 				return lexRightBracePunctuator
 			}
+			if strings.HasPrefix(l.input[l.pos:], "/") {
+				return lexRegex
+			}
 		case InputElementRegExpOrTemplateTail:
 			if strings.HasPrefix(l.input[l.pos:], "}") { // TemplateSubstitutionTail
 				return lexTemplateSubstitutionTail
+			}
+			if strings.HasPrefix(l.input[l.pos:], "/") {
+				return lexRegex
 			}
 		case InputElementTemplateTail:
 			if strings.HasPrefix(l.input[l.pos:], "}") { // TemplateSubstitutionTail

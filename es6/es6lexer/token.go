@@ -48,6 +48,9 @@ const (
 	TemplateHead
 	TemplateMiddle
 	TemplateTail
+
+	// RegEx ::
+	RegEx
 )
 
 func (typ Type) String() string {
@@ -86,6 +89,8 @@ func (typ Type) String() string {
 		return "TemplateMiddle"
 	case TemplateTail:
 		return "TemplateTail"
+	case RegEx:
+		return "RegEx"
 	default:
 		return "UNKNOWN_TOKEN_TYPE"
 	}
