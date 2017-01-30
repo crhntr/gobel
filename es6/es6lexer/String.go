@@ -20,7 +20,7 @@ func lexStringLiteralDouble(l *Lexer) stateFunc {
 	}
 	l.accept("\"")
 	l.emit(StringLiteral)
-	return lexMux
+	return l.state
 }
 
 // lexStringLiteralSingle consumes a string literal surounded by
@@ -39,5 +39,5 @@ func lexStringLiteralSingle(l *Lexer) stateFunc {
 	}
 	l.accept("'")
 	l.emit(StringLiteral)
-	return lexMux
+	return l.state
 }
