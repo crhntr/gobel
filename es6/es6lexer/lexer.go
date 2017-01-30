@@ -64,6 +64,21 @@ const (
 	InputElementTemplateTail
 )
 
+func (goal LexerGoal) String() string {
+	switch goal {
+	case InputElementDiv:
+		return "InputElementDiv"
+	case InputElementRegExp:
+		return "InputElementRegExp"
+	case InputElementRegExpOrTemplateTail:
+		return "InputElementRegExpOrTemplateTail"
+	case InputElementTemplateTail:
+		return "InputElementTemplateTail"
+	default:
+		return "UnknownGoal"
+	}
+}
+
 // Next returns the next token
 func (l *Lexer) Next(goal LexerGoal) Token {
 	l.goal = goal
