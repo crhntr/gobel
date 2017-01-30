@@ -343,16 +343,13 @@ func TestToken_String(t *testing.T) {
 
 func expectedTokens(t *testing.T, expectedTokens []Token, l *Lexer) {
 	i := 0
-	for tok := range l.tokens {
-		if i >= len(expectedTokens) {
-			t.Errorf("expected fewer tokens (expected: %d, got %d %s)", len(expectedTokens), i, tok)
-		} else {
-			// t.Logf("%d: %s %s\n", i, expectedTokens[i], tok)
-			if !expectedTokens[i].equals(tok) {
-				t.Errorf("expected and recived tokens do not match [%d](%s != %s)", i, tok, expectedTokens[i])
-			}
-			i++
+	for _, expected := range expectedTokens {
+		tok := l.Next(InputElementDiv)
+		t.Logf("%d: %s %s\n", i, expectedTokens[i], tok)
+		if !expected.Equals(tok) {
+			t.Errorf("expected and recived tokens do not match [%d](%s != %s)", i, tok, expectedTokens[i])
 		}
+		i++
 	}
 	if i < len(expectedTokens) {
 		t.Errorf("expected more tokens (expected: %d, got %d)", len(expectedTokens), i)
