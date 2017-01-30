@@ -58,3 +58,20 @@ func TestLex_TemplateLiteral04(t *testing.T) {
 	js := "var foo = `Hello ${friend"
 	expectedTokens(t, expected, Lex("", js, true))
 }
+
+func TestLex_TemplateLiteral05(t *testing.T) {
+	t.Skip()
+	expected := []Token{
+		Token{ReservedWord, "var"},
+		Token{WhiteSpace, " "},
+		Token{IdentifierName, "foo"},
+		Token{WhiteSpace, " "},
+		Token{Punctuator, "="},
+		Token{WhiteSpace, " "},
+		Token{TemplateHead, "`Hello ${"},
+		Token{IdentifierName, "friend"},
+		Token{TemplateTail, "}!`"},
+	}
+	js := "var foo = `Hello ${friend}!`"
+	expectedTokens(t, expected, Lex("", js, true))
+}
