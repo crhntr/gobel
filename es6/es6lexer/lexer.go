@@ -170,18 +170,18 @@ func (l *Lexer) acceptRun(validSet string) bool {
 
 // acceptRunN consumes a run of runes from the
 // valid set of exactly length n
-func (l *Lexer) acceptRunN(validSet string, n int) bool {
-	acceptedWidth := 0
-	for strings.IndexRune(validSet, l.next()) >= 0 {
-		n--
-		acceptedWidth += l.width
-	}
-	if n != 0 {
-		l.pos -= acceptedWidth
-		return false
-	}
-	return true
-}
+// func (l *Lexer) acceptRunN(validSet string, n int) bool {
+// 	acceptedWidth := 0
+// 	for strings.IndexRune(validSet, l.next()) >= 0 {
+// 		n--
+// 		acceptedWidth += l.width
+// 	}
+// 	if n != 0 {
+// 		l.pos -= acceptedWidth
+// 		return false
+// 	}
+// 	return true
+// }
 
 // acceptString consumes a string
 func (l *Lexer) acceptString(str string) bool {
