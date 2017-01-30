@@ -9,7 +9,7 @@ import (
 var errNotNull = fmt.Errorf("not null")
 
 func Test_peek(t *testing.T) {
-	l, _ := Lex("", "101", false)
+	l := Lex("", "101", false)
 
 	n1 := l.next()
 	p0 := l.peek()
@@ -26,8 +26,8 @@ func TestLex_Whitespace_AND_SingleLineComment(t *testing.T) {
 		Token{SingleLineComment, " Hello World!"},
 	}
 	js := " \t// Hello World!"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 func TestLex_Terminator_And_Whitespace(t *testing.T) {
@@ -38,8 +38,8 @@ func TestLex_Terminator_And_Whitespace(t *testing.T) {
 		Token{LineTerminator, "\n"},
 	}
 
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 func TestLex_ReservedWord1(t *testing.T) {
@@ -52,13 +52,13 @@ func TestLex_ReservedWord1(t *testing.T) {
 	for _, word := range lJs.reservedWords {
 		js += word + ws
 	}
-	l, tokens := Lex("", js, true)
+	l := Lex("", js, true)
 	for _, word := range l.reservedWords {
 		expected = append(expected, Token{ReservedWord, word})
 		expected = append(expected, Token{WhiteSpace, ws})
 	}
 
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, l)
 }
 
 func TestLex_ReservedWord2(t *testing.T) {
@@ -72,13 +72,13 @@ func TestLex_ReservedWord2(t *testing.T) {
 		js += word + ws
 	}
 
-	l, tokens := Lex("", js, false)
+	l := Lex("", js, false)
 	for _, word := range l.reservedWords {
 		expected = append(expected, Token{ReservedWord, word})
 		expected = append(expected, Token{WhiteSpace, ws})
 	}
 
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, l)
 }
 
 func TestLex_Punctuator1(t *testing.T) {
@@ -92,8 +92,8 @@ func TestLex_Punctuator1(t *testing.T) {
 		js += punct + ws
 	}
 
-	_, tokens := Lex("", js, false)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, false)
+	expectedTokens(t, expected, l)
 }
 
 func TestLex_DivPunctuator1(t *testing.T) {
@@ -103,8 +103,8 @@ func TestLex_DivPunctuator1(t *testing.T) {
 		Token{DivPunctuator, "/="},
 	}
 	js := "/ /="
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 func TestLex_RightBracePunctuator1(t *testing.T) {
@@ -113,8 +113,8 @@ func TestLex_RightBracePunctuator1(t *testing.T) {
 		Token{RightBracePunctuator, "}"},
 	}
 	js := "{}"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 // func TestLex_EscapeSequence0(t *testing.T) {
@@ -125,8 +125,8 @@ func TestLex_RightBracePunctuator1(t *testing.T) {
 // 		Token{LineTerminator, "\n"},
 // 	}
 // 	js := `"\n"`
-// 	_, tokens := lex("", js, true)
-// 	expectedTokens(t, expected, tokens)
+// 	l := lex("", js, true)
+// 	expectedTokens(t, expected, l)
 // }
 
 func TestLex1(t *testing.T) {
@@ -142,8 +142,8 @@ func TestLex1(t *testing.T) {
 	}
 
 	js := "function (){}()"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 func TestLex2(t *testing.T) {
@@ -161,8 +161,8 @@ func TestLex2(t *testing.T) {
 	}
 
 	js := "function foo (){}()"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 func TestLex3(t *testing.T) {
@@ -190,8 +190,8 @@ func TestLex3(t *testing.T) {
 	}
 
 	js := "function add (a, b){\n\treturn a+b\n}"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 func TestLexJS(t *testing.T) {
@@ -265,8 +265,8 @@ func TestLexJS(t *testing.T) {
 	}
 
 	js := string(testData)
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 func TestLexJS2(t *testing.T) {
@@ -322,8 +322,8 @@ func TestLexJS2(t *testing.T) {
 	}
 
 	js := string(testData)
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	l := Lex("", js, true)
+	expectedTokens(t, expected, l)
 }
 
 func TestToken_String(t *testing.T) {
@@ -341,9 +341,9 @@ func TestToken_String(t *testing.T) {
 	}
 }
 
-func expectedTokens(t *testing.T, expectedTokens []Token, tokens chan Token) {
+func expectedTokens(t *testing.T, expectedTokens []Token, l *Lexer) {
 	i := 0
-	for tok := range tokens {
+	for tok := range l.tokens {
 		if i >= len(expectedTokens) {
 			t.Errorf("expected fewer tokens (expected: %d, got %d %s)", len(expectedTokens), i, tok)
 		} else {

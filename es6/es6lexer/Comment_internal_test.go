@@ -7,8 +7,7 @@ func TestLex_MultiLineComment1(t *testing.T) {
 		Token{MultiLineComment, "Hello World!"},
 	}
 	js := "/*Hello World!*/"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
 
 func TestLex_MultiLineComment2(t *testing.T) {
@@ -16,8 +15,7 @@ func TestLex_MultiLineComment2(t *testing.T) {
 		Token{Error, "no multi line comment terminator \"*/\""},
 	}
 	js := "/*Hello World!"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
 
 func TestLex_MultiLineComment3(t *testing.T) {
@@ -25,8 +23,7 @@ func TestLex_MultiLineComment3(t *testing.T) {
 		Token{Error, "no multi line comment terminator \"*/\""},
 	}
 	js := "/* \""
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
 
 func TestLex_SingleLineComment1(t *testing.T) {
@@ -34,16 +31,14 @@ func TestLex_SingleLineComment1(t *testing.T) {
 		Token{SingleLineComment, " Hello World!"},
 	}
 	js := "// Hello World!"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
 func TestLex_SingleLineComment2(t *testing.T) {
 	expected := []Token{
 		Token{SingleLineComment, " Hello World!"},
 	}
 	js := "// Hello World!\n"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
 func TestLex_Comments(t *testing.T) {
 	expected := []Token{
@@ -51,6 +46,5 @@ func TestLex_Comments(t *testing.T) {
 		Token{MultiLineComment, "This is a multi\nline comment "},
 	}
 	js := "// Hello World!\n/*This is a multi\nline comment */"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }

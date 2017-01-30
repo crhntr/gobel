@@ -7,9 +7,7 @@ func TestLex_LineTerminator1(t *testing.T) {
 	expected := []Token{
 		Token{LineTerminator, js},
 	}
-
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
 
 func TestLex_LineTerminator2(t *testing.T) {
@@ -18,9 +16,7 @@ func TestLex_LineTerminator2(t *testing.T) {
 		Token{LineTerminator, "\n"},
 		Token{LineTerminator, "\n"},
 	}
-
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
 
 func TestLex_LineTerminator3(t *testing.T) {
@@ -31,7 +27,5 @@ func TestLex_LineTerminator3(t *testing.T) {
 		Token{LineTerminator, "\u2028"},
 		Token{LineTerminator, "\u2029"},
 	}
-
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }

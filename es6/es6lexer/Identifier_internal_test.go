@@ -11,8 +11,7 @@ func TestLex_Identifier1(t *testing.T) {
 		Token{IdentifierName, "foo"},
 	}
 	js := "$=_=foo"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
 
 func TestLex_Identifier2(t *testing.T) {
@@ -23,6 +22,5 @@ func TestLex_Identifier2(t *testing.T) {
 		Token{LineTerminator, "\n"},
 	}
 	js := "X&ooooooooooooo___\n"
-	_, tokens := Lex("", js, true)
-	expectedTokens(t, expected, tokens)
+	expectedTokens(t, expected, Lex("", js, true))
 }
