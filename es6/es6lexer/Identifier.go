@@ -19,7 +19,7 @@ func lexIdentifierName(l *Lexer) stateFunc {
 	for {
 		if !hasIdentifierNameContinuePrefix(l) {
 			l.emit(IdentifierName)
-			return lexMux
+			return l.state
 		}
 		l.next()
 	}
