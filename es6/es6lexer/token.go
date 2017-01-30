@@ -42,7 +42,10 @@ const (
 
 	NumericLiteral
 	StringLiteral
-	Template
+
+	// Template ::
+	NoSubstitutionTemplate
+	TemplateHead
 )
 
 func (typ Type) String() string {
@@ -73,8 +76,8 @@ func (typ Type) String() string {
 		return "NumericLiteral"
 	case StringLiteral:
 		return "StringLiteral"
-	case Template:
-		return "Template"
+	case TemplateHead:
+		return "TemplateHead"
 	default:
 		return "UNKNOWN_TOKEN_TYPE"
 	}
