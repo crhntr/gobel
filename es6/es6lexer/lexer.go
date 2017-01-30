@@ -13,7 +13,7 @@ func Lex(name, input string, safe bool) *Lexer {
 		name:   name,
 		input:  input,
 		state:  lexMux,
-		tokens: make(chan Token, 1),
+		tokens: make(chan Token, 2),
 		strict: true,
 		goal:   InputElementDiv,
 	}
@@ -23,7 +23,6 @@ func Lex(name, input string, safe bool) *Lexer {
 		l.unsetStrict()
 	}
 
-	go l.run()
 	return l
 }
 
@@ -69,6 +68,7 @@ const (
 // Next returns the next token
 func (l *Lexer) Next(goal LexerGoal) Token {
 	l.goal = goal
+	l.state = lexMux
 	for {
 		select {
 		case tok := <-l.tokens:
@@ -77,15 +77,6 @@ func (l *Lexer) Next(goal LexerGoal) Token {
 			l.state = l.state(l)
 		}
 	}
-}
-
-func (tok Token) equals(otherTok Token) bool {
-	/*  ||
-	!((tok.Err == nil) || (otherTok.Err == nil)) ||
-	tok.Err.Error() == otherTok.Err.Error()
-	*/
-	return tok.Type == otherTok.Type &&
-		tok.Value == otherTok.Value
 }
 
 const eof rune = -1
@@ -114,18 +105,10 @@ func (l *Lexer) unsetStrict() {
 
 type stateFunc func(*Lexer) stateFunc
 
-// run lexes the input by executing state functions
-// until the state is nil
-func (l *Lexer) run() {
-	for state := lexMux; state != nil; {
-		state = state(l)
-	}
-	close(l.tokens)
-}
-
 // emit passes an item back to the client.
 func (l *Lexer) emit(typ Type) {
-	l.tokens <- Token{typ, l.input[l.start:l.pos]}
+	val := l.input[l.start:l.pos]
+	l.tokens <- Token{typ, val}
 	l.start = l.pos
 }
 

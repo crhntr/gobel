@@ -78,6 +78,8 @@ func (typ Type) String() string {
 		return "StringLiteral"
 	case TemplateHead:
 		return "TemplateHead"
+	case NoSubstitutionTemplate:
+		return "NoSubstitutionTemplate"
 	default:
 		return "UNKNOWN_TOKEN_TYPE"
 	}
