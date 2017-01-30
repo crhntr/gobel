@@ -12,8 +12,10 @@ func Lex(name, input string, safe bool) *Lexer {
 	l := &Lexer{
 		name:   name,
 		input:  input,
-		tokens: make(chan Token, 2),
+		state:  lexMux,
+		tokens: make(chan Token, 1),
 		strict: true,
+		goal:   InputElementDiv,
 	}
 	if safe {
 		l.setStrict()
@@ -25,7 +27,8 @@ func Lex(name, input string, safe bool) *Lexer {
 	return l
 }
 
-// A Lexer represents the state of the lexing algorithm
+// A Lexer represents the state of the lexing algorithm use func Lex to return
+// an initalized Lexer
 type Lexer struct {
 	name          string // used for error reports
 	state         stateFunc
@@ -39,12 +42,27 @@ type Lexer struct {
 	goal          LexerGoal
 }
 
+// LexerGoal represents a lexing goal
+// There are several situations where the identification of lexical input
+// elements is sensitive to the syntactic grammar context that is consuming the
+// input elements. This requires multiple goal symbols for the lexical grammar.
 type LexerGoal int
 
 const (
+	// InputElementDiv is used as the lexical goal symbol when none of the following
+	// goals are set
 	InputElementDiv LexerGoal = iota
+	// InputElementRegExp goal symbol is used in all syntactic grammar
+	// contexts where a RegularExpressionLiteral is permitted but neither a
+	// TemplateMiddle, nor a TemplateTail is permitted
 	InputElementRegExp
+	// InputElementRegExpOrTemplateTail goal is used in syntactic grammar
+	// contexts where a RegularExpressionLiteral, a TemplateMiddle, or a
+	// TemplateTail is permitted
 	InputElementRegExpOrTemplateTail
+	// InputElementTemplateTail goal is used in all syntactic grammar contexts
+	// where a TemplateMiddle or a TemplateTail is permitted but a
+	// RegularExpressionLiteral is not permitted
 	InputElementTemplateTail
 )
 
