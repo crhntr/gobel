@@ -1,3 +1,13 @@
+# ES6 Compliant Lexer
+
+## Design
+The design of this lexer is based on Rob Pike's talk "Lexical Scanning in Go"
+from Google Technology User Group given on Tuesday, 30 August 2011 it can be
+watched at: https://www.youtube.com/watch?v=HxaD_trXwRE
+
+## Copy of the lexical grammar from:
+http://www.ecma-international.org/ecma-262/6.0/#sec-lexical-grammar
+
 A.1 Lexical Grammar
 
 SourceCharacter (See 10.1) ::
