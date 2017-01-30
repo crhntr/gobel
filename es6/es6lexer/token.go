@@ -46,6 +46,8 @@ const (
 	// Template ::
 	NoSubstitutionTemplate
 	TemplateHead
+	TemplateMiddle
+	TemplateTail
 )
 
 func (typ Type) String() string {
@@ -80,6 +82,10 @@ func (typ Type) String() string {
 		return "TemplateHead"
 	case NoSubstitutionTemplate:
 		return "NoSubstitutionTemplate"
+	case TemplateMiddle:
+		return "TemplateMiddle"
+	case TemplateTail:
+		return "TemplateTail"
 	default:
 		return "UNKNOWN_TOKEN_TYPE"
 	}
