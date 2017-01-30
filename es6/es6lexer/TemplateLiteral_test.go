@@ -75,3 +75,18 @@ func TestLex_TemplateLiteral05(t *testing.T) {
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}!`", true))
 }
+
+func TestLex_TemplateLiteral06(t *testing.T) {
+	expected := []TokenTest{
+		TokenTest{Token{ReservedWord, "var"}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{IdentifierName, "foo"}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{Punctuator, "="}, InputElementDiv},
+		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
+		TokenTest{Token{TemplateHead, "`Hello ${"}, InputElementDiv},
+		TokenTest{Token{IdentifierName, "friend"}, InputElementDiv},
+		TokenTest{Token{Error, "did not reach TemplateMiddle or TemplateTail but reached eof"}, InputElementRegExpOrTemplateTail},
+	}
+	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}! ", true))
+}
