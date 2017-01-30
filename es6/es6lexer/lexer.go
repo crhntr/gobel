@@ -12,7 +12,7 @@ func Lex(name, input string, safe bool) *Lexer {
 	l := &Lexer{
 		name:   name,
 		input:  input,
-		state:  lexMux,
+		state:  lexInputElement,
 		tokens: make(chan Token, 2),
 		strict: true,
 		goal:   InputElementDiv,
@@ -82,7 +82,7 @@ func (goal LexerGoal) String() string {
 // Next returns the next token
 func (l *Lexer) Next(goal LexerGoal) Token {
 	l.goal = goal
-	l.state = lexMux
+	l.state = lexInputElement
 	for {
 		select {
 		case tok := <-l.tokens:
