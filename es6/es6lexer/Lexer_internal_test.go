@@ -290,6 +290,18 @@ func TestLexJS2(t *testing.T) {
 	expectedTokens(t, expected, l)
 }
 
+func TestLexJS3(t *testing.T) {
+	expected := []TokenTest{}
+	testData, err := ioutil.ReadFile("testdata/TestLexJS3.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	js := string(testData)
+	l := Lex("", js, true)
+	expectedTokensTable(t, expected, l)
+}
+
 func TestToken_String(t *testing.T) {
 	t1 := Token{Type(-1), ""}
 	if t1.String() == "" {
