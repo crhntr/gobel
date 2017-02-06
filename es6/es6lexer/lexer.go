@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"unicode/utf16"
 	"unicode/utf8"
 )
 
@@ -160,6 +161,23 @@ func (l *Lexer) accept(validSet string) bool {
 	}
 	l.backup()
 	return false
+}
+
+var maxUtf8Rune = utf16.DecodeRune(0xDBFF, 0xDFFF)
+
+// accept consumes the next rune if it is from
+// a valid set
+func (l *Lexer) acceptSourceCharacterRunExcept(invalidSet string) bool {
+	n := 0
+	for {
+		r := l.next()
+		if r < '\u0000' || r > maxUtf8Rune || strings.ContainsRune(invalidSet, r) {
+			break
+		}
+		n++
+	}
+	l.backup()
+	return n > 0
 }
 
 // // acceptN consumes the next runes n times
