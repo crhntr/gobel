@@ -1,15 +1,19 @@
 package es6lexer
 
+import "strings"
+
+var lineTerminators = "\u000A\u000D\u2028\u2029"
+
 func isLineTerminator(r rune) bool {
-	return r == '\u000A' || r == '\u000D' || r == '\u2028' || r == '\u2029'
+	return strings.ContainsRune(lineTerminators, r)
 }
 func hasLineTerminatorPrefix(l *Lexer) bool {
 	defer l.reset()
-	return l.accept("\u000A\u000D\u2028\u2029")
+	return l.accept(lineTerminators)
 }
 
 func lexLineTerminator(l *Lexer) stateFunc {
-	l.accept("\u000A\u000D\u2028\u2029")
+	l.accept(lineTerminators)
 	l.emit(LineTerminator)
 	return l.state
 }
