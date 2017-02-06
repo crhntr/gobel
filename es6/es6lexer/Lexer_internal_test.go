@@ -291,7 +291,45 @@ func TestLexJS2(t *testing.T) {
 }
 
 func TestLexJS3(t *testing.T) {
-	expected := []TokenTest{}
+	expected := []TokenTest{
+		TokenTest{Token{ReservedWord, "function"}, InputElementRegExp},
+		TokenTest{Token{WhiteSpace, " "}, InputElementRegExp},
+		TokenTest{Token{IdentifierName, "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
+		TokenTest{Token{IdentifierName, "sequence"}, InputElementRegExp},
+		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
+		TokenTest{Token{WhiteSpace, " "}, InputElementRegExp},
+		TokenTest{Token{Punctuator, "{"}, InputElementRegExp},
+		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
+		TokenTest{Token{WhiteSpace, "  "}, InputElementRegExp},
+		TokenTest{Token{ReservedWord, "return"}, InputElementRegExp},
+		TokenTest{Token{WhiteSpace, " "}, InputElementRegExp},
+		TokenTest{Token{IdentifierName, "valid"}, InputElementRegExp},
+		TokenTest{Token{Punctuator, "."}, InputElementRegExp},
+		TokenTest{Token{IdentifierName, "match"}, InputElementRegExp},
+		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
+		TokenTest{Token{RegEx, "/([CGAT]{3}){1,}/g"}, InputElementRegExp},
+		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
+		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
+		TokenTest{Token{RightBracePunctuator, "}"}, InputElementRegExp},
+		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
+		TokenTest{Token{IdentifierName, "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
+		TokenTest{Token{StringLiteral, "\"ATATTGGTGTTCATGTGCGCGGGGCCGACGAGCTACTGGCAGAACCACGAGGACAAGAGGTGA\""}, InputElementRegExp},
+		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
+		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
+		TokenTest{Token{IdentifierName, "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
+		TokenTest{Token{StringLiteral, "\"FAIL\""}, InputElementRegExp},
+		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
+		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
+		TokenTest{Token{IdentifierName, "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
+		TokenTest{Token{StringLiteral, "\"Alanine\""}, InputElementRegExp},
+		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
+		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
+		TokenTest{Token{EOF, ""}, InputElementDiv},
+	}
 	testData, err := ioutil.ReadFile("testdata/TestLexJS3.js")
 	if err != nil {
 		t.Fatal(err)
