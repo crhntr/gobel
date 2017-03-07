@@ -4,11 +4,10 @@ import (
   "fmt"
   "io"
   "io/ioutil"
-  "github.com/crhntr/gobel/es6lexer"
 )
 
 // Parser ...
-type Parser func(es6lexer.Token) (ASTNode, error)
+type Parser func(Token) (ASTNode, error)
 
 // DecodeES6 ...
 func DecodeES6(r io.Reader) (*ASTNode, error) {
@@ -18,11 +17,11 @@ func DecodeES6(r io.Reader) (*ASTNode, error) {
     return node, err
   }
 
-  l := es6lexer.Lex("", string(b), true)
+  l := Lex("", string(b), true)
 
   for {
-    tok := l.Next(es6lexer.InputElementDiv)
-    if tok.Type == es6lexer.EOF {
+    tok := l.Next(InputElementDiv)
+    if tok.Type == EOF {
       break
     }
 
@@ -32,6 +31,6 @@ func DecodeES6(r io.Reader) (*ASTNode, error) {
 }
 
 // ParseES6 ...
-func ParseES6(lexer *es6lexer.Lexer) (*ASTNode, error) {
+func ParseES6(lexer *Lexer) (*ASTNode, error) {
   return nil, nil
 }
