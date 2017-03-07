@@ -1,60 +1,60 @@
-package es6
+package es6_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/crhntr/gobel/es6/es6lexer"
+	"github.com/crhntr/gobel/es6"
 )
 
 func TestLexer_Next01(t *testing.T) {
-	l := es6lexer.Lex("", "var foo = 123", true)
+	l := es6.Lex("", "var foo = 123", true)
 
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.ReservedWord, "var"}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.ReservedWord, "var"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.WhiteSpace, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.IdentifierName, "foo"}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.IdentifierName, "foo"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.WhiteSpace, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.Punctuator, "="}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.Punctuator, "="}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.WhiteSpace, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.NumericLiteral, "123"}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.NumericLiteral, "123"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
@@ -62,53 +62,53 @@ func TestLexer_Next01(t *testing.T) {
 }
 
 func TestLexer_Next02(t *testing.T) {
-	l := es6lexer.Lex("", "var foo = `\\u006d\\x70`", true)
+	l := es6.Lex("", "var foo = `\\u006d\\x70`", true)
 
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.ReservedWord, "var"}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.ReservedWord, "var"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.WhiteSpace, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.IdentifierName, "foo"}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.IdentifierName, "foo"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.WhiteSpace, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.Punctuator, "="}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.Punctuator, "="}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.WhiteSpace, " "}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.WhiteSpace, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.NoSubstitutionTemplate, "`\\u006d\\x70`"}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.NoSubstitutionTemplate, "`\\u006d\\x70`"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
@@ -116,18 +116,18 @@ func TestLexer_Next02(t *testing.T) {
 }
 
 func TestLexer_Next03(t *testing.T) {
-	l := es6lexer.Lex("", "i", true)
+	l := es6.Lex("", "i", true)
 
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.IdentifierName, "i"}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.IdentifierName, "i"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
-		next := l.Next(es6lexer.InputElementDiv)
-		expected := es6lexer.Token{es6lexer.EOF, ""}
+		next := l.Next(es6.InputElementDiv)
+		expected := es6.Token{es6.EOF, ""}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
@@ -135,19 +135,19 @@ func TestLexer_Next03(t *testing.T) {
 }
 
 func TestLexerGoal_String(t *testing.T) {
-	if fmt.Sprintf("%s", es6lexer.InputElementDiv) == "" {
+	if fmt.Sprintf("%s", es6.InputElementDiv) == "" {
 		t.Fail()
 	}
-	if fmt.Sprintf("%s", es6lexer.InputElementRegExp) == "" {
+	if fmt.Sprintf("%s", es6.InputElementRegExp) == "" {
 		t.Fail()
 	}
-	if fmt.Sprintf("%s", es6lexer.InputElementRegExpOrTemplateTail) == "" {
+	if fmt.Sprintf("%s", es6.InputElementRegExpOrTemplateTail) == "" {
 		t.Fail()
 	}
-	if fmt.Sprintf("%s", es6lexer.InputElementTemplateTail) == "" {
+	if fmt.Sprintf("%s", es6.InputElementTemplateTail) == "" {
 		t.Fail()
 	}
-	if fmt.Sprintf("%s", es6lexer.LexerGoal(-1)) == "" {
+	if fmt.Sprintf("%s", es6.LexerGoal(-1)) == "" {
 		t.Fail()
 	}
 }
