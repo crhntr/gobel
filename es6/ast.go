@@ -1,4 +1,4 @@
-package es6parser
+package es6
 
 // ASTNode ...
 type ASTNode struct {

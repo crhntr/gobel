@@ -1,4 +1,4 @@
-package es6lexer
+package es6
 
 var lineTerminators = "\u000A\u000D\u2028\u2029"
 

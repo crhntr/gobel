@@ -1,4 +1,4 @@
-package es6lexer
+package es6
 
 // see 11.2
 

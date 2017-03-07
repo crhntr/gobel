@@ -1,4 +1,4 @@
-package es6lexer
+package es6
 
 // // EscapeSequence :: CharacterEscapeSequence || 0 [lookahead ∉ DecimalDigit] || HexEscapeSequence || UnicodeEscapeSequence
 // func lexEscapeSequence(l *Lexer) {

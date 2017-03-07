@@ -1,4 +1,4 @@
-package es6lexer_test
+package es6
 
 import (
 	"fmt"
