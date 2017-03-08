@@ -9,5 +9,6 @@ import (
 func DecodeES6Script(r io.Reader) (ASTNode, error) {
 	b, _ := ioutil.ReadAll(r)
 	l := Lex("", string(b), true)
+	l.SkipWhitespace = true
 	return ParseScriptNode(l)
 }
