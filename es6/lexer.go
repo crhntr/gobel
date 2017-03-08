@@ -88,24 +88,33 @@ func (goal LexerGoal) String() string {
 
 // Next returns the next token
 func (l *Lexer) Next(goal LexerGoal) Token {
-	l.goal = goal
-	l.state = lexInputElement
-	for len(l.tokens) < 1 {
-		l.state = l.state(l)
+	for {
+		l.goal = goal
+		l.state = lexInputElement
+		for len(l.tokens) < 1 {
+			l.state = l.state(l)
+		}
+		tok := l.tokens[0]
+		l.tokens = l.tokens[1:]
+
+		if l.SkipWhitespace && tok.Type == WhiteSpaceToken {
+			continue
+		}
+		return tok
 	}
-	tok := l.tokens[0]
-	l.tokens = l.tokens[1:]
-	return tok
 }
 
 // Peek returns the next token
 func (l *Lexer) Peek(goal LexerGoal) Token {
-	l.goal = goal
-	l.state = lexInputElement
-	for len(l.tokens) < 1 {
-		l.state = l.state(l)
+	for {
+		tok := l.Next(goal)
+		l.tokens = append(l.tokens, tok)
+
+		if l.SkipWhitespace && tok.Type == WhiteSpaceToken {
+			continue
+		}
+		return tok
 	}
-	return l.tokens[0]
 }
 
 // CurrentPosition returns the Lexer's current position
@@ -143,21 +152,19 @@ type stateFunc func(*Lexer) stateFunc
 func (l *Lexer) emit(typ TokenType) {
 	val := l.input[l.start:l.pos]
 	// l.tokens <- Token{typ, val}
-	if typ != WhiteSpaceToken || (!l.SkipWhitespace && typ == WhiteSpaceToken) {
-		l.tokens = append(
-			l.tokens,
-			Token{
-				Type:  typ,
-				Value: val,
-				FilePosition: FilePosition{
-					fileName: l.name,
-					offset:   l.pos,
-					line:     l.line,
-					column:   l.column,
-				},
+	l.tokens = append(
+		l.tokens,
+		Token{
+			Type:  typ,
+			Value: val,
+			FilePosition: FilePosition{
+				fileName: l.name,
+				offset:   l.pos,
+				line:     l.line,
+				column:   l.column,
 			},
-		)
-	}
+		},
+	)
 	l.start = l.pos
 }
 
