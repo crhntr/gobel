@@ -31,16 +31,17 @@ func Lex(name, input string, safe bool) *Lexer {
 // A Lexer represents the state of the lexing algorithm use func Lex to return
 // an initalized Lexer
 type Lexer struct {
-	name          string // used for error reports
-	state         stateFunc
-	input         string  // the string being scanned
-	start         int     // start position of this item
-	pos           int     // current position of this input
-	width         int     // width of last rune read
-	tokens        []Token // chan Token // channel if scanned tokens
-	reservedWords []string
-	strict        bool
-	goal          LexerGoal
+	name           string // used for error reports
+	state          stateFunc
+	input          string  // the string being scanned
+	start          int     // start position of this item
+	pos            int     // current position of this input
+	width          int     // width of last rune read
+	tokens         []Token // chan Token // channel if scanned tokens
+	reservedWords  []string
+	strict         bool
+	goal           LexerGoal
+	SkipWhitespace bool
 
 	line   int
 	column int
@@ -142,19 +143,21 @@ type stateFunc func(*Lexer) stateFunc
 func (l *Lexer) emit(typ TokenType) {
 	val := l.input[l.start:l.pos]
 	// l.tokens <- Token{typ, val}
-	l.tokens = append(
-		l.tokens,
-		Token{
-			Type:  typ,
-			Value: val,
-			FilePosition: FilePosition{
-				fileName: l.name,
-				offset:   l.pos,
-				line:     l.line,
-				column:   l.column,
+	if typ != WhiteSpaceToken || (!l.SkipWhitespace && typ == WhiteSpaceToken) {
+		l.tokens = append(
+			l.tokens,
+			Token{
+				Type:  typ,
+				Value: val,
+				FilePosition: FilePosition{
+					fileName: l.name,
+					offset:   l.pos,
+					line:     l.line,
+					column:   l.column,
+				},
 			},
-		},
-	)
+		)
+	}
 	l.start = l.pos
 }
 
