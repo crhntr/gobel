@@ -119,7 +119,7 @@ func (l *Lexer) unsetStrict() {
 type stateFunc func(*Lexer) stateFunc
 
 // emit passes an item back to the client.
-func (l *Lexer) emit(typ Type) {
+func (l *Lexer) emit(typ TokenType) {
 	val := l.input[l.start:l.pos]
 	// l.tokens <- Token{typ, val}
 	l.tokens = append(l.tokens, Token{typ, val})
