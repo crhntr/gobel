@@ -156,8 +156,22 @@ func TestLexer_Peek(t *testing.T) {
 	l := es6.Lex("", "var foo = 123", true)
 
 	{
+		next := l.Peek(es6.InputElementDiv)
+		expected := es6.Token{Type: es6.ReservedWordToken, Value: "var"}
+		if !next.Equals(expected) {
+			t.Errorf("expected token: %s, but got %s", expected, next)
+		}
+	}
+	{
 		next := l.Next(es6.InputElementDiv)
 		expected := es6.Token{Type: es6.ReservedWordToken, Value: "var"}
+		if !next.Equals(expected) {
+			t.Errorf("expected token: %s, but got %s", expected, next)
+		}
+	}
+	{
+		next := l.Peek(es6.InputElementDiv)
+		expected := es6.Token{Type: es6.WhiteSpaceToken, Value: " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
@@ -170,8 +184,22 @@ func TestLexer_Peek(t *testing.T) {
 		}
 	}
 	{
+		next := l.Peek(es6.InputElementDiv)
+		expected := es6.Token{Type: es6.IdentifierNameToken, Value: "foo"}
+		if !next.Equals(expected) {
+			t.Errorf("expected token: %s, but got %s", expected, next)
+		}
+	}
+	{
 		next := l.Next(es6.InputElementDiv)
 		expected := es6.Token{Type: es6.IdentifierNameToken, Value: "foo"}
+		if !next.Equals(expected) {
+			t.Errorf("expected token: %s, but got %s", expected, next)
+		}
+	}
+	{
+		next := l.Peek(es6.InputElementDiv)
+		expected := es6.Token{Type: es6.WhiteSpaceToken, Value: " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
@@ -198,8 +226,22 @@ func TestLexer_Peek(t *testing.T) {
 		}
 	}
 	{
+		next := l.Peek(es6.InputElementDiv)
+		expected := es6.Token{Type: es6.WhiteSpaceToken, Value: " "}
+		if !next.Equals(expected) {
+			t.Errorf("expected token: %s, but got %s", expected, next)
+		}
+	}
+	{
 		next := l.Next(es6.InputElementDiv)
 		expected := es6.Token{Type: es6.WhiteSpaceToken, Value: " "}
+		if !next.Equals(expected) {
+			t.Errorf("expected token: %s, but got %s", expected, next)
+		}
+	}
+	{
+		next := l.Peek(es6.InputElementDiv)
+		expected := es6.Token{Type: es6.NumericLiteralToken, Value: "123"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
