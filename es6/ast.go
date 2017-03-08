@@ -20,6 +20,408 @@ func (n *node) Position() (filename string, offset int, line int, column int) {
 }
 
 //
+//  A.2 Expressions
+//
+
+// IdentifierReferenceNode [Yield] : [See 12.1]
+//  Identifier
+//  [~Yield] yield
+type IdentifierReferenceNode struct {
+  node
+}
+
+// BindingIdentifierNode [Yield] : [See 12.1]
+//  Identifier
+//  [~Yield] yield
+//
+type BindingIdentifierNode struct {
+  node
+}
+
+// LabelIdentifierNode [Yield] : [See 12.1]
+//  Identifier
+//  [~Yield] yield
+type LabelIdentifierNode struct {
+  node
+}
+
+// IdentifierNode  : [See 12.1]
+//  IdentifierName but not ReservedWord
+type IdentifierNode struct {
+  node
+}
+
+// PrimaryExpressionNode [Yield] : [See 12.2]
+//  this
+//  IdentifierReference[?Yield]
+//  Literal
+//  ArrayLiteral[?Yield]
+//  ObjectLiteral[?Yield]
+//  FunctionExpression
+//  ClassExpression[?Yield]
+//  GeneratorExpression
+//  RegularExpressionLiteral
+//  TemplateLiteral[?Yield]
+//  CoverParenthesizedExpressionAndArrowParameterList[?Yield]
+// the interpretation of CoverParenthesizedExpressionAndArrowParameterList
+// is refined using the following grammar:
+type PrimaryExpressionNode struct {
+  node
+}
+
+// CoverParenthesizedExpressionAndArrowParameterListNode [Yield] : [See 12.2]
+// ( Expression[In, ?Yield] )
+// ( )
+// ( ... BindingIdentifier[?Yield] )
+// ( Expression[In, ?Yield] , ... BindingIdentifier[?Yield] )
+//  When processing the production
+type CoverParenthesizedExpressionAndArrowParameterListNode struct {
+  node
+}
+
+// ParenthesizedExpressionNode [Yield] : [See 12.2]
+//  ( Expression[In, ?Yield] )
+type ParenthesizedExpressionNode struct {
+  node
+}
+
+// LiteralNode  : [See 12.2.4]
+//  NullLiteral
+//  BooleanLiteral
+//  NumericLiteral
+//  StringLiteral
+type LiteralNode struct {
+  node
+}
+
+// ArrayLiteralNode [Yield] : [See 12.2.5]
+//  [ Elisionopt ]
+//  [ ElementList[?Yield] ]
+//  [ ElementList[?Yield] , Elisionopt ]
+type ArrayLiteralNode struct {
+  node
+}
+
+// ElementListNode [Yield] : [See 12.2.5]
+//  Elisionopt AssignmentExpression[In, ?Yield]
+//  Elisionopt SpreadElement[?Yield]
+//  ElementList[?Yield] , Elisionopt AssignmentExpression[In, ?Yield]
+//  ElementList[?Yield] , Elisionopt SpreadElement[?Yield]
+type ElementListNode struct {
+  node
+}
+
+// ElisionNode  : [See 12.2.5]
+//  ,
+//  Elision ,
+type ElisionNode struct {
+  node
+}
+
+// SpreadElementNode [Yield] : [See 12.2.5]
+//  ... AssignmentExpression[In, ?Yield]
+type SpreadElementNode struct {
+  node
+}
+
+// ObjectLiteralNode [Yield] : [See 12.2.6]
+//  { }
+//  { PropertyDefinitionList[?Yield] }
+//  { PropertyDefinitionList[?Yield] , }
+type ObjectLiteralNode struct {
+  node
+}
+
+// PropertyDefinitionListNode [Yield] : [See 12.2.6]
+//  PropertyDefinition[?Yield]
+//  PropertyDefinitionList[?Yield] , PropertyDefinition[?Yield]
+type PropertyDefinitionListNode struct {
+  node
+}
+
+// PropertyDefinitionNode [Yield] : [See 12.2.6]
+//  IdentifierReference[?Yield]
+//  CoverInitializedName[?Yield]
+//  PropertyName[?Yield] : AssignmentExpression[In, ?Yield]
+//  MethodDefinition[?Yield]
+type PropertyDefinitionNode struct {
+  node
+}
+
+// PropertyNameNode [Yield] : [See 12.2.6]
+//  LiteralPropertyName
+//  ComputedPropertyName[?Yield]
+type PropertyNameNode struct {
+  node
+}
+
+// LiteralPropertyNameNode  : [See 12.2.6]
+//  IdentifierName
+//  StringLiteral
+//  NumericLiteral
+type LiteralPropertyNameNode struct {
+  node
+}
+
+// ComputedPropertyNameNode [Yield] : [See 12.2.6]
+//  [ AssignmentExpression[In, ?Yield] ]
+type ComputedPropertyNameNode struct {
+  node
+}
+
+// CoverInitializedNameNode [Yield] : [See 12.2.6]
+//  IdentifierReference[?Yield] Initializer[In, ?Yield]
+type CoverInitializedNameNode struct {
+  node
+}
+
+// InitializerNode [In, Yield] : [See 12.2.6]
+//  = AssignmentExpression[?In, ?Yield]
+type InitializerNode struct {
+  node
+}
+
+// TemplateLiteralNode [Yield] : [See 12.2.9]
+//  NoSubstitutionTemplate
+//  TemplateHead Expression[In, ?Yield] TemplateSpans[?Yield]
+type TemplateLiteralNode struct {
+  node
+}
+
+// TemplateSpansNode [Yield] : [See 12.2.9]
+//  TemplateTail
+//  TemplateMiddleList[?Yield] TemplateTail
+type TemplateSpansNode struct {
+  node
+}
+
+// TemplateMiddleListNode [Yield] : [See 12.2.9]
+//  TemplateMiddle Expression[In, ?Yield]
+//  TemplateMiddleList[?Yield] TemplateMiddle Expression[In, ?Yield]
+type TemplateMiddleListNode struct {
+  node
+}
+
+// MemberExpressionNode [Yield] : [See 12.3]
+//  PrimaryExpression[?Yield]
+//  MemberExpression[?Yield] [ Expression[In, ?Yield] ]
+//  MemberExpression[?Yield] . IdentifierName
+//  MemberExpression[?Yield] TemplateLiteral[?Yield]
+//  SuperProperty[?Yield]
+//  MetaProperty
+//  new MemberExpression[?Yield] Arguments[?Yield]
+type MemberExpressionNode struct {
+  node
+}
+
+// SuperPropertyNode [Yield] : [See 12.3]
+//  super [ Expression[In, ?Yield] ]
+//  super . IdentifierName
+type SuperPropertyNode struct {
+  node
+}
+
+// MetaPropertyNode  : [See 12.3]
+//  NewTarget
+type MetaPropertyNode struct {
+  node
+}
+
+// NewTargetNode  : [See 12.3]
+//  new . target
+type NewTargetNode struct {
+  node
+}
+
+// NewExpressionNode [Yield] : [See 12.3]
+//  MemberExpression[?Yield]
+//  new NewExpression[?Yield]
+type NewExpressionNode struct {
+  node
+}
+
+// CallExpressionNode [Yield] : [See 12.3]
+//  MemberExpression[?Yield] Arguments[?Yield]
+//  SuperCall[?Yield]
+//  CallExpression[?Yield] Arguments[?Yield]
+//  CallExpression[?Yield] [ Expression[In, ?Yield] ]
+//  CallExpression[?Yield] . IdentifierName
+//  CallExpression[?Yield] TemplateLiteral[?Yield]
+type CallExpressionNode struct {
+  node
+}
+
+// SuperCallNode [Yield] : [See 12.3]
+//  super Arguments[?Yield]
+type SuperCallNode struct {
+  node
+}
+
+// ArgumentsNode [Yield] : [See 12.3]
+//  ( )
+//  ( ArgumentList[?Yield] )
+type ArgumentsNode struct {
+  node
+}
+
+// ArgumentListNode [Yield] : [See 12.3]
+//  AssignmentExpression[In, ?Yield]
+//  ... AssignmentExpression[In, ?Yield]
+//  ArgumentList[?Yield] , AssignmentExpression[In, ?Yield]
+//  ArgumentList[?Yield] , ... AssignmentExpression[In, ?Yield]
+type ArgumentListNode struct {
+  node
+}
+
+// LeftHandSideExpressionNode [Yield] : [See 12.3]
+//  NewExpression[?Yield]
+//  CallExpression[?Yield]
+type LeftHandSideExpressionNode struct {
+  node
+}
+
+// PostfixExpressionNode [Yield] : [See 12.4]
+//  LeftHandSideExpression[?Yield]
+//  LeftHandSideExpression[?Yield] [no LineTerminator here] ++
+//  LeftHandSideExpression[?Yield] [no LineTerminator here] --
+type PostfixExpressionNode struct {
+  node
+}
+
+// UnaryExpressionNode [Yield] : [See 12.5]
+//  PostfixExpression[?Yield]
+//  delete UnaryExpression[?Yield]
+//  void UnaryExpression[?Yield]
+//  typeof UnaryExpression[?Yield]
+//  ++ UnaryExpression[?Yield]
+//  -- UnaryExpression[?Yield]
+//  + UnaryExpression[?Yield]
+//  - UnaryExpression[?Yield]
+//  ~ UnaryExpression[?Yield]
+//  ! UnaryExpression[?Yield]
+type UnaryExpressionNode struct {
+  node
+}
+
+// MultiplicativeExpressionNode [Yield] : [See 12.6]
+//  UnaryExpression[?Yield]
+//  MultiplicativeExpression[?Yield] MultiplicativeOperator UnaryExpression[?Yield]
+type MultiplicativeExpressionNode struct {
+  node
+}
+
+// MultiplicativeOperatorNode  : one of [See 12.6]
+//  * / %
+type MultiplicativeOperatorNode struct {
+  node
+}
+
+// AdditiveExpressionNode [Yield] : [See 12.7]
+//  MultiplicativeExpression[?Yield]
+//  AdditiveExpression[?Yield] + MultiplicativeExpression[?Yield]
+//  AdditiveExpression[?Yield] - MultiplicativeExpression[?Yield]
+type AdditiveExpressionNode struct {
+  node
+}
+
+// ShiftExpressionNode [Yield] : [See 12.8]
+//  AdditiveExpression[?Yield]
+//  ShiftExpression[?Yield] << AdditiveExpression[?Yield]
+//  ShiftExpression[?Yield] >> AdditiveExpression[?Yield]
+//  ShiftExpression[?Yield] >>> AdditiveExpression[?Yield]
+type ShiftExpressionNode struct {
+  node
+}
+
+// RelationalExpressionNode [In, Yield] : [See 12.9]
+//  ShiftExpression[?Yield]
+//  RelationalExpression[?In, ?Yield] < ShiftExpression[?Yield]
+//  RelationalExpression[?In, ?Yield] > ShiftExpression[?Yield]
+//  RelationalExpression[?In, ?Yield] <= ShiftExpression[? Yield]
+//  RelationalExpression[?In, ?Yield] >= ShiftExpression[?Yield]
+//  RelationalExpression[?In, ?Yield] instanceof ShiftExpression[?Yield]
+//  [+In] RelationalExpression[In, ?Yield] in ShiftExpression[?Yield]
+type RelationalExpressionNode struct {
+  node
+}
+
+// EqualityExpressionNode [In, Yield] : [See 12.10]
+//  RelationalExpression[?In, ?Yield]
+//  EqualityExpression[?In, ?Yield] == RelationalExpression[?In, ?Yield]
+//  EqualityExpression[?In, ?Yield] != RelationalExpression[?In, ?Yield]
+//  EqualityExpression[?In, ?Yield] === RelationalExpression[?In, ?Yield]
+//  EqualityExpression[?In, ?Yield] !== RelationalExpression[?In, ?Yield]
+type EqualityExpressionNode struct {
+  node
+}
+
+// BitwiseANDExpressionNode [In, Yield] : [See 12.11]
+//  EqualityExpression[?In, ?Yield]
+//  BitwiseANDExpression[?In, ?Yield] & EqualityExpression[?In, ?Yield]
+type BitwiseANDExpressionNode struct {
+  node
+}
+
+// BitwiseXORExpressionNode [In, Yield] : [See 12.11]
+//  BitwiseANDExpression[?In, ?Yield]
+//  BitwiseXORExpression[?In, ?Yield] ^ BitwiseANDExpression[?In, ?Yield]
+type BitwiseXORExpressionNode struct {
+  node
+}
+
+// BitwiseORExpressionNode [In, Yield] : [See 12.11]
+//  BitwiseXORExpression[?In, ?Yield]
+//  BitwiseORExpression[?In, ?Yield] | BitwiseXORExpression[?In, ?Yield]
+type BitwiseORExpressionNode struct {
+  node
+}
+
+// LogicalANDExpressionNode [In, Yield] : [See 12.12]
+//  BitwiseORExpression[?In, ?Yield]
+//  LogicalANDExpression[?In, ?Yield] && BitwiseORExpression[?In, ?Yield]
+type LogicalANDExpressionNode struct {
+  node
+}
+
+// LogicalORExpressionNode [In, Yield] : [See 12.12]
+//  LogicalANDExpression[?In, ?Yield]
+//  LogicalORExpression[?In, ?Yield] || LogicalANDExpression[?In, ?Yield]
+type LogicalORExpressionNode struct {
+  node
+}
+
+// ConditionalExpressionNode [In, Yield] : [See 12.13]
+//  LogicalORExpression[?In, ?Yield]
+//  LogicalORExpression[?In,?Yield] ? AssignmentExpression[In, ?Yield] : AssignmentExpression[?In, ?Yield]
+type ConditionalExpressionNode struct {
+  node
+}
+
+// AssignmentExpressionNode [In, Yield] : [See 12.14]
+//  ConditionalExpression[?In, ?Yield]
+//  [+Yield] YieldExpression[?In]
+//  ArrowFunction[?In, ?Yield]
+//  LeftHandSideExpression[?Yield] = AssignmentExpression[?In, ?Yield]
+//  LeftHandSideExpression[?Yield] AssignmentOperator AssignmentExpression[?In, ?Yield]
+type AssignmentExpressionNode struct {
+  node
+}
+
+// AssignmentOperatorNode  : one of [See 12.14]
+//  *= /= %= += -= <<= >>= >>>= &= ^= |=
+type AssignmentOperatorNode struct {
+  node
+}
+
+// ExpressionNode [In, Yield] : [See 12.15]
+//  AssignmentExpression[?In, ?Yield]
+//  Expression[?In, ?Yield] , AssignmentExpression[?In, ?Yield]
+type ExpressionNode struct {
+  node
+}
+
+
+//
 // A.3 Statements
 //
 
