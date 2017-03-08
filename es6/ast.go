@@ -884,13 +884,25 @@ func ParseStatementNode(l *Lexer) (ASTNode, error) {
 //  LexicalDeclaration[In, ?Yield]
 // implements: Parser and ASTNode
 type DeclarationNode struct {
+	child ASTNode
 	node
 }
 
 // ParseDeclarationNode ...
 func ParseDeclarationNode(l *Lexer) (ASTNode, error) {
-	panic("ParseDeclarationNode not implemented")
-	// return nil, nil
+	node := DeclarationNode{}
+	child, err := tryParseFuncs(l,
+		ParseHoistableDeclarationNode,
+		ParseClassDeclarationNode,
+		ParseLexicalDeclarationNode,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if child != nil {
+		node.child = child
+	}
+	return node, nil
 }
 
 // HoistableDeclarationNode [Yield, Default] : [See clause 13]
