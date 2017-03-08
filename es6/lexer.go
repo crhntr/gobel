@@ -17,7 +17,7 @@ func Lex(name, input string, safe bool) *Lexer {
 		tokens: []Token{},
 		strict: true,
 		goal:   InputElementDiv,
-		line: 1,
+		line:   1,
 		column: 0,
 	}
 	if safe {
@@ -42,7 +42,7 @@ type Lexer struct {
 	strict        bool
 	goal          LexerGoal
 
-	line int
+	line   int
 	column int
 }
 
@@ -97,8 +97,8 @@ func (l *Lexer) Next(goal LexerGoal) Token {
 	return tok
 }
 
-// Position returns the Lexer's current position
-func (l *Lexer) CurrentPosition() (offset, line, column int ) {
+// CurrentPosition returns the Lexer's current position
+func (l *Lexer) CurrentPosition() (offset, line, column int) {
 	return l.pos, l.line, l.column
 }
 
@@ -132,7 +132,19 @@ type stateFunc func(*Lexer) stateFunc
 func (l *Lexer) emit(typ TokenType) {
 	val := l.input[l.start:l.pos]
 	// l.tokens <- Token{typ, val}
-	l.tokens = append(l.tokens, Token{typ, val})
+	l.tokens = append(
+		l.tokens,
+		Token{
+			Type: typ,
+			Value: val,
+			pos: Position{
+				FileName: l.name,
+				Offset: l.pos,
+				Line: l.line,
+				Column: l.column,
+			},
+		},
+	)
 	l.start = l.pos
 }
 
@@ -281,8 +293,8 @@ func (l *Lexer) errorf(format string, args ...interface{}) stateFunc {
 	// 	fmt.Sprintf(format, args...),
 	// }
 	l.tokens = append(l.tokens, Token{
-		ErrorToken,
-		fmt.Sprintf(format, args...),
+		Type:  ErrorToken,
+		Value: fmt.Sprintf(format, args...),
 	})
 	return nil
 }

@@ -7,6 +7,13 @@ import "fmt"
 type Token struct {
 	Type  TokenType
 	Value string
+	pos   Position
+}
+
+// Position represents the source where
+type Position struct {
+	FileName             string
+	Offset, Line, Column int
 }
 
 func (tok Token) String() string {

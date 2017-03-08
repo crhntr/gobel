@@ -22,8 +22,8 @@ func Test_peek(t *testing.T) {
 
 func TestLex_Whitespace_AND_SingleLineComment(t *testing.T) {
 	expected := []Token{
-		Token{WhiteSpaceToken, " \t"},
-		Token{SingleLineCommentToken, " Hello World!"},
+		Token{Type: WhiteSpaceToken, Value: " \t"},
+		Token{Type: SingleLineCommentToken, Value: " Hello World!"},
 	}
 	js := " \t// Hello World!"
 	l := Lex("", js, true)
@@ -33,9 +33,9 @@ func TestLex_Whitespace_AND_SingleLineComment(t *testing.T) {
 func TestLex_Terminator_And_Whitespace(t *testing.T) {
 	js := "\n\t\n"
 	expected := []Token{
-		Token{LineTerminatorToken, "\n"},
-		Token{WhiteSpaceToken, "\t"},
-		Token{LineTerminatorToken, "\n"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: WhiteSpaceToken, Value: "\t"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
 	}
 
 	l := Lex("", js, true)
@@ -54,8 +54,8 @@ func TestLex_ReservedWord1(t *testing.T) {
 	}
 	l := Lex("", js, true)
 	for _, word := range l.reservedWords {
-		expected = append(expected, Token{ReservedWordToken, word})
-		expected = append(expected, Token{WhiteSpaceToken, ws})
+		expected = append(expected, Token{Type: ReservedWordToken, Value: word})
+		expected = append(expected, Token{Type: WhiteSpaceToken, Value: ws})
 	}
 
 	expectedTokens(t, expected, l)
@@ -74,8 +74,8 @@ func TestLex_ReservedWord2(t *testing.T) {
 
 	l := Lex("", js, false)
 	for _, word := range l.reservedWords {
-		expected = append(expected, Token{ReservedWordToken, word})
-		expected = append(expected, Token{WhiteSpaceToken, ws})
+		expected = append(expected, Token{Type: ReservedWordToken, Value: word})
+		expected = append(expected, Token{Type: WhiteSpaceToken, Value: ws})
 	}
 
 	expectedTokens(t, expected, l)
@@ -83,10 +83,10 @@ func TestLex_ReservedWord2(t *testing.T) {
 
 // func TestLex_EscapeSequence0(t *testing.T) {
 // 	expected := []Token{
-// 		Token{IdentifierName, "X"},
-// 		Token{Punctuator, "&"},
-// 		Token{IdentifierName, "ooooooooooooo___"},
-// 		Token{LineTerminator, "\n"},
+// 		Token{Type: IdentifierName, Value: "X"},
+// 		Token{Type: Punctuator, Value: "&"},
+// 		Token{Type: IdentifierName, Value: "ooooooooooooo___"},
+// 		Token{Type: LineTerminator, Value: "\n"},
 // 	}
 // 	js := `"\n"`
 // 	l := lex("", js, true)
@@ -95,14 +95,14 @@ func TestLex_ReservedWord2(t *testing.T) {
 
 func TestLex1(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "function"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "("},
-		Token{PunctuatorToken, ")"},
-		Token{PunctuatorToken, "{"},
-		Token{RightBracePunctuatorToken, "}"},
-		Token{PunctuatorToken, "("},
-		Token{PunctuatorToken, ")"},
+		Token{Type: ReservedWordToken, Value: "function"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: PunctuatorToken, Value: "{"},
+		Token{Type: RightBracePunctuatorToken, Value: "}"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: PunctuatorToken, Value: ")"},
 	}
 
 	js := "function (){}()"
@@ -112,16 +112,16 @@ func TestLex1(t *testing.T) {
 
 func TestLex2(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "function"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "("},
-		Token{PunctuatorToken, ")"},
-		Token{PunctuatorToken, "{"},
-		Token{RightBracePunctuatorToken, "}"},
-		Token{PunctuatorToken, "("},
-		Token{PunctuatorToken, ")"},
+		Token{Type: ReservedWordToken, Value: "function"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: PunctuatorToken, Value: "{"},
+		Token{Type: RightBracePunctuatorToken, Value: "}"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: PunctuatorToken, Value: ")"},
 	}
 
 	js := "function foo (){}()"
@@ -131,26 +131,26 @@ func TestLex2(t *testing.T) {
 
 func TestLex3(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "function"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "add"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "a"},
-		Token{PunctuatorToken, ","},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "b"},
-		Token{PunctuatorToken, ")"},
-		Token{PunctuatorToken, "{"},
-		Token{LineTerminatorToken, "\n"},
-		Token{WhiteSpaceToken, "\t"},
-		Token{ReservedWordToken, "return"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "a"},
-		Token{PunctuatorToken, "+"},
-		Token{IdentifierNameToken, "b"},
-		Token{LineTerminatorToken, "\n"},
-		Token{RightBracePunctuatorToken, "}"},
+		Token{Type: ReservedWordToken, Value: "function"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "add"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "a"},
+		Token{Type: PunctuatorToken, Value: ","},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "b"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: PunctuatorToken, Value: "{"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: WhiteSpaceToken, Value: "\t"},
+		Token{Type: ReservedWordToken, Value: "return"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "a"},
+		Token{Type: PunctuatorToken, Value: "+"},
+		Token{Type: IdentifierNameToken, Value: "b"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: RightBracePunctuatorToken, Value: "}"},
 	}
 
 	js := "function add (a, b){\n\treturn a+b\n}"
@@ -160,67 +160,67 @@ func TestLex3(t *testing.T) {
 
 func TestLexJS(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "function"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "fibonacci"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "n"},
-		Token{PunctuatorToken, ")"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "{"},
-		Token{LineTerminatorToken, "\n"},
-		Token{WhiteSpaceToken, "  "},
-		Token{ReservedWordToken, "if"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "n"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, ">="},
-		Token{WhiteSpaceToken, " "},
-		Token{NumericLiteralToken, "2"},
-		Token{PunctuatorToken, ")"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "{"},
-		Token{LineTerminatorToken, "\n"},
-		Token{WhiteSpaceToken, "    "},
-		Token{ReservedWordToken, "return"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "fibonacci"},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "n"},
-		Token{NumericLiteralToken, "-1"},
-		Token{PunctuatorToken, ")"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "+"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "fibonacci"},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "n"},
-		Token{NumericLiteralToken, "-2"},
-		Token{PunctuatorToken, ")"},
-		Token{LineTerminatorToken, "\n"},
-		Token{WhiteSpaceToken, "  "},
-		Token{RightBracePunctuatorToken, "}"},
-		Token{LineTerminatorToken, "\n"},
-		Token{WhiteSpaceToken, "  "},
-		Token{ReservedWordToken, "return"},
-		Token{WhiteSpaceToken, " "},
-		Token{NumericLiteralToken, "1"},
-		Token{LineTerminatorToken, "\n"},
-		Token{RightBracePunctuatorToken, "}"},
-		Token{LineTerminatorToken, "\n"},
-		Token{LineTerminatorToken, "\n"},
-		Token{IdentifierNameToken, "console"},
-		Token{PunctuatorToken, "."},
-		Token{IdentifierNameToken, "log"},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "fibonacci"},
-		Token{PunctuatorToken, "("},
-		Token{NumericLiteralToken, "7"},
-		Token{PunctuatorToken, ")"},
-		Token{PunctuatorToken, ")"},
-		Token{LineTerminatorToken, "\n"},
+		Token{Type: ReservedWordToken, Value: "function"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "fibonacci"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "n"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "{"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: WhiteSpaceToken, Value: "  "},
+		Token{Type: ReservedWordToken, Value: "if"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "n"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: ">="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: NumericLiteralToken, Value: "2"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "{"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: WhiteSpaceToken, Value: "    "},
+		Token{Type: ReservedWordToken, Value: "return"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "fibonacci"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "n"},
+		Token{Type: NumericLiteralToken, Value: "-1"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "+"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "fibonacci"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "n"},
+		Token{Type: NumericLiteralToken, Value: "-2"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: WhiteSpaceToken, Value: "  "},
+		Token{Type: RightBracePunctuatorToken, Value: "}"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: WhiteSpaceToken, Value: "  "},
+		Token{Type: ReservedWordToken, Value: "return"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: NumericLiteralToken, Value: "1"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: RightBracePunctuatorToken, Value: "}"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: IdentifierNameToken, Value: "console"},
+		Token{Type: PunctuatorToken, Value: "."},
+		Token{Type: IdentifierNameToken, Value: "log"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "fibonacci"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: NumericLiteralToken, Value: "7"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
 	}
 
 	testData, err := ioutil.ReadFile("testdata/index01.js")
@@ -235,49 +235,49 @@ func TestLexJS(t *testing.T) {
 
 func TestLexJS2(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "function"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "fibonacci"},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "n"},
-		Token{PunctuatorToken, ")"},
-		Token{PunctuatorToken, "{"},
-		Token{ReservedWordToken, "if"},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "n"},
-		Token{PunctuatorToken, ">="},
-		Token{NumericLiteralToken, "2"},
-		Token{PunctuatorToken, ")"},
-		Token{PunctuatorToken, "{"},
-		Token{ReservedWordToken, "return"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "fibonacci"},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "n"},
-		Token{NumericLiteralToken, "-1"},
-		Token{PunctuatorToken, ")"},
-		Token{PunctuatorToken, "+"},
-		Token{IdentifierNameToken, "fibonacci"},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "n"},
-		Token{NumericLiteralToken, "-2"},
-		Token{PunctuatorToken, ")"},
-		Token{RightBracePunctuatorToken, "}"},
-		Token{ReservedWordToken, "return"},
-		Token{WhiteSpaceToken, " "},
-		Token{NumericLiteralToken, "1"},
-		Token{RightBracePunctuatorToken, "}"},
-		Token{PunctuatorToken, ";"},
-		Token{IdentifierNameToken, "console"},
-		Token{PunctuatorToken, "."},
-		Token{IdentifierNameToken, "log"},
-		Token{PunctuatorToken, "("},
-		Token{IdentifierNameToken, "fibonacci"},
-		Token{PunctuatorToken, "("},
-		Token{NumericLiteralToken, "7"},
-		Token{PunctuatorToken, ")"},
-		Token{PunctuatorToken, ")"},
-		Token{LineTerminatorToken, "\n"},
+		Token{Type: ReservedWordToken, Value: "function"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "fibonacci"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "n"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: PunctuatorToken, Value: "{"},
+		Token{Type: ReservedWordToken, Value: "if"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "n"},
+		Token{Type: PunctuatorToken, Value: ">="},
+		Token{Type: NumericLiteralToken, Value: "2"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: PunctuatorToken, Value: "{"},
+		Token{Type: ReservedWordToken, Value: "return"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "fibonacci"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "n"},
+		Token{Type: NumericLiteralToken, Value: "-1"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: PunctuatorToken, Value: "+"},
+		Token{Type: IdentifierNameToken, Value: "fibonacci"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "n"},
+		Token{Type: NumericLiteralToken, Value: "-2"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: RightBracePunctuatorToken, Value: "}"},
+		Token{Type: ReservedWordToken, Value: "return"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: NumericLiteralToken, Value: "1"},
+		Token{Type: RightBracePunctuatorToken, Value: "}"},
+		Token{Type: PunctuatorToken, Value: ";"},
+		Token{Type: IdentifierNameToken, Value: "console"},
+		Token{Type: PunctuatorToken, Value: "."},
+		Token{Type: IdentifierNameToken, Value: "log"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: IdentifierNameToken, Value: "fibonacci"},
+		Token{Type: PunctuatorToken, Value: "("},
+		Token{Type: NumericLiteralToken, Value: "7"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: PunctuatorToken, Value: ")"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
 	}
 
 	testData, err := ioutil.ReadFile("testdata/index02.js")
@@ -292,43 +292,43 @@ func TestLexJS2(t *testing.T) {
 
 func TestLexJS3(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWordToken, "function"}, InputElementRegExp},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementRegExp},
-		TokenTest{Token{IdentifierNameToken, "anylize_dna_sequence"}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
-		TokenTest{Token{IdentifierNameToken, "sequence"}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, "{"}, InputElementRegExp},
-		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
-		TokenTest{Token{WhiteSpaceToken, "  "}, InputElementRegExp},
-		TokenTest{Token{ReservedWordToken, "return"}, InputElementRegExp},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementRegExp},
-		TokenTest{Token{IdentifierNameToken, "valid"}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, "."}, InputElementRegExp},
-		TokenTest{Token{IdentifierNameToken, "match"}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
-		TokenTest{Token{RegExToken, "/([CGAT]{3}){1,}/g"}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
-		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
-		TokenTest{Token{RightBracePunctuatorToken, "}"}, InputElementRegExp},
-		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
-		TokenTest{Token{IdentifierNameToken, "anylize_dna_sequence"}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
-		TokenTest{Token{StringLiteralToken, "\"ATATTGGTGTTCATGTGCGCGGGGCCGACGAGCTACTGGCAGAACCACGAGGACAAGAGGTGA\""}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
-		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
-		TokenTest{Token{IdentifierNameToken, "anylize_dna_sequence"}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
-		TokenTest{Token{StringLiteralToken, "\"FAIL\""}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
-		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
-		TokenTest{Token{IdentifierNameToken, "anylize_dna_sequence"}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
-		TokenTest{Token{StringLiteralToken, "\"Alanine\""}, InputElementRegExp},
-		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
-		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
-		TokenTest{Token{EOFToken, ""}, InputElementDiv},
+		TokenTest{Token{Type: ReservedWordToken, Value: "function"}, InputElementRegExp},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementRegExp},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: "("}, InputElementRegExp},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "sequence"}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: ")"}, InputElementRegExp},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: "{"}, InputElementRegExp},
+		TokenTest{Token{Type: LineTerminatorToken, Value: "\n"}, InputElementRegExp},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: "  "}, InputElementRegExp},
+		TokenTest{Token{Type: ReservedWordToken, Value: "return"}, InputElementRegExp},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementRegExp},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "valid"}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: "."}, InputElementRegExp},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "match"}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: "("}, InputElementRegExp},
+		TokenTest{Token{Type: RegExToken, Value: "/([CGAT]{3}){1,}/g"}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: ")"}, InputElementRegExp},
+		TokenTest{Token{Type: LineTerminatorToken, Value: "\n"}, InputElementRegExp},
+		TokenTest{Token{Type: RightBracePunctuatorToken, Value: "}"}, InputElementRegExp},
+		TokenTest{Token{Type: LineTerminatorToken, Value: "\n"}, InputElementRegExp},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: "("}, InputElementRegExp},
+		TokenTest{Token{Type: StringLiteralToken, Value: "\"ATATTGGTGTTCATGTGCGCGGGGCCGACGAGCTACTGGCAGAACCACGAGGACAAGAGGTGA\""}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: ")"}, InputElementRegExp},
+		TokenTest{Token{Type: LineTerminatorToken, Value: "\n"}, InputElementRegExp},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: "("}, InputElementRegExp},
+		TokenTest{Token{Type: StringLiteralToken, Value: "\"FAIL\""}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: ")"}, InputElementRegExp},
+		TokenTest{Token{Type: LineTerminatorToken, Value: "\n"}, InputElementRegExp},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: "("}, InputElementRegExp},
+		TokenTest{Token{Type: StringLiteralToken, Value: "\"Alanine\""}, InputElementRegExp},
+		TokenTest{Token{Type: PunctuatorToken, Value: ")"}, InputElementRegExp},
+		TokenTest{Token{Type: LineTerminatorToken, Value: "\n"}, InputElementRegExp},
+		TokenTest{Token{Type: EOFToken, Value: ""}, InputElementDiv},
 	}
 	testData, err := ioutil.ReadFile("testdata/TestLexJS3.js")
 	if err != nil {
@@ -341,15 +341,15 @@ func TestLexJS3(t *testing.T) {
 }
 
 func TestToken_String(t *testing.T) {
-	t1 := Token{TokenType(-1), ""}
+	t1 := Token{Type: TokenType(-1), Value: ""}
 	if t1.String() == "" {
 		t.Error("t1.String() string returns empty string")
 	}
-	t2 := Token{LineTerminatorToken, ""}
+	t2 := Token{Type: LineTerminatorToken, Value: ""}
 	if t2.String() == "" {
 		t.Error("t2.String() string returns empty string")
 	}
-	t3 := Token{MultiLineCommentToken, " some string value "}
+	t3 := Token{Type: MultiLineCommentToken, Value: " some string value "}
 	if t3.String() == "" {
 		t.Error("t3.String() string returns empty string")
 	}
@@ -396,7 +396,7 @@ func expectedTokensTable(t *testing.T, expectedTokenRows []TokenTest, l *Lexer) 
 
 func TestLex_MultiLineComment1(t *testing.T) {
 	expected := []Token{
-		Token{MultiLineCommentToken, "Hello World!"},
+		Token{Type: MultiLineCommentToken, Value: "Hello World!"},
 	}
 	js := "/*Hello World!*/"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -404,7 +404,7 @@ func TestLex_MultiLineComment1(t *testing.T) {
 
 func TestLex_MultiLineComment2(t *testing.T) {
 	expected := []Token{
-		Token{ErrorToken, "no multi line comment terminator \"*/\""},
+		Token{Type: ErrorToken, Value: "no multi line comment terminator \"*/\""},
 	}
 	js := "/*Hello World!"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -412,7 +412,7 @@ func TestLex_MultiLineComment2(t *testing.T) {
 
 func TestLex_MultiLineComment3(t *testing.T) {
 	expected := []Token{
-		Token{ErrorToken, "no multi line comment terminator \"*/\""},
+		Token{Type: ErrorToken, Value: "no multi line comment terminator \"*/\""},
 	}
 	js := "/* \""
 	expectedTokens(t, expected, Lex("", js, true))
@@ -420,22 +420,22 @@ func TestLex_MultiLineComment3(t *testing.T) {
 
 func TestLex_SingleLineComment1(t *testing.T) {
 	expected := []Token{
-		Token{SingleLineCommentToken, " Hello World!"},
+		Token{Type: SingleLineCommentToken, Value: " Hello World!"},
 	}
 	js := "// Hello World!"
 	expectedTokens(t, expected, Lex("", js, true))
 }
 func TestLex_SingleLineComment2(t *testing.T) {
 	expected := []Token{
-		Token{SingleLineCommentToken, " Hello World!"},
+		Token{Type: SingleLineCommentToken, Value: " Hello World!"},
 	}
 	js := "// Hello World!\n"
 	expectedTokens(t, expected, Lex("", js, true))
 }
 func TestLex_Comments(t *testing.T) {
 	expected := []Token{
-		Token{SingleLineCommentToken, " Hello World!"},
-		Token{MultiLineCommentToken, "This is a multi\nline comment "},
+		Token{Type: SingleLineCommentToken, Value: " Hello World!"},
+		Token{Type: MultiLineCommentToken, Value: "This is a multi\nline comment "},
 	}
 	js := "// Hello World!\n/*This is a multi\nline comment */"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -444,7 +444,7 @@ func TestLex_Comments(t *testing.T) {
 // Test EscapeSequence
 func TestLex_lexEscapeSequence01(t *testing.T) {
 	expected := []Token{
-		Token{StringLiteralToken, "\"\\u0074\\x61z\nzz\""},
+		Token{Type: StringLiteralToken, Value: "\"\\u0074\\x61z\nzz\""},
 	}
 	js := "\"\\u0074\\x61z\nzz\""
 	expectedTokens(t, expected, Lex("", js, true))
@@ -455,11 +455,11 @@ func TestLex_lexEscapeSequence01(t *testing.T) {
 //
 func TestLex_Identifier1(t *testing.T) {
 	expected := []Token{
-		Token{IdentifierNameToken, "$"},
-		Token{PunctuatorToken, "="},
-		Token{IdentifierNameToken, "_"},
-		Token{PunctuatorToken, "="},
-		Token{IdentifierNameToken, "foo"},
+		Token{Type: IdentifierNameToken, Value: "$"},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: IdentifierNameToken, Value: "_"},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: IdentifierNameToken, Value: "foo"},
 	}
 	js := "$=_=foo"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -467,10 +467,10 @@ func TestLex_Identifier1(t *testing.T) {
 
 func TestLex_Identifier2(t *testing.T) {
 	expected := []Token{
-		Token{IdentifierNameToken, "X"},
-		Token{PunctuatorToken, "&"},
-		Token{IdentifierNameToken, "ooooooooooooo___"},
-		Token{LineTerminatorToken, "\n"},
+		Token{Type: IdentifierNameToken, Value: "X"},
+		Token{Type: PunctuatorToken, Value: "&"},
+		Token{Type: IdentifierNameToken, Value: "ooooooooooooo___"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
 	}
 	js := "X&ooooooooooooo___\n"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -483,7 +483,7 @@ func TestLex_Identifier2(t *testing.T) {
 func TestLex_LineTerminator1(t *testing.T) {
 	js := "\n"
 	expected := []Token{
-		Token{LineTerminatorToken, js},
+		Token{Type: LineTerminatorToken, Value: js},
 	}
 	expectedTokens(t, expected, Lex("", js, true))
 }
@@ -491,8 +491,8 @@ func TestLex_LineTerminator1(t *testing.T) {
 func TestLex_LineTerminator2(t *testing.T) {
 	js := "\n\n"
 	expected := []Token{
-		Token{LineTerminatorToken, "\n"},
-		Token{LineTerminatorToken, "\n"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
+		Token{Type: LineTerminatorToken, Value: "\n"},
 	}
 	expectedTokens(t, expected, Lex("", js, true))
 }
@@ -500,10 +500,10 @@ func TestLex_LineTerminator2(t *testing.T) {
 func TestLex_LineTerminator3(t *testing.T) {
 	js := "\u000A\u000D\u2028\u2029"
 	expected := []Token{
-		Token{LineTerminatorToken, "\u000A"},
-		Token{LineTerminatorToken, "\u000D"},
-		Token{LineTerminatorToken, "\u2028"},
-		Token{LineTerminatorToken, "\u2029"},
+		Token{Type: LineTerminatorToken, Value: "\u000A"},
+		Token{Type: LineTerminatorToken, Value: "\u000D"},
+		Token{Type: LineTerminatorToken, Value: "\u2028"},
+		Token{Type: LineTerminatorToken, Value: "\u2029"},
 	}
 	expectedTokens(t, expected, Lex("", js, true))
 }
@@ -514,7 +514,7 @@ func TestLex_LineTerminator3(t *testing.T) {
 
 func TestLex_NumericLiteral0(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "0"},
+		Token{Type: NumericLiteralToken, Value: "0"},
 	}
 	js := "0"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -522,7 +522,7 @@ func TestLex_NumericLiteral0(t *testing.T) {
 
 func TestLex_NumericLiteral1(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "1"},
+		Token{Type: NumericLiteralToken, Value: "1"},
 	}
 	js := "1"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -530,7 +530,7 @@ func TestLex_NumericLiteral1(t *testing.T) {
 
 func TestLex_NumericLiteral2(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "10"},
+		Token{Type: NumericLiteralToken, Value: "10"},
 	}
 	js := "10"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -538,7 +538,7 @@ func TestLex_NumericLiteral2(t *testing.T) {
 
 func TestLex_NumericLiteral3(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "0xAB10"},
+		Token{Type: NumericLiteralToken, Value: "0xAB10"},
 	}
 	js := "0xAB10"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -546,7 +546,7 @@ func TestLex_NumericLiteral3(t *testing.T) {
 
 func TestLex_NumericLiteral4(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "0b0100"},
+		Token{Type: NumericLiteralToken, Value: "0b0100"},
 	}
 	js := "0b0100"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -554,7 +554,7 @@ func TestLex_NumericLiteral4(t *testing.T) {
 
 func TestLex_NumericLiteral5(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "0O0005"},
+		Token{Type: NumericLiteralToken, Value: "0O0005"},
 	}
 	js := "0O0005"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -562,7 +562,7 @@ func TestLex_NumericLiteral5(t *testing.T) {
 
 func TestLex_NumericLiteral6(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "-6"},
+		Token{Type: NumericLiteralToken, Value: "-6"},
 	}
 	js := "-6"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -570,7 +570,7 @@ func TestLex_NumericLiteral6(t *testing.T) {
 
 func TestLex_NumericLiteral7(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "0.0007"},
+		Token{Type: NumericLiteralToken, Value: "0.0007"},
 	}
 	js := "0.0007"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -578,7 +578,7 @@ func TestLex_NumericLiteral7(t *testing.T) {
 
 func TestLex_NumericLiteral8(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "8.08"},
+		Token{Type: NumericLiteralToken, Value: "8.08"},
 	}
 	js := "8.08"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -586,7 +586,7 @@ func TestLex_NumericLiteral8(t *testing.T) {
 
 func TestLex_NumericLiteral9(t *testing.T) {
 	expected := []Token{
-		Token{NumericLiteralToken, "3e2"},
+		Token{Type: NumericLiteralToken, Value: "3e2"},
 	}
 	js := "3e2"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -594,7 +594,7 @@ func TestLex_NumericLiteral9(t *testing.T) {
 
 func TestLex_NumericLiteral10(t *testing.T) {
 	expected := []Token{
-		Token{ErrorToken, "bad number syntax: \"1o\""},
+		Token{Type: ErrorToken, Value: "bad number syntax: \"1o\""},
 	}
 	js := "1o"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -610,8 +610,8 @@ func TestLex_Punctuator1(t *testing.T) {
 	ws := " "
 
 	for _, punct := range punctuators {
-		expected = append(expected, Token{PunctuatorToken, punct})
-		expected = append(expected, Token{WhiteSpaceToken, ws})
+		expected = append(expected, Token{Type: PunctuatorToken, Value: punct})
+		expected = append(expected, Token{Type: WhiteSpaceToken, Value: ws})
 		js += punct + ws
 	}
 
@@ -621,11 +621,11 @@ func TestLex_Punctuator1(t *testing.T) {
 
 func TestLex_DivPunctuator1(t *testing.T) {
 	expected := []Token{
-		Token{IdentifierNameToken, "i"},
-		Token{DivPunctuatorToken, "/="},
-		Token{IdentifierNameToken, "j"},
-		Token{DivPunctuatorToken, "/"},
-		Token{NumericLiteralToken, "2"},
+		Token{Type: IdentifierNameToken, Value: "i"},
+		Token{Type: DivPunctuatorToken, Value: "/="},
+		Token{Type: IdentifierNameToken, Value: "j"},
+		Token{Type: DivPunctuatorToken, Value: "/"},
+		Token{Type: NumericLiteralToken, Value: "2"},
 	}
 	js := "i/=j/2"
 	l := Lex("", js, true)
@@ -634,8 +634,8 @@ func TestLex_DivPunctuator1(t *testing.T) {
 
 func TestLex_RightBracePunctuator1(t *testing.T) {
 	expected := []Token{
-		Token{PunctuatorToken, "{"},
-		Token{RightBracePunctuatorToken, "}"},
+		Token{Type: PunctuatorToken, Value: "{"},
+		Token{Type: RightBracePunctuatorToken, Value: "}"},
 	}
 	js := "{}"
 	l := Lex("", js, true)
@@ -648,26 +648,26 @@ func TestLex_RightBracePunctuator1(t *testing.T) {
 
 func TestLex_RegEx00(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWordToken, "var"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "foo"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{PunctuatorToken, "="}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{RegExToken, "/abc/i"}, InputElementRegExp},
+		TokenTest{Token{Type: ReservedWordToken, Value: "var"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "foo"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: PunctuatorToken, Value: "="}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: RegExToken, Value: "/abc/i"}, InputElementRegExp},
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = /abc/i", true))
 }
 
 func TestLex_RegEx01(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWordToken, "var"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "foo"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{PunctuatorToken, "="}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{ErrorToken, "regex did not close with '/' "}, InputElementRegExp},
+		TokenTest{Token{Type: ReservedWordToken, Value: "var"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "foo"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: PunctuatorToken, Value: "="}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: ErrorToken, Value: "regex did not close with '/' "}, InputElementRegExp},
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = /abc", true))
 }
@@ -678,13 +678,13 @@ func TestLex_RegEx01(t *testing.T) {
 
 func TestLex_StringLiteralSingleQuote1(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "var"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "="},
-		Token{WhiteSpaceToken, " "},
-		Token{StringLiteralToken, "'foo'"},
+		Token{Type: ReservedWordToken, Value: "var"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: StringLiteralToken, Value: "'foo'"},
 	}
 	js := "var foo = 'foo'"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -692,14 +692,14 @@ func TestLex_StringLiteralSingleQuote1(t *testing.T) {
 
 func TestLex_StringLiteralSingleQuote2(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "var"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "="},
-		Token{WhiteSpaceToken, " "},
-		Token{ErrorToken, "did not reach end of string literal reached eof"},
-		Token{StringLiteralToken, "'foo"},
+		Token{Type: ReservedWordToken, Value: "var"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: ErrorToken, Value: "did not reach end of string literal reached eof"},
+		Token{Type: StringLiteralToken, Value: "'foo"},
 	}
 	js := "var foo = 'foo"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -707,13 +707,13 @@ func TestLex_StringLiteralSingleQuote2(t *testing.T) {
 
 func TestLex_StringLiteralDoubleQuote1(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "var"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "="},
-		Token{WhiteSpaceToken, " "},
-		Token{StringLiteralToken, "\"foo\""},
+		Token{Type: ReservedWordToken, Value: "var"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: StringLiteralToken, Value: "\"foo\""},
 	}
 	js := "var foo = \"foo\""
 	expectedTokens(t, expected, Lex("", js, true))
@@ -721,14 +721,14 @@ func TestLex_StringLiteralDoubleQuote1(t *testing.T) {
 
 func TestLex_StringLiteralDoubleQuote2(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "var"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "="},
-		Token{WhiteSpaceToken, " "},
-		Token{ErrorToken, "did not reach end of string literal reached eof"},
-		Token{StringLiteralToken, "\"foo"},
+		Token{Type: ReservedWordToken, Value: "var"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: ErrorToken, Value: "did not reach end of string literal reached eof"},
+		Token{Type: StringLiteralToken, Value: "\"foo"},
 	}
 	js := "var foo = \"foo"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -740,13 +740,13 @@ func TestLex_StringLiteralDoubleQuote2(t *testing.T) {
 
 func TestLex_TemplateLiteral01(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "var"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "="},
-		Token{WhiteSpaceToken, " "},
-		Token{NoSubstitutionTemplateToken, "`foo`"},
+		Token{Type: ReservedWordToken, Value: "var"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: NoSubstitutionTemplateToken, Value: "`foo`"},
 	}
 	js := "var foo = `foo`"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -754,13 +754,13 @@ func TestLex_TemplateLiteral01(t *testing.T) {
 
 func TestLex_TemplateLiteral02(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "var"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "="},
-		Token{WhiteSpaceToken, " "},
-		Token{NoSubstitutionTemplateToken, "``"},
+		Token{Type: ReservedWordToken, Value: "var"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: NoSubstitutionTemplateToken, Value: "``"},
 	}
 	js := "var foo = ``"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -768,13 +768,13 @@ func TestLex_TemplateLiteral02(t *testing.T) {
 
 func TestLex_TemplateLiteral03(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "var"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "="},
-		Token{WhiteSpaceToken, " "},
-		Token{ErrorToken, "did not reach end of template literal reached eof"},
+		Token{Type: ReservedWordToken, Value: "var"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: ErrorToken, Value: "did not reach end of template literal reached eof"},
 	}
 	js := "var foo = `"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -782,14 +782,14 @@ func TestLex_TemplateLiteral03(t *testing.T) {
 
 func TestLex_TemplateLiteral04(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWordToken, "var"},
-		Token{WhiteSpaceToken, " "},
-		Token{IdentifierNameToken, "foo"},
-		Token{WhiteSpaceToken, " "},
-		Token{PunctuatorToken, "="},
-		Token{WhiteSpaceToken, " "},
-		Token{TemplateHeadToken, "`Hello ${"},
-		Token{IdentifierNameToken, "friend"},
+		Token{Type: ReservedWordToken, Value: "var"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: IdentifierNameToken, Value: "foo"},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: PunctuatorToken, Value: "="},
+		Token{Type: WhiteSpaceToken, Value: " "},
+		Token{Type: TemplateHeadToken, Value: "`Hello ${"},
+		Token{Type: IdentifierNameToken, Value: "friend"},
 	}
 	js := "var foo = `Hello ${friend"
 	expectedTokens(t, expected, Lex("", js, true))
@@ -797,76 +797,76 @@ func TestLex_TemplateLiteral04(t *testing.T) {
 
 func TestLex_TemplateLiteral05(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWordToken, "var"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "foo"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{PunctuatorToken, "="}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{TemplateHeadToken, "`Hello ${"}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "friend"}, InputElementDiv},
-		TokenTest{Token{TemplateTailToken, "}!`"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{Type: ReservedWordToken, Value: "var"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "foo"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: PunctuatorToken, Value: "="}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: TemplateHeadToken, Value: "`Hello ${"}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "friend"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateTailToken, Value: "}!`"}, InputElementRegExpOrTemplateTail},
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}!`", true))
 }
 
 func TestLex_TemplateLiteral06(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWordToken, "var"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "foo"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{PunctuatorToken, "="}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{TemplateHeadToken, "`Hello ${"}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "friend"}, InputElementDiv},
-		TokenTest{Token{ErrorToken, "did not reach TemplateMiddle or TemplateTail but reached eof"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{Type: ReservedWordToken, Value: "var"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "foo"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: PunctuatorToken, Value: "="}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: TemplateHeadToken, Value: "`Hello ${"}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "friend"}, InputElementDiv},
+		TokenTest{Token{Type: ErrorToken, Value: "did not reach TemplateMiddle or TemplateTail but reached eof"}, InputElementRegExpOrTemplateTail},
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}! ", true))
 }
 
 func TestLex_TemplateLiteral07(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWordToken, "var"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "foo"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{PunctuatorToken, "="}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{TemplateHeadToken, "`Hello ${"}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "friend"}, InputElementDiv},
-		TokenTest{Token{TemplateMiddleToken, "}! ${"}, InputElementRegExpOrTemplateTail},
-		TokenTest{Token{TemplateHeadToken, "` ${"}, InputElementDiv},
-		TokenTest{Token{NumericLiteralToken, "4"}, InputElementDiv},
-		TokenTest{Token{TemplateTailToken, "}`"}, InputElementRegExpOrTemplateTail},
-		TokenTest{Token{PunctuatorToken, "+"}, InputElementDiv},
-		TokenTest{Token{TemplateHeadToken, "`${"}, InputElementDiv},
-		TokenTest{Token{NumericLiteralToken, "2"}, InputElementDiv},
-		TokenTest{Token{TemplateTailToken, "} `"}, InputElementRegExpOrTemplateTail},
-		TokenTest{Token{TemplateTailToken, "}`"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{Type: ReservedWordToken, Value: "var"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "foo"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: PunctuatorToken, Value: "="}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: TemplateHeadToken, Value: "`Hello ${"}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "friend"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateMiddleToken, Value: "}! ${"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{Type: TemplateHeadToken, Value: "` ${"}, InputElementDiv},
+		TokenTest{Token{Type: NumericLiteralToken, Value: "4"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateTailToken, Value: "}`"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{Type: PunctuatorToken, Value: "+"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateHeadToken, Value: "`${"}, InputElementDiv},
+		TokenTest{Token{Type: NumericLiteralToken, Value: "2"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateTailToken, Value: "} `"}, InputElementRegExpOrTemplateTail},
+		TokenTest{Token{Type: TemplateTailToken, Value: "}`"}, InputElementRegExpOrTemplateTail},
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}! ${` ${4}`+`${2} `}`", true))
 }
 
 func TestLex_TemplateLiteral08(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWordToken, "var"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "foo"}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{PunctuatorToken, "="}, InputElementDiv},
-		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
-		TokenTest{Token{TemplateHeadToken, "`Hello ${"}, InputElementDiv},
-		TokenTest{Token{IdentifierNameToken, "friend"}, InputElementDiv},
-		TokenTest{Token{TemplateMiddleToken, "}! ${"}, InputElementTemplateTail},
-		TokenTest{Token{TemplateHeadToken, "` ${"}, InputElementDiv},
-		TokenTest{Token{NumericLiteralToken, "4"}, InputElementDiv},
-		TokenTest{Token{TemplateTailToken, "}`"}, InputElementTemplateTail},
-		TokenTest{Token{PunctuatorToken, "+"}, InputElementDiv},
-		TokenTest{Token{TemplateHeadToken, "`${"}, InputElementDiv},
-		TokenTest{Token{NumericLiteralToken, "2"}, InputElementDiv},
-		TokenTest{Token{TemplateTailToken, "} `"}, InputElementTemplateTail},
-		TokenTest{Token{TemplateTailToken, "}`"}, InputElementTemplateTail},
+		TokenTest{Token{Type: ReservedWordToken, Value: "var"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "foo"}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: PunctuatorToken, Value: "="}, InputElementDiv},
+		TokenTest{Token{Type: WhiteSpaceToken, Value: " "}, InputElementDiv},
+		TokenTest{Token{Type: TemplateHeadToken, Value: "`Hello ${"}, InputElementDiv},
+		TokenTest{Token{Type: IdentifierNameToken, Value: "friend"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateMiddleToken, Value: "}! ${"}, InputElementTemplateTail},
+		TokenTest{Token{Type: TemplateHeadToken, Value: "` ${"}, InputElementDiv},
+		TokenTest{Token{Type: NumericLiteralToken, Value: "4"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateTailToken, Value: "}`"}, InputElementTemplateTail},
+		TokenTest{Token{Type: PunctuatorToken, Value: "+"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateHeadToken, Value: "`${"}, InputElementDiv},
+		TokenTest{Token{Type: NumericLiteralToken, Value: "2"}, InputElementDiv},
+		TokenTest{Token{Type: TemplateTailToken, Value: "} `"}, InputElementTemplateTail},
+		TokenTest{Token{Type: TemplateTailToken, Value: "}`"}, InputElementTemplateTail},
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = `Hello ${friend}! ${` ${4}`+`${2} `}`", true))
 }
@@ -878,7 +878,7 @@ func TestLex_TemplateLiteral08(t *testing.T) {
 func TestLex_Whitespace1(t *testing.T) {
 	js := " \t"
 	expected := []Token{
-		Token{WhiteSpaceToken, js},
+		Token{Type: WhiteSpaceToken, Value: js},
 	}
 	expectedTokens(t, expected, Lex("", js, true))
 }
@@ -886,7 +886,7 @@ func TestLex_Whitespace1(t *testing.T) {
 func TestLex_Whitespace2(t *testing.T) {
 	js := " "
 	expected := []Token{
-		Token{WhiteSpaceToken, js},
+		Token{Type: WhiteSpaceToken, Value: js},
 	}
 	expectedTokens(t, expected, Lex("", js, true))
 }
