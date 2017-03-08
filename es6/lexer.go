@@ -98,7 +98,7 @@ func (l *Lexer) Next(goal LexerGoal) Token {
 }
 
 // Position returns the Lexer's current position
-func (l *Lexer) Position() (offset, line, column int ) {
+func (l *Lexer) CurrentPosition() (offset, line, column int ) {
 	return l.pos, l.line, l.column
 }
 
