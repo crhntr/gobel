@@ -910,13 +910,24 @@ func ParseDeclarationNode(l *Lexer) (ASTNode, error) {
 //  GeneratorDeclaration[?Yield, ?Default]
 // implements: Parser and ASTNode
 type HoistableDeclarationNode struct {
+	child ASTNode
 	node
 }
 
 // ParseHoistableDeclarationNode ...
 func ParseHoistableDeclarationNode(l *Lexer) (ASTNode, error) {
-	panic("ParseHoistableDeclarationNode not implemented")
-	// return nil, nil
+	node := HoistableDeclarationNode{}
+	child, err := tryParseFuncs(l,
+		ParseFunctionDeclarationNode,
+		ParseGeneratorDeclarationNode,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if child != nil {
+		node.child = node
+	}
+	return node, err
 }
 
 // BreakableStatementNode [Yield, Return] : [See clause 13]
@@ -1593,12 +1604,45 @@ func ParseDebuggerStatementNode(l *Lexer) (ASTNode, error) {
 //  [+Default] function ( FormalParameters ) { FunctionBody }
 // implements: Parser and ASTNode
 type FunctionDeclarationNode struct {
+ 	BindingIdentifier BindingIdentifierNode
+	FormalParameters  FormalParametersNode
+	FunctionBody      FunctionBodyNode
 	node
 }
 
 // ParseFunctionDeclarationNode ...
 func ParseFunctionDeclarationNode(l *Lexer) (ASTNode, error) {
+	var (
+		// node = FunctionDeclarationNode{}
+		// err error
+	)
+	tokPeek0 := l.Peek(InputElementDiv)
+	if tokPeek0.Type != ReservedWordToken {
+		return nil, IncorrectTokenError(tokPeek0)
+	}
+	if tokPeek0.Value != "function" {
+		return nil, IncorrectTokenError(tokPeek0)
+	}
+	l.Next(InputElementDiv) // accept input token
+
+	tokPeek1 := l.Peek(InputElementDiv)
+	fmt.Print(tokPeek1)
 	panic("ParseFunctionDeclarationNode not implemented")
+	// // if next token is not "(" attempt BindingIdentifier
+	// if !(tokPeek1.Type == PunctuatorToken && tokPeek0.Value == "(") {
+	// 	var identifierChild ASTNode
+	// 	identifierChild, err = ParseBindingIdentifierNode(l)
+	// 	if err != nil {
+	// 		_, isIncorrectToken := err.(IncorrectTokenError)
+	// 		if !isIncorrectToken {
+	// 			return nil, err
+	// 		}
+	// 	}
+	// 	var ok bool
+	// 	if node.BindingIdentifier, ok = identifierChild.(BindingIdentifierNode); ok {
+	// 		return node, IncorrectTokenError(tokPeek1)
+	// 	}
+	// }
 	// return nil, nil
 }
 
