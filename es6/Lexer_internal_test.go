@@ -358,7 +358,7 @@ func TestToken_String(t *testing.T) {
 func expectedTokens(t *testing.T, expectedTokens []Token, l *Lexer) {
 	i := 0
 	for _, expected := range expectedTokens {
-		tok, _ := l.Next(InputElementDiv)
+		tok := l.Next(InputElementDiv)
 		t.Logf("%d: %s %s\n", i, expectedTokens[i], tok)
 		if !expected.Equals(tok) {
 			t.Errorf("expected and recived tokens do not match [%d](%s != %s)", i, tok, expectedTokens[i])
@@ -378,7 +378,7 @@ type TokenTest struct {
 func expectedTokensTable(t *testing.T, expectedTokenRows []TokenTest, l *Lexer) {
 	i := 0
 	for _, expected := range expectedTokenRows {
-		tok , _:= l.Next(expected.Goal)
+		tok := l.Next(expected.Goal)
 		t.Logf("%d: %s %s\n", i, expected.Token, tok)
 		if !expected.Token.Equals(tok) {
 			t.Errorf("expected and recived tokens do not match [%d](%s != %s)", i, expected.Token, tok)

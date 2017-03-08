@@ -86,13 +86,7 @@ func (goal LexerGoal) String() string {
 }
 
 // Next returns the next token
-func (l *Lexer) Next(goal LexerGoal) (Token, Position) {
-	pos := Position{
-		Filename: l.name,
-		Line: l.line,
-		Column: l.column,
-		Offset: l.pos,
-	}
+func (l *Lexer) Next(goal LexerGoal) Token {
 	l.goal = goal
 	l.state = lexInputElement
 	for len(l.tokens) < 1 {
@@ -100,7 +94,12 @@ func (l *Lexer) Next(goal LexerGoal) (Token, Position) {
 	}
 	tok := l.tokens[0]
 	l.tokens = l.tokens[1:]
-	return tok, pos
+	return tok
+}
+
+// Position returns the Lexer's current position
+func (l *Lexer) Position() (offset, line, column int ) {
+	return l.pos, l.line, l.column
 }
 
 const eof rune = -1

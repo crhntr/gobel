@@ -17,7 +17,7 @@ func DecodeES6Script(r io.Reader) (ASTNode, error) {
 	l := Lex("", string(b), true)
 
 	for {
-		tok, _ := l.Next(InputElementDiv)
+		tok := l.Next(InputElementDiv)
 		if tok.Type == EOFToken {
 			break
 		}
