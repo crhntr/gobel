@@ -1239,13 +1239,43 @@ func ParseEmptyStatementNode(l *Lexer) (ASTNode, error) {
 //  [lookahead ∉ {{, function, class, let [}] Expression[In, ?Yield] ;
 // implements: Parser and ASTNode
 type ExpressionStatementNode struct {
+	child ASTNode
 	node
 }
 
 // ParseExpressionStatementNode ...
 func ParseExpressionStatementNode(l *Lexer) (ASTNode, error) {
-	panic("ParseExpressionStatementNode not implemented")
-	// return nil, nil
+	var err error
+	tok := l.Peek(InputElementDiv)
+	switch tok.Type {
+	case ReservedWordToken:
+		switch tok.Value {
+		case "function", "class":
+			return nil, IncorrectTokenError(tok)
+		case "let":
+			tok2 := l.Peek(InputElementDiv)
+			if tok2.Type == PunctuatorToken && tok2.Value == "[" {
+				return nil, IncorrectTokenError(tok2)
+			}
+		default:
+		}
+	case PunctuatorToken:
+		if tok.Type == PunctuatorToken && tok.Value == "{" {
+			return nil, IncorrectTokenError(tok)
+		}
+	default:
+	}
+	node := ExpressionStatementNode{}
+
+	node.child, err = ParseExpressionNode(l)
+	if err != nil {
+		return nil, err
+	}
+	tok3 := l.Peek(InputElementDiv)
+	if tok3.Type != PunctuatorToken || tok3.Value != ";" {
+		return nil, IncorrectTokenError(tok)
+	}
+	return node, nil
 }
 
 // IfStatementNode [Yield, Return] : [See 13.6]
