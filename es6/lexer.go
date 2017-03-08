@@ -135,13 +135,13 @@ func (l *Lexer) emit(typ TokenType) {
 	l.tokens = append(
 		l.tokens,
 		Token{
-			Type: typ,
+			Type:  typ,
 			Value: val,
-			pos: Position{
-				FileName: l.name,
-				Offset: l.pos,
-				Line: l.line,
-				Column: l.column,
+			Position: Position{
+				fileName: l.name,
+				offset:   l.pos,
+				line:     l.line,
+				column:   l.column,
 			},
 		},
 	)

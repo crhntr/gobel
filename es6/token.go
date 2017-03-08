@@ -7,13 +7,18 @@ import "fmt"
 type Token struct {
 	Type  TokenType
 	Value string
-	pos   Position
+	Position
 }
 
 // Position represents the source where
 type Position struct {
-	FileName             string
-	Offset, Line, Column int
+	fileName             string
+	offset, line, column int
+}
+
+// Position returns the Lexer's current position
+func (l *Position) Position() (filename string, offset, line, column int) {
+	return l.fileName, l.offset, l.line, l.column
 }
 
 func (tok Token) String() string {
