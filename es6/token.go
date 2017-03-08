@@ -23,73 +23,73 @@ type TokenType int
 // not handled Type's
 // TODO missing LineTerminatorSequence
 const (
-	Error TokenType = iota
-	EOF
+	ErrorToken TokenType = iota
+	EOFToken
 	// Comment ::
-	MultiLineComment
-	SingleLineComment
-	// WhiteSpace ::
-	WhiteSpace
-	// LineTerminator ::
-	LineTerminator
+	MultiLineCommentToken
+	SingleLineCommentToken
+	// WhiteSpaceToken ::
+	WhiteSpaceToken
+	// LineTerminatorToken ::
+	LineTerminatorToken
 	// ComomonToken ::
-	IdentifierName
-	ReservedWord
+	IdentifierNameToken
+	ReservedWordToken
 	//   Punctuator
-	Punctuator
-	RightBracePunctuator
-	DivPunctuator
+	PunctuatorToken
+	RightBracePunctuatorToken
+	DivPunctuatorToken
 
-	NumericLiteral
-	StringLiteral
+	NumericLiteralToken
+	StringLiteralToken
 
 	// Template ::
-	NoSubstitutionTemplate
-	TemplateHead
-	TemplateMiddle
-	TemplateTail
+	NoSubstitutionTemplateToken
+	TemplateHeadToken
+	TemplateMiddleToken
+	TemplateTailToken
 
 	// RegEx ::
-	RegEx
+	RegExToken
 )
 
 func (typ TokenType) String() string {
 	switch typ {
-	case Error:
+	case ErrorToken:
 		return "Error"
-	case EOF:
+	case EOFToken:
 		return "EOF"
-	case MultiLineComment:
+	case MultiLineCommentToken:
 		return "MultiLineComment"
-	case SingleLineComment:
+	case SingleLineCommentToken:
 		return "SingleLineComment"
-	case WhiteSpace:
+	case WhiteSpaceToken:
 		return "WhiteSpace"
-	case LineTerminator:
+	case LineTerminatorToken:
 		return "LineTerminator"
-	case IdentifierName:
+	case IdentifierNameToken:
 		return "IdentifierName"
-	case ReservedWord:
+	case ReservedWordToken:
 		return "ReservedWord"
-	case Punctuator:
+	case PunctuatorToken:
 		return "Punctuator"
-	case RightBracePunctuator:
+	case RightBracePunctuatorToken:
 		return "RightBracePunctuator"
-	case DivPunctuator:
+	case DivPunctuatorToken:
 		return "DivPunctuator"
-	case NumericLiteral:
+	case NumericLiteralToken:
 		return "NumericLiteral"
-	case StringLiteral:
+	case StringLiteralToken:
 		return "StringLiteral"
-	case TemplateHead:
+	case TemplateHeadToken:
 		return "TemplateHead"
-	case NoSubstitutionTemplate:
+	case NoSubstitutionTemplateToken:
 		return "NoSubstitutionTemplate"
-	case TemplateMiddle:
+	case TemplateMiddleToken:
 		return "TemplateMiddle"
-	case TemplateTail:
+	case TemplateTailToken:
 		return "TemplateTail"
-	case RegEx:
+	case RegExToken:
 		return "RegEx"
 	default:
 		return "UNKNOWN_TOKEN_TYPE"

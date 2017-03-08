@@ -4,26 +4,26 @@ import "testing"
 
 func TestLex_RegEx00(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWord, "var"}, InputElementDiv},
-		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
-		TokenTest{Token{IdentifierName, "foo"}, InputElementDiv},
-		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
-		TokenTest{Token{Punctuator, "="}, InputElementDiv},
-		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
-		TokenTest{Token{RegEx, "/abc/i"}, InputElementRegExp},
+		TokenTest{Token{ReservedWordToken, "var"}, InputElementDiv},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
+		TokenTest{Token{IdentifierNameToken, "foo"}, InputElementDiv},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
+		TokenTest{Token{PunctuatorToken, "="}, InputElementDiv},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
+		TokenTest{Token{RegExToken, "/abc/i"}, InputElementRegExp},
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = /abc/i", true))
 }
 
 func TestLex_RegEx01(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWord, "var"}, InputElementDiv},
-		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
-		TokenTest{Token{IdentifierName, "foo"}, InputElementDiv},
-		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
-		TokenTest{Token{Punctuator, "="}, InputElementDiv},
-		TokenTest{Token{WhiteSpace, " "}, InputElementDiv},
-		TokenTest{Token{Error, "regex did not close with '/' "}, InputElementRegExp},
+		TokenTest{Token{ReservedWordToken, "var"}, InputElementDiv},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
+		TokenTest{Token{IdentifierNameToken, "foo"}, InputElementDiv},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
+		TokenTest{Token{PunctuatorToken, "="}, InputElementDiv},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementDiv},
+		TokenTest{Token{ErrorToken, "regex did not close with '/' "}, InputElementRegExp},
 	}
 	expectedTokensTable(t, expected, Lex("", "var foo = /abc", true))
 }

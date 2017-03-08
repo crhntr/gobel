@@ -8,8 +8,8 @@ func TestLex_Punctuator1(t *testing.T) {
 	ws := " "
 
 	for _, punct := range punctuators {
-		expected = append(expected, Token{Punctuator, punct})
-		expected = append(expected, Token{WhiteSpace, ws})
+		expected = append(expected, Token{PunctuatorToken, punct})
+		expected = append(expected, Token{WhiteSpaceToken, ws})
 		js += punct + ws
 	}
 
@@ -19,11 +19,11 @@ func TestLex_Punctuator1(t *testing.T) {
 
 func TestLex_DivPunctuator1(t *testing.T) {
 	expected := []Token{
-		Token{IdentifierName, "i"},
-		Token{DivPunctuator, "/="},
-		Token{IdentifierName, "j"},
-		Token{DivPunctuator, "/"},
-		Token{NumericLiteral, "2"},
+		Token{IdentifierNameToken, "i"},
+		Token{DivPunctuatorToken, "/="},
+		Token{IdentifierNameToken, "j"},
+		Token{DivPunctuatorToken, "/"},
+		Token{NumericLiteralToken, "2"},
 	}
 	js := "i/=j/2"
 	l := Lex("", js, true)
@@ -32,8 +32,8 @@ func TestLex_DivPunctuator1(t *testing.T) {
 
 func TestLex_RightBracePunctuator1(t *testing.T) {
 	expected := []Token{
-		Token{Punctuator, "{"},
-		Token{RightBracePunctuator, "}"},
+		Token{PunctuatorToken, "{"},
+		Token{RightBracePunctuatorToken, "}"},
 	}
 	js := "{}"
 	l := Lex("", js, true)

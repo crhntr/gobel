@@ -22,8 +22,8 @@ func Test_peek(t *testing.T) {
 
 func TestLex_Whitespace_AND_SingleLineComment(t *testing.T) {
 	expected := []Token{
-		Token{WhiteSpace, " \t"},
-		Token{SingleLineComment, " Hello World!"},
+		Token{WhiteSpaceToken, " \t"},
+		Token{SingleLineCommentToken, " Hello World!"},
 	}
 	js := " \t// Hello World!"
 	l := Lex("", js, true)
@@ -33,9 +33,9 @@ func TestLex_Whitespace_AND_SingleLineComment(t *testing.T) {
 func TestLex_Terminator_And_Whitespace(t *testing.T) {
 	js := "\n\t\n"
 	expected := []Token{
-		Token{LineTerminator, "\n"},
-		Token{WhiteSpace, "\t"},
-		Token{LineTerminator, "\n"},
+		Token{LineTerminatorToken, "\n"},
+		Token{WhiteSpaceToken, "\t"},
+		Token{LineTerminatorToken, "\n"},
 	}
 
 	l := Lex("", js, true)
@@ -54,8 +54,8 @@ func TestLex_ReservedWord1(t *testing.T) {
 	}
 	l := Lex("", js, true)
 	for _, word := range l.reservedWords {
-		expected = append(expected, Token{ReservedWord, word})
-		expected = append(expected, Token{WhiteSpace, ws})
+		expected = append(expected, Token{ReservedWordToken, word})
+		expected = append(expected, Token{WhiteSpaceToken, ws})
 	}
 
 	expectedTokens(t, expected, l)
@@ -74,8 +74,8 @@ func TestLex_ReservedWord2(t *testing.T) {
 
 	l := Lex("", js, false)
 	for _, word := range l.reservedWords {
-		expected = append(expected, Token{ReservedWord, word})
-		expected = append(expected, Token{WhiteSpace, ws})
+		expected = append(expected, Token{ReservedWordToken, word})
+		expected = append(expected, Token{WhiteSpaceToken, ws})
 	}
 
 	expectedTokens(t, expected, l)
@@ -95,14 +95,14 @@ func TestLex_ReservedWord2(t *testing.T) {
 
 func TestLex1(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWord, "function"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "("},
-		Token{Punctuator, ")"},
-		Token{Punctuator, "{"},
-		Token{RightBracePunctuator, "}"},
-		Token{Punctuator, "("},
-		Token{Punctuator, ")"},
+		Token{ReservedWordToken, "function"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, "("},
+		Token{PunctuatorToken, ")"},
+		Token{PunctuatorToken, "{"},
+		Token{RightBracePunctuatorToken, "}"},
+		Token{PunctuatorToken, "("},
+		Token{PunctuatorToken, ")"},
 	}
 
 	js := "function (){}()"
@@ -112,16 +112,16 @@ func TestLex1(t *testing.T) {
 
 func TestLex2(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWord, "function"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "foo"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "("},
-		Token{Punctuator, ")"},
-		Token{Punctuator, "{"},
-		Token{RightBracePunctuator, "}"},
-		Token{Punctuator, "("},
-		Token{Punctuator, ")"},
+		Token{ReservedWordToken, "function"},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "foo"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, "("},
+		Token{PunctuatorToken, ")"},
+		Token{PunctuatorToken, "{"},
+		Token{RightBracePunctuatorToken, "}"},
+		Token{PunctuatorToken, "("},
+		Token{PunctuatorToken, ")"},
 	}
 
 	js := "function foo (){}()"
@@ -131,26 +131,26 @@ func TestLex2(t *testing.T) {
 
 func TestLex3(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWord, "function"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "add"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "a"},
-		Token{Punctuator, ","},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "b"},
-		Token{Punctuator, ")"},
-		Token{Punctuator, "{"},
-		Token{LineTerminator, "\n"},
-		Token{WhiteSpace, "\t"},
-		Token{ReservedWord, "return"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "a"},
-		Token{Punctuator, "+"},
-		Token{IdentifierName, "b"},
-		Token{LineTerminator, "\n"},
-		Token{RightBracePunctuator, "}"},
+		Token{ReservedWordToken, "function"},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "add"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "a"},
+		Token{PunctuatorToken, ","},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "b"},
+		Token{PunctuatorToken, ")"},
+		Token{PunctuatorToken, "{"},
+		Token{LineTerminatorToken, "\n"},
+		Token{WhiteSpaceToken, "\t"},
+		Token{ReservedWordToken, "return"},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "a"},
+		Token{PunctuatorToken, "+"},
+		Token{IdentifierNameToken, "b"},
+		Token{LineTerminatorToken, "\n"},
+		Token{RightBracePunctuatorToken, "}"},
 	}
 
 	js := "function add (a, b){\n\treturn a+b\n}"
@@ -160,67 +160,67 @@ func TestLex3(t *testing.T) {
 
 func TestLexJS(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWord, "function"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "fibonacci"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "n"},
-		Token{Punctuator, ")"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "{"},
-		Token{LineTerminator, "\n"},
-		Token{WhiteSpace, "  "},
-		Token{ReservedWord, "if"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "n"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, ">="},
-		Token{WhiteSpace, " "},
-		Token{NumericLiteral, "2"},
-		Token{Punctuator, ")"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "{"},
-		Token{LineTerminator, "\n"},
-		Token{WhiteSpace, "    "},
-		Token{ReservedWord, "return"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "fibonacci"},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "n"},
-		Token{NumericLiteral, "-1"},
-		Token{Punctuator, ")"},
-		Token{WhiteSpace, " "},
-		Token{Punctuator, "+"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "fibonacci"},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "n"},
-		Token{NumericLiteral, "-2"},
-		Token{Punctuator, ")"},
-		Token{LineTerminator, "\n"},
-		Token{WhiteSpace, "  "},
-		Token{RightBracePunctuator, "}"},
-		Token{LineTerminator, "\n"},
-		Token{WhiteSpace, "  "},
-		Token{ReservedWord, "return"},
-		Token{WhiteSpace, " "},
-		Token{NumericLiteral, "1"},
-		Token{LineTerminator, "\n"},
-		Token{RightBracePunctuator, "}"},
-		Token{LineTerminator, "\n"},
-		Token{LineTerminator, "\n"},
-		Token{IdentifierName, "console"},
-		Token{Punctuator, "."},
-		Token{IdentifierName, "log"},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "fibonacci"},
-		Token{Punctuator, "("},
-		Token{NumericLiteral, "7"},
-		Token{Punctuator, ")"},
-		Token{Punctuator, ")"},
-		Token{LineTerminator, "\n"},
+		Token{ReservedWordToken, "function"},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "fibonacci"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "n"},
+		Token{PunctuatorToken, ")"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, "{"},
+		Token{LineTerminatorToken, "\n"},
+		Token{WhiteSpaceToken, "  "},
+		Token{ReservedWordToken, "if"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "n"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, ">="},
+		Token{WhiteSpaceToken, " "},
+		Token{NumericLiteralToken, "2"},
+		Token{PunctuatorToken, ")"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, "{"},
+		Token{LineTerminatorToken, "\n"},
+		Token{WhiteSpaceToken, "    "},
+		Token{ReservedWordToken, "return"},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "fibonacci"},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "n"},
+		Token{NumericLiteralToken, "-1"},
+		Token{PunctuatorToken, ")"},
+		Token{WhiteSpaceToken, " "},
+		Token{PunctuatorToken, "+"},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "fibonacci"},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "n"},
+		Token{NumericLiteralToken, "-2"},
+		Token{PunctuatorToken, ")"},
+		Token{LineTerminatorToken, "\n"},
+		Token{WhiteSpaceToken, "  "},
+		Token{RightBracePunctuatorToken, "}"},
+		Token{LineTerminatorToken, "\n"},
+		Token{WhiteSpaceToken, "  "},
+		Token{ReservedWordToken, "return"},
+		Token{WhiteSpaceToken, " "},
+		Token{NumericLiteralToken, "1"},
+		Token{LineTerminatorToken, "\n"},
+		Token{RightBracePunctuatorToken, "}"},
+		Token{LineTerminatorToken, "\n"},
+		Token{LineTerminatorToken, "\n"},
+		Token{IdentifierNameToken, "console"},
+		Token{PunctuatorToken, "."},
+		Token{IdentifierNameToken, "log"},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "fibonacci"},
+		Token{PunctuatorToken, "("},
+		Token{NumericLiteralToken, "7"},
+		Token{PunctuatorToken, ")"},
+		Token{PunctuatorToken, ")"},
+		Token{LineTerminatorToken, "\n"},
 	}
 
 	testData, err := ioutil.ReadFile("testdata/index01.js")
@@ -235,49 +235,49 @@ func TestLexJS(t *testing.T) {
 
 func TestLexJS2(t *testing.T) {
 	expected := []Token{
-		Token{ReservedWord, "function"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "fibonacci"},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "n"},
-		Token{Punctuator, ")"},
-		Token{Punctuator, "{"},
-		Token{ReservedWord, "if"},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "n"},
-		Token{Punctuator, ">="},
-		Token{NumericLiteral, "2"},
-		Token{Punctuator, ")"},
-		Token{Punctuator, "{"},
-		Token{ReservedWord, "return"},
-		Token{WhiteSpace, " "},
-		Token{IdentifierName, "fibonacci"},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "n"},
-		Token{NumericLiteral, "-1"},
-		Token{Punctuator, ")"},
-		Token{Punctuator, "+"},
-		Token{IdentifierName, "fibonacci"},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "n"},
-		Token{NumericLiteral, "-2"},
-		Token{Punctuator, ")"},
-		Token{RightBracePunctuator, "}"},
-		Token{ReservedWord, "return"},
-		Token{WhiteSpace, " "},
-		Token{NumericLiteral, "1"},
-		Token{RightBracePunctuator, "}"},
-		Token{Punctuator, ";"},
-		Token{IdentifierName, "console"},
-		Token{Punctuator, "."},
-		Token{IdentifierName, "log"},
-		Token{Punctuator, "("},
-		Token{IdentifierName, "fibonacci"},
-		Token{Punctuator, "("},
-		Token{NumericLiteral, "7"},
-		Token{Punctuator, ")"},
-		Token{Punctuator, ")"},
-		Token{LineTerminator, "\n"},
+		Token{ReservedWordToken, "function"},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "fibonacci"},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "n"},
+		Token{PunctuatorToken, ")"},
+		Token{PunctuatorToken, "{"},
+		Token{ReservedWordToken, "if"},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "n"},
+		Token{PunctuatorToken, ">="},
+		Token{NumericLiteralToken, "2"},
+		Token{PunctuatorToken, ")"},
+		Token{PunctuatorToken, "{"},
+		Token{ReservedWordToken, "return"},
+		Token{WhiteSpaceToken, " "},
+		Token{IdentifierNameToken, "fibonacci"},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "n"},
+		Token{NumericLiteralToken, "-1"},
+		Token{PunctuatorToken, ")"},
+		Token{PunctuatorToken, "+"},
+		Token{IdentifierNameToken, "fibonacci"},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "n"},
+		Token{NumericLiteralToken, "-2"},
+		Token{PunctuatorToken, ")"},
+		Token{RightBracePunctuatorToken, "}"},
+		Token{ReservedWordToken, "return"},
+		Token{WhiteSpaceToken, " "},
+		Token{NumericLiteralToken, "1"},
+		Token{RightBracePunctuatorToken, "}"},
+		Token{PunctuatorToken, ";"},
+		Token{IdentifierNameToken, "console"},
+		Token{PunctuatorToken, "."},
+		Token{IdentifierNameToken, "log"},
+		Token{PunctuatorToken, "("},
+		Token{IdentifierNameToken, "fibonacci"},
+		Token{PunctuatorToken, "("},
+		Token{NumericLiteralToken, "7"},
+		Token{PunctuatorToken, ")"},
+		Token{PunctuatorToken, ")"},
+		Token{LineTerminatorToken, "\n"},
 	}
 
 	testData, err := ioutil.ReadFile("testdata/index02.js")
@@ -292,43 +292,43 @@ func TestLexJS2(t *testing.T) {
 
 func TestLexJS3(t *testing.T) {
 	expected := []TokenTest{
-		TokenTest{Token{ReservedWord, "function"}, InputElementRegExp},
-		TokenTest{Token{WhiteSpace, " "}, InputElementRegExp},
-		TokenTest{Token{IdentifierName, "anylize_dna_sequence"}, InputElementRegExp},
-		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
-		TokenTest{Token{IdentifierName, "sequence"}, InputElementRegExp},
-		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
-		TokenTest{Token{WhiteSpace, " "}, InputElementRegExp},
-		TokenTest{Token{Punctuator, "{"}, InputElementRegExp},
-		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
-		TokenTest{Token{WhiteSpace, "  "}, InputElementRegExp},
-		TokenTest{Token{ReservedWord, "return"}, InputElementRegExp},
-		TokenTest{Token{WhiteSpace, " "}, InputElementRegExp},
-		TokenTest{Token{IdentifierName, "valid"}, InputElementRegExp},
-		TokenTest{Token{Punctuator, "."}, InputElementRegExp},
-		TokenTest{Token{IdentifierName, "match"}, InputElementRegExp},
-		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
-		TokenTest{Token{RegEx, "/([CGAT]{3}){1,}/g"}, InputElementRegExp},
-		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
-		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
-		TokenTest{Token{RightBracePunctuator, "}"}, InputElementRegExp},
-		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
-		TokenTest{Token{IdentifierName, "anylize_dna_sequence"}, InputElementRegExp},
-		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
-		TokenTest{Token{StringLiteral, "\"ATATTGGTGTTCATGTGCGCGGGGCCGACGAGCTACTGGCAGAACCACGAGGACAAGAGGTGA\""}, InputElementRegExp},
-		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
-		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
-		TokenTest{Token{IdentifierName, "anylize_dna_sequence"}, InputElementRegExp},
-		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
-		TokenTest{Token{StringLiteral, "\"FAIL\""}, InputElementRegExp},
-		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
-		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
-		TokenTest{Token{IdentifierName, "anylize_dna_sequence"}, InputElementRegExp},
-		TokenTest{Token{Punctuator, "("}, InputElementRegExp},
-		TokenTest{Token{StringLiteral, "\"Alanine\""}, InputElementRegExp},
-		TokenTest{Token{Punctuator, ")"}, InputElementRegExp},
-		TokenTest{Token{LineTerminator, "\n"}, InputElementRegExp},
-		TokenTest{Token{EOF, ""}, InputElementDiv},
+		TokenTest{Token{ReservedWordToken, "function"}, InputElementRegExp},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementRegExp},
+		TokenTest{Token{IdentifierNameToken, "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
+		TokenTest{Token{IdentifierNameToken, "sequence"}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, "{"}, InputElementRegExp},
+		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
+		TokenTest{Token{WhiteSpaceToken, "  "}, InputElementRegExp},
+		TokenTest{Token{ReservedWordToken, "return"}, InputElementRegExp},
+		TokenTest{Token{WhiteSpaceToken, " "}, InputElementRegExp},
+		TokenTest{Token{IdentifierNameToken, "valid"}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, "."}, InputElementRegExp},
+		TokenTest{Token{IdentifierNameToken, "match"}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
+		TokenTest{Token{RegExToken, "/([CGAT]{3}){1,}/g"}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
+		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
+		TokenTest{Token{RightBracePunctuatorToken, "}"}, InputElementRegExp},
+		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
+		TokenTest{Token{IdentifierNameToken, "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
+		TokenTest{Token{StringLiteralToken, "\"ATATTGGTGTTCATGTGCGCGGGGCCGACGAGCTACTGGCAGAACCACGAGGACAAGAGGTGA\""}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
+		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
+		TokenTest{Token{IdentifierNameToken, "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
+		TokenTest{Token{StringLiteralToken, "\"FAIL\""}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
+		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
+		TokenTest{Token{IdentifierNameToken, "anylize_dna_sequence"}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, "("}, InputElementRegExp},
+		TokenTest{Token{StringLiteralToken, "\"Alanine\""}, InputElementRegExp},
+		TokenTest{Token{PunctuatorToken, ")"}, InputElementRegExp},
+		TokenTest{Token{LineTerminatorToken, "\n"}, InputElementRegExp},
+		TokenTest{Token{EOFToken, ""}, InputElementDiv},
 	}
 	testData, err := ioutil.ReadFile("testdata/TestLexJS3.js")
 	if err != nil {
@@ -345,11 +345,11 @@ func TestToken_String(t *testing.T) {
 	if t1.String() == "" {
 		t.Error("t1.String() string returns empty string")
 	}
-	t2 := Token{LineTerminator, ""}
+	t2 := Token{LineTerminatorToken, ""}
 	if t2.String() == "" {
 		t.Error("t2.String() string returns empty string")
 	}
-	t3 := Token{MultiLineComment, " some string value "}
+	t3 := Token{MultiLineCommentToken, " some string value "}
 	if t3.String() == "" {
 		t.Error("t3.String() string returns empty string")
 	}

@@ -12,49 +12,49 @@ func TestLexer_Next01(t *testing.T) {
 
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.ReservedWord, "var"}
+		expected := es6.Token{es6.ReservedWordToken, "var"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.WhiteSpace, " "}
+		expected := es6.Token{es6.WhiteSpaceToken, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.IdentifierName, "foo"}
+		expected := es6.Token{es6.IdentifierNameToken, "foo"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.WhiteSpace, " "}
+		expected := es6.Token{es6.WhiteSpaceToken, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.Punctuator, "="}
+		expected := es6.Token{es6.PunctuatorToken, "="}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.WhiteSpace, " "}
+		expected := es6.Token{es6.WhiteSpaceToken, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.NumericLiteral, "123"}
+		expected := es6.Token{es6.NumericLiteralToken, "123"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
@@ -66,49 +66,49 @@ func TestLexer_Next02(t *testing.T) {
 
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.ReservedWord, "var"}
+		expected := es6.Token{es6.ReservedWordToken, "var"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.WhiteSpace, " "}
+		expected := es6.Token{es6.WhiteSpaceToken, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.IdentifierName, "foo"}
+		expected := es6.Token{es6.IdentifierNameToken, "foo"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.WhiteSpace, " "}
+		expected := es6.Token{es6.WhiteSpaceToken, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.Punctuator, "="}
+		expected := es6.Token{es6.PunctuatorToken, "="}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.WhiteSpace, " "}
+		expected := es6.Token{es6.WhiteSpaceToken, " "}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.NoSubstitutionTemplate, "`\\u006d\\x70`"}
+		expected := es6.Token{es6.NoSubstitutionTemplateToken, "`\\u006d\\x70`"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
@@ -120,14 +120,14 @@ func TestLexer_Next03(t *testing.T) {
 
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.IdentifierName, "i"}
+		expected := es6.Token{es6.IdentifierNameToken, "i"}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}
 	}
 	{
 		next := l.Next(es6.InputElementDiv)
-		expected := es6.Token{es6.EOF, ""}
+		expected := es6.Token{es6.EOFToken, ""}
 		if !next.Equals(expected) {
 			t.Errorf("expected token: %s, but got %s", expected, next)
 		}

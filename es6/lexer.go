@@ -271,7 +271,7 @@ func (l *Lexer) errorf(format string, args ...interface{}) stateFunc {
 	// 	fmt.Sprintf(format, args...),
 	// }
 	l.tokens = append(l.tokens, Token{
-		Error,
+		ErrorToken,
 		fmt.Sprintf(format, args...),
 	})
 	return nil

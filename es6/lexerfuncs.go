@@ -1,8 +1,8 @@
 package es6
 
 import (
-  "strings"
-  "unicode"
+	"strings"
+	"unicode"
 )
 
 // lexMux multiplexes the various states based on
@@ -72,7 +72,7 @@ func lexInputElement(l *Lexer) stateFunc {
 		l.errorf("unexpected end of input")
 		return nil
 	}
-	l.emit(EOF)
+	l.emit(EOFToken)
 	return nil
 }
 
@@ -90,7 +90,7 @@ func lexMultiLineComment(l *Lexer) stateFunc {
 		if l.acceptString("*/") {
 			l.pos -= len("*/")
 			if l.pos >= l.start {
-				l.emit(MultiLineComment)
+				l.emit(MultiLineCommentToken)
 			}
 			l.ignoreN(len("*/"))
 			return l.state
@@ -107,7 +107,7 @@ func lexSingleLineComment(l *Lexer) stateFunc {
 	l.ignore()
 	for {
 		if strings.HasPrefix(l.input[l.pos:], "\n") || l.next() == eof {
-			l.emit(SingleLineComment)
+			l.emit(SingleLineCommentToken)
 			l.accept("\n")
 			l.ignore()
 			return l.state
@@ -140,7 +140,7 @@ func lexIdentifierName(l *Lexer) stateFunc {
 	l.next()
 	for {
 		if !hasIdentifierNameContinuePrefix(l) {
-			l.emit(IdentifierName)
+			l.emit(IdentifierNameToken)
 			return l.state
 		}
 		l.next()
@@ -160,7 +160,7 @@ func hasLineTerminatorPrefix(l *Lexer) bool {
 
 func lexLineTerminator(l *Lexer) stateFunc {
 	l.accept(lineTerminators)
-	l.emit(LineTerminator)
+	l.emit(LineTerminatorToken)
 	return l.state
 }
 
@@ -187,7 +187,7 @@ func lexNumericLiteral(l *Lexer) stateFunc {
 			l.next()
 			return l.errorf("bad number syntax: %q", l.input[l.start:l.pos])
 		}
-		l.emit(NumericLiteral)
+		l.emit(NumericLiteralToken)
 		return l.state
 	}
 
@@ -242,7 +242,7 @@ func hasPunctuator(l *Lexer) bool {
 
 func lexPunctuator(l *Lexer) stateFunc {
 	l.acceptAnyString(punctuators)
-	l.emit(Punctuator)
+	l.emit(PunctuatorToken)
 	return l.state
 }
 
@@ -253,14 +253,14 @@ func hasDivPunctuator(l *Lexer) bool {
 
 func lexDivPunctuator(l *Lexer) stateFunc {
 	l.acceptAnyString([]string{"/=", "/"})
-	l.emit(DivPunctuator)
+	l.emit(DivPunctuatorToken)
 	return l.state
 	// }
 }
 
 func lexRightBracePunctuator(l *Lexer) stateFunc {
 	l.accept("}")
-	l.emit(RightBracePunctuator)
+	l.emit(RightBracePunctuatorToken)
 	return l.state
 }
 
@@ -285,7 +285,7 @@ func lexRegex(l *Lexer) stateFunc {
 		}
 	}
 
-	l.emit(RegEx)
+	l.emit(RegExToken)
 
 	return nil
 }
@@ -318,7 +318,7 @@ func hasReservedWord(l *Lexer, str string) bool {
 
 func lexReservedWord(l *Lexer) stateFunc {
 	l.acceptAnyString(l.reservedWords)
-	l.emit(ReservedWord)
+	l.emit(ReservedWordToken)
 	return l.state
 }
 
@@ -349,12 +349,12 @@ func lexTemplateLiteral(l *Lexer) stateFunc {
 	for {
 		if strings.HasPrefix(l.input[l.pos:], "${") {
 			l.acceptString("${")
-			l.emit(TemplateHead)
+			l.emit(TemplateHeadToken)
 			return l.state
 		}
 		if strings.HasPrefix(l.input[l.pos:], "`") {
 			l.accept("`")
-			l.emit(NoSubstitutionTemplate)
+			l.emit(NoSubstitutionTemplateToken)
 			return l.state
 		}
 		if r = l.next(); r == eof {
@@ -370,12 +370,12 @@ func lexTemplateSubstitutionTail(l *Lexer) stateFunc {
 	for {
 		if strings.HasPrefix(l.input[l.pos:], "${") {
 			l.acceptString("${")
-			l.emit(TemplateMiddle)
+			l.emit(TemplateMiddleToken)
 			return l.state
 		}
 		if strings.HasPrefix(l.input[l.pos:], "`") {
 			l.accept("`")
-			l.emit(TemplateTail)
+			l.emit(TemplateTailToken)
 			return l.state
 		}
 		if r = l.next(); r == eof {
@@ -398,10 +398,9 @@ func hasWhiteSpacePrefix(l *Lexer) bool {
 
 func lexWhiteSpace(l *Lexer) stateFunc {
 	l.acceptRun("\u0009\u000B\u000C\u0020\u00A0\uFEFF\uFEFF")
-	l.emit(WhiteSpace)
+	l.emit(WhiteSpaceToken)
 	return l.state
 }
-
 
 //
 // StringLiteral
@@ -424,7 +423,7 @@ func lexStringLiteralDouble(l *Lexer) stateFunc {
 		}
 	}
 	l.accept("\"")
-	l.emit(StringLiteral)
+	l.emit(StringLiteralToken)
 	return l.state
 }
 
@@ -443,7 +442,7 @@ func lexStringLiteralSingle(l *Lexer) stateFunc {
 		}
 	}
 	l.accept("'")
-	l.emit(StringLiteral)
+	l.emit(StringLiteralToken)
 	return l.state
 }
 
