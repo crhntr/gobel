@@ -137,7 +137,7 @@ func (l *Lexer) emit(typ TokenType) {
 		Token{
 			Type:  typ,
 			Value: val,
-			Position: Position{
+			FilePosition: FilePosition{
 				fileName: l.name,
 				offset:   l.pos,
 				line:     l.line,

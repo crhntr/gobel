@@ -1,5 +1,8 @@
 package es6
 
+import (
+	"fmt"
+)
 // ASTNode ...
 type ASTNode interface {
 	Positioner
@@ -16,12 +19,15 @@ type Parser interface {
 }
 
 type node struct {
-	filename             string
-	line, column, offset int
+	FilePosition
 }
 
-func (n *node) Position() (filename string, offset int, line int, column int) {
-	return n.filename, n.offset, n.line, n.column
+// IncorrectTokenError is returned when an unexpected token is found
+// tokens recieved by function returning this error have only been peeked
+// so that the calling function may try another Parse* function
+type IncorrectTokenError Token
+func (tok IncorrectTokenError) Error() string {
+	return fmt.Sprintf("IncorrectTokenError at %s", tok.FilePosition.String())
 }
 
 //
@@ -36,8 +42,8 @@ type IdentifierReferenceNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n IdentifierReferenceNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseIdentifierReferenceNode implements Parser
+func ParseIdentifierReferenceNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -50,8 +56,8 @@ type BindingIdentifierNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingIdentifierNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingIdentifierNode implements Parser
+func ParseBindingIdentifierNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -63,8 +69,8 @@ type LabelIdentifierNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LabelIdentifierNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLabelIdentifierNode implements Parser
+func ParseLabelIdentifierNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -75,8 +81,8 @@ type IdentifierNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n IdentifierNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseIdentifierNode implements Parser
+func ParseIdentifierNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -99,8 +105,8 @@ type PrimaryExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n PrimaryExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParsePrimaryExpressionNode implements Parser
+func ParsePrimaryExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -115,8 +121,8 @@ type CoverParenthesizedExpressionAndArrowParameterListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n CoverParenthesizedExpressionAndArrowParameterListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseCoverParenthesizedExpressionAndArrowParameterListNode implements Parser
+func ParseCoverParenthesizedExpressionAndArrowParameterListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -127,8 +133,8 @@ type ParenthesizedExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ParenthesizedExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseParenthesizedExpressionNode implements Parser
+func ParseParenthesizedExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -142,8 +148,8 @@ type LiteralNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LiteralNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLiteralNode implements Parser
+func ParseLiteralNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -156,8 +162,8 @@ type ArrayLiteralNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ArrayLiteralNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseArrayLiteralNode implements Parser
+func ParseArrayLiteralNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -171,8 +177,8 @@ type ElementListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ElementListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseElementListNode implements Parser
+func ParseElementListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -184,8 +190,8 @@ type ElisionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ElisionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseElisionNode implements Parser
+func ParseElisionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -196,8 +202,8 @@ type SpreadElementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n SpreadElementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseSpreadElementNode implements Parser
+func ParseSpreadElementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -210,8 +216,8 @@ type ObjectLiteralNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ObjectLiteralNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseObjectLiteralNode implements Parser
+func ParseObjectLiteralNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -223,8 +229,8 @@ type PropertyDefinitionListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n PropertyDefinitionListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParsePropertyDefinitionListNode implements Parser
+func ParsePropertyDefinitionListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -238,8 +244,8 @@ type PropertyDefinitionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n PropertyDefinitionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParsePropertyDefinitionNode implements Parser
+func ParsePropertyDefinitionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -251,8 +257,8 @@ type PropertyNameNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n PropertyNameNode) Parse(l *Lexer) (ASTNode, error) {
+// ParsePropertyNameNode implements Parser
+func ParsePropertyNameNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -265,8 +271,8 @@ type LiteralPropertyNameNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LiteralPropertyNameNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLiteralPropertyNameNode implements Parser
+func ParseLiteralPropertyNameNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -277,8 +283,8 @@ type ComputedPropertyNameNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ComputedPropertyNameNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseComputedPropertyNameNode implements Parser
+func ParseComputedPropertyNameNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -289,8 +295,8 @@ type CoverInitializedNameNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n CoverInitializedNameNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseCoverInitializedNameNode implements Parser
+func ParseCoverInitializedNameNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -301,8 +307,8 @@ type InitializerNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n InitializerNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseInitializerNode implements Parser
+func ParseInitializerNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -314,8 +320,8 @@ type TemplateLiteralNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n TemplateLiteralNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseTemplateLiteralNode implements Parser
+func ParseTemplateLiteralNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -327,8 +333,8 @@ type TemplateSpansNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n TemplateSpansNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseTemplateSpansNode implements Parser
+func ParseTemplateSpansNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -340,8 +346,8 @@ type TemplateMiddleListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n TemplateMiddleListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseTemplateMiddleListNode implements Parser
+func ParseTemplateMiddleListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -358,8 +364,8 @@ type MemberExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n MemberExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseMemberExpressionNode implements Parser
+func ParseMemberExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -371,8 +377,8 @@ type SuperPropertyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n SuperPropertyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseSuperPropertyNode implements Parser
+func ParseSuperPropertyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -383,8 +389,8 @@ type MetaPropertyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n MetaPropertyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseMetaPropertyNode implements Parser
+func ParseMetaPropertyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -395,8 +401,8 @@ type NewTargetNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n NewTargetNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseNewTargetNode implements Parser
+func ParseNewTargetNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -408,8 +414,8 @@ type NewExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n NewExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseNewExpressionNode implements Parser
+func ParseNewExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -425,8 +431,8 @@ type CallExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n CallExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseCallExpressionNode implements Parser
+func ParseCallExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -437,8 +443,8 @@ type SuperCallNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n SuperCallNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseSuperCallNode implements Parser
+func ParseSuperCallNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -450,8 +456,8 @@ type ArgumentsNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ArgumentsNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseArgumentsNode implements Parser
+func ParseArgumentsNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -465,8 +471,8 @@ type ArgumentListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ArgumentListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseArgumentListNode implements Parser
+func ParseArgumentListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -478,8 +484,8 @@ type LeftHandSideExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LeftHandSideExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLeftHandSideExpressionNode implements Parser
+func ParseLeftHandSideExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -492,8 +498,8 @@ type PostfixExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n PostfixExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParsePostfixExpressionNode implements Parser
+func ParsePostfixExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -513,8 +519,8 @@ type UnaryExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n UnaryExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseUnaryExpressionNode implements Parser
+func ParseUnaryExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -526,8 +532,8 @@ type MultiplicativeExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n MultiplicativeExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseMultiplicativeExpressionNode implements Parser
+func ParseMultiplicativeExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -538,8 +544,8 @@ type MultiplicativeOperatorNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n MultiplicativeOperatorNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseMultiplicativeOperatorNode implements Parser
+func ParseMultiplicativeOperatorNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -552,8 +558,8 @@ type AdditiveExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n AdditiveExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseAdditiveExpressionNode implements Parser
+func ParseAdditiveExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -567,8 +573,8 @@ type ShiftExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ShiftExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseShiftExpressionNode implements Parser
+func ParseShiftExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -585,8 +591,8 @@ type RelationalExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n RelationalExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseRelationalExpressionNode implements Parser
+func ParseRelationalExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -601,8 +607,8 @@ type EqualityExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n EqualityExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseEqualityExpressionNode implements Parser
+func ParseEqualityExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -614,8 +620,8 @@ type BitwiseANDExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BitwiseANDExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBitwiseANDExpressionNode implements Parser
+func ParseBitwiseANDExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -627,8 +633,8 @@ type BitwiseXORExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BitwiseXORExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBitwiseXORExpressionNode implements Parser
+func ParseBitwiseXORExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -640,8 +646,8 @@ type BitwiseORExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BitwiseORExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBitwiseORExpressionNode implements Parser
+func ParseBitwiseORExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -653,8 +659,8 @@ type LogicalANDExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LogicalANDExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLogicalANDExpressionNode implements Parser
+func ParseLogicalANDExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -666,8 +672,8 @@ type LogicalORExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LogicalORExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLogicalORExpressionNode implements Parser
+func ParseLogicalORExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -679,8 +685,8 @@ type ConditionalExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ConditionalExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseConditionalExpressionNode implements Parser
+func ParseConditionalExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -695,8 +701,8 @@ type AssignmentExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n AssignmentExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseAssignmentExpressionNode implements Parser
+func ParseAssignmentExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -707,8 +713,8 @@ type AssignmentOperatorNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n AssignmentOperatorNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseAssignmentOperatorNode implements Parser
+func ParseAssignmentOperatorNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -720,8 +726,8 @@ type ExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseExpressionNode implements Parser
+func ParseExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -749,8 +755,8 @@ type StatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n StatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseStatementNode implements Parser
+func ParseStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -763,8 +769,8 @@ type DeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n DeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseDeclarationNode implements Parser
+func ParseDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -776,8 +782,8 @@ type HoistableDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n HoistableDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseHoistableDeclarationNode implements Parser
+func ParseHoistableDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -789,8 +795,8 @@ type BreakableStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BreakableStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBreakableStatementNode implements Parser
+func ParseBreakableStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -801,8 +807,8 @@ type BlockStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BlockStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBlockStatementNode implements Parser
+func ParseBlockStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -813,8 +819,8 @@ type BlockNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BlockNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBlockNode implements Parser
+func ParseBlockNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -826,8 +832,8 @@ type StatementListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n StatementListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseStatementListNode implements Parser
+func ParseStatementListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -839,8 +845,8 @@ type StatementListItemNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n StatementListItemNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseStatementListItemNode implements Parser
+func ParseStatementListItemNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -851,8 +857,8 @@ type LexicalDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LexicalDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLexicalDeclarationNode implements Parser
+func ParseLexicalDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -864,8 +870,8 @@ type LetOrConstNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LetOrConstNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLetOrConstNode implements Parser
+func ParseLetOrConstNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -877,8 +883,8 @@ type BindingListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingListNode implements Parser
+func ParseBindingListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -890,8 +896,8 @@ type LexicalBindingNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LexicalBindingNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLexicalBindingNode implements Parser
+func ParseLexicalBindingNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -902,8 +908,8 @@ type VariableStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n VariableStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseVariableStatementNode implements Parser
+func ParseVariableStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -915,8 +921,8 @@ type VariableDeclarationListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n VariableDeclarationListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseVariableDeclarationListNode implements Parser
+func ParseVariableDeclarationListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -928,8 +934,8 @@ type VariableDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n VariableDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseVariableDeclarationNode implements Parser
+func ParseVariableDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -941,8 +947,8 @@ type BindingPatternNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingPatternNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingPatternNode implements Parser
+func ParseBindingPatternNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -955,8 +961,8 @@ type ObjectBindingPatternNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ObjectBindingPatternNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseObjectBindingPatternNode implements Parser
+func ParseObjectBindingPatternNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -969,8 +975,8 @@ type ArrayBindingPatternNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ArrayBindingPatternNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseArrayBindingPatternNode implements Parser
+func ParseArrayBindingPatternNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -982,8 +988,8 @@ type BindingPropertyListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingPropertyListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingPropertyListNode implements Parser
+func ParseBindingPropertyListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -995,8 +1001,8 @@ type BindingElementListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingElementListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingElementListNode implements Parser
+func ParseBindingElementListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1007,8 +1013,8 @@ type BindingElisionElementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingElisionElementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingElisionElementNode implements Parser
+func ParseBindingElisionElementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1020,8 +1026,8 @@ type BindingPropertyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingPropertyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingPropertyNode implements Parser
+func ParseBindingPropertyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1033,8 +1039,8 @@ type BindingElementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingElementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingElementNode implements Parser
+func ParseBindingElementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1045,8 +1051,8 @@ type SingleNameBindingNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n SingleNameBindingNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseSingleNameBindingNode implements Parser
+func ParseSingleNameBindingNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1057,8 +1063,8 @@ type BindingRestElementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BindingRestElementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBindingRestElementNode implements Parser
+func ParseBindingRestElementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1069,8 +1075,8 @@ type EmptyStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n EmptyStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseEmptyStatementNode implements Parser
+func ParseEmptyStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1081,8 +1087,8 @@ type ExpressionStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ExpressionStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseExpressionStatementNode implements Parser
+func ParseExpressionStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1094,8 +1100,8 @@ type IfStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n IfStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseIfStatementNode implements Parser
+func ParseIfStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1116,8 +1122,8 @@ type IterationStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n IterationStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseIterationStatementNode implements Parser
+func ParseIterationStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1128,8 +1134,8 @@ type ForDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ForDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseForDeclarationNode implements Parser
+func ParseForDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1141,8 +1147,8 @@ type ForBindingNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ForBindingNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseForBindingNode implements Parser
+func ParseForBindingNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1154,8 +1160,8 @@ type ContinueStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ContinueStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseContinueStatementNode implements Parser
+func ParseContinueStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1167,8 +1173,8 @@ type BreakStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n BreakStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseBreakStatementNode implements Parser
+func ParseBreakStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1180,8 +1186,8 @@ type ReturnStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ReturnStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseReturnStatementNode implements Parser
+func ParseReturnStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1192,8 +1198,8 @@ type WithStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n WithStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseWithStatementNode implements Parser
+func ParseWithStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1204,8 +1210,8 @@ type SwitchStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n SwitchStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseSwitchStatementNode implements Parser
+func ParseSwitchStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1217,8 +1223,8 @@ type CaseBlockNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n CaseBlockNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseCaseBlockNode implements Parser
+func ParseCaseBlockNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1230,8 +1236,8 @@ type CaseClausesNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n CaseClausesNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseCaseClausesNode implements Parser
+func ParseCaseClausesNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1242,8 +1248,8 @@ type CaseClauseNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n CaseClauseNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseCaseClauseNode implements Parser
+func ParseCaseClauseNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1254,8 +1260,8 @@ type DefaultClauseNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n DefaultClauseNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseDefaultClauseNode implements Parser
+func ParseDefaultClauseNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1266,8 +1272,8 @@ type LabelledStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LabelledStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLabelledStatementNode implements Parser
+func ParseLabelledStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1279,8 +1285,8 @@ type LabelledItemNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n LabelledItemNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseLabelledItemNode implements Parser
+func ParseLabelledItemNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1291,8 +1297,8 @@ type ThrowStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ThrowStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseThrowStatementNode implements Parser
+func ParseThrowStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1305,8 +1311,8 @@ type TryStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n TryStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseTryStatementNode implements Parser
+func ParseTryStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1317,8 +1323,8 @@ type CatchNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n CatchNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseCatchNode implements Parser
+func ParseCatchNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1329,8 +1335,8 @@ type FinallyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FinallyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFinallyNode implements Parser
+func ParseFinallyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1342,8 +1348,8 @@ type CatchParameterNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n CatchParameterNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseCatchParameterNode implements Parser
+func ParseCatchParameterNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1354,8 +1360,8 @@ type DebuggerStatementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n DebuggerStatementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseDebuggerStatementNode implements Parser
+func ParseDebuggerStatementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1371,8 +1377,8 @@ type FunctionDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FunctionDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFunctionDeclarationNode implements Parser
+func ParseFunctionDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1383,8 +1389,8 @@ type FunctionExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FunctionExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFunctionExpressionNode implements Parser
+func ParseFunctionExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1395,8 +1401,8 @@ type StrictFormalParametersNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n StrictFormalParametersNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseStrictFormalParametersNode implements Parser
+func ParseStrictFormalParametersNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1408,8 +1414,8 @@ type FormalParametersNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FormalParametersNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFormalParametersNode implements Parser
+func ParseFormalParametersNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1422,8 +1428,8 @@ type FormalParameterListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FormalParameterListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFormalParameterListNode implements Parser
+func ParseFormalParameterListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1435,8 +1441,8 @@ type FormalsListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FormalsListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFormalsListNode implements Parser
+func ParseFormalsListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1447,8 +1453,8 @@ type FunctionRestParameterNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FunctionRestParameterNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFunctionRestParameterNode implements Parser
+func ParseFunctionRestParameterNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1459,8 +1465,8 @@ type FormalParameterNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FormalParameterNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFormalParameterNode implements Parser
+func ParseFormalParameterNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1471,8 +1477,8 @@ type FunctionBodyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FunctionBodyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFunctionBodyNode implements Parser
+func ParseFunctionBodyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1483,8 +1489,8 @@ type FunctionStatementListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n FunctionStatementListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseFunctionStatementListNode implements Parser
+func ParseFunctionStatementListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1495,8 +1501,8 @@ type ArrowFunctionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ArrowFunctionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseArrowFunctionNode implements Parser
+func ParseArrowFunctionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1510,8 +1516,8 @@ type ArrowParametersNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ArrowParametersNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseArrowParametersNode implements Parser
+func ParseArrowParametersNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1525,8 +1531,8 @@ type ConciseBodyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ConciseBodyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseConciseBodyNode implements Parser
+func ParseConciseBodyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1540,8 +1546,8 @@ type MethodDefinitionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n MethodDefinitionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseMethodDefinitionNode implements Parser
+func ParseMethodDefinitionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1552,8 +1558,8 @@ type PropertySetParameterListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n PropertySetParameterListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParsePropertySetParameterListNode implements Parser
+func ParsePropertySetParameterListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1564,8 +1570,8 @@ type GeneratorMethodNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n GeneratorMethodNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseGeneratorMethodNode implements Parser
+func ParseGeneratorMethodNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1577,8 +1583,8 @@ type GeneratorDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n GeneratorDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseGeneratorDeclarationNode implements Parser
+func ParseGeneratorDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1589,8 +1595,8 @@ type GeneratorExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n GeneratorExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseGeneratorExpressionNode implements Parser
+func ParseGeneratorExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1601,8 +1607,8 @@ type GeneratorBodyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n GeneratorBodyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseGeneratorBodyNode implements Parser
+func ParseGeneratorBodyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1615,8 +1621,8 @@ type YieldExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n YieldExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseYieldExpressionNode implements Parser
+func ParseYieldExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1628,8 +1634,8 @@ type ClassDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ClassDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseClassDeclarationNode implements Parser
+func ParseClassDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1640,8 +1646,8 @@ type ClassExpressionNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ClassExpressionNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseClassExpressionNode implements Parser
+func ParseClassExpressionNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1652,8 +1658,8 @@ type ClassTailNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ClassTailNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseClassTailNode implements Parser
+func ParseClassTailNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1664,8 +1670,8 @@ type ClassHeritageNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ClassHeritageNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseClassHeritageNode implements Parser
+func ParseClassHeritageNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1676,8 +1682,8 @@ type ClassBodyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ClassBodyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseClassBodyNode implements Parser
+func ParseClassBodyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1689,8 +1695,8 @@ type ClassElementListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ClassElementListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseClassElementListNode implements Parser
+func ParseClassElementListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1703,8 +1709,8 @@ type ClassElementNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ClassElementNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseClassElementNode implements Parser
+func ParseClassElementNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1719,8 +1725,8 @@ type ScriptNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ScriptNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseScriptNode implements Parser
+func ParseScriptNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1731,8 +1737,8 @@ type ScriptBodyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ScriptBodyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseScriptBodyNode implements Parser
+func ParseScriptBodyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1743,8 +1749,8 @@ type ModuleNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ModuleNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseModuleNode implements Parser
+func ParseModuleNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1755,8 +1761,8 @@ type ModuleBodyNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ModuleBodyNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseModuleBodyNode implements Parser
+func ParseModuleBodyNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1768,8 +1774,8 @@ type ModuleItemListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ModuleItemListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseModuleItemListNode implements Parser
+func ParseModuleItemListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1782,8 +1788,8 @@ type ModuleItemNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ModuleItemNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseModuleItemNode implements Parser
+func ParseModuleItemNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1795,8 +1801,8 @@ type ImportDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ImportDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseImportDeclarationNode implements Parser
+func ParseImportDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1811,8 +1817,8 @@ type ImportClauseNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ImportClauseNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseImportClauseNode implements Parser
+func ParseImportClauseNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1844,8 +1850,8 @@ type ImportsListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ImportsListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseImportsListNode implements Parser
+func ParseImportsListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1857,8 +1863,8 @@ type ImportSpecifierNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ImportSpecifierNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseImportSpecifierNode implements Parser
+func ParseImportSpecifierNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1869,8 +1875,8 @@ type ModuleSpecifierNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ModuleSpecifierNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseModuleSpecifierNode implements Parser
+func ParseModuleSpecifierNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1881,8 +1887,8 @@ type ImportedBindingNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ImportedBindingNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseImportedBindingNode implements Parser
+func ParseImportedBindingNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1900,8 +1906,8 @@ type ExportDeclarationNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ExportDeclarationNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseExportDeclarationNode implements Parser
+func ParseExportDeclarationNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1914,8 +1920,8 @@ type ExportClauseNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ExportClauseNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseExportClauseNode implements Parser
+func ParseExportClauseNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1927,8 +1933,8 @@ type ExportsListNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ExportsListNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseExportsListNode implements Parser
+func ParseExportsListNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }
 
@@ -1940,7 +1946,7 @@ type ExportSpecifierNode struct {
 	node
 }
 
-// Parse implements Parser
-func (n ExportSpecifierNode) Parse(l *Lexer) (ASTNode, error) {
+// ParseExportSpecifierNode implements Parser
+func ParseExportSpecifierNode(l *Lexer) (ASTNode, error) {
 	return nil, nil
 }

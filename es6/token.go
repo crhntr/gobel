@@ -7,18 +7,22 @@ import "fmt"
 type Token struct {
 	Type  TokenType
 	Value string
-	Position
+	FilePosition
 }
 
-// Position represents the source where
-type Position struct {
+// FilePosition represents the source where
+type FilePosition struct {
 	fileName             string
 	offset, line, column int
 }
 
+func (pos FilePosition) String() string {
+	return fmt.Sprintf("in %s at line: %d, column: %d", pos.fileName, pos.line, pos.column)
+}
+
 // Position returns the Lexer's current position
-func (l *Position) Position() (filename string, offset, line, column int) {
-	return l.fileName, l.offset, l.line, l.column
+func (pos *FilePosition) Position() (filename string, offset, line, column int) {
+	return pos.fileName, pos.offset, pos.line, pos.column
 }
 
 func (tok Token) String() string {
@@ -26,7 +30,7 @@ func (tok Token) String() string {
 	if len(tok.Value) > 0 {
 		val = " \"" + tok.Value + "\""
 	}
-	return fmt.Sprintf("<%s%s>", tok.Type.String(), val)
+	return fmt.Sprintf("<%s%s at %s>", tok.Type.String(), val, tok.FilePosition)
 }
 
 // TokenType represents a golang type
