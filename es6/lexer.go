@@ -97,6 +97,16 @@ func (l *Lexer) Next(goal LexerGoal) Token {
 	return tok
 }
 
+// Peek returns the next token
+func (l *Lexer) Peek(goal LexerGoal) Token {
+	l.goal = goal
+	l.state = lexInputElement
+	for len(l.tokens) < 1 {
+		l.state = l.state(l)
+	}
+	return l.tokens[0]
+}
+
 // CurrentPosition returns the Lexer's current position
 func (l *Lexer) CurrentPosition() (offset, line, column int) {
 	return l.pos, l.line, l.column
