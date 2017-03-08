@@ -5,9 +5,6 @@ import (
 	"io/ioutil"
 )
 
-// Parser ...
-type Parser func(Token) (ASTNode, error)
-
 // DecodeES6Script ...
 func DecodeES6Script(r io.Reader) (ASTNode, error) {
 	var err error
@@ -24,9 +21,4 @@ func DecodeES6Script(r io.Reader) (ASTNode, error) {
 
 	}
 	return node, err
-}
-
-// ParseES6 ...
-func ParseES6(lexer *Lexer) (*ASTNode, error) {
-	return nil, nil
 }
