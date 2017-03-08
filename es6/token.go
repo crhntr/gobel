@@ -21,7 +21,7 @@ func (pos FilePosition) String() string {
 }
 
 // Position returns the Lexer's current position
-func (pos *FilePosition) Position() (filename string, offset, line, column int) {
+func (pos FilePosition) Position() (filename string, offset, line, column int) {
 	return pos.fileName, pos.offset, pos.line, pos.column
 }
 
