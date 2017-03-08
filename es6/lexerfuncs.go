@@ -264,6 +264,188 @@ func lexRightBracePunctuator(l *Lexer) stateFunc {
 	return l.state
 }
 
+//
+// regex
+//
+
+func lexRegex(l *Lexer) stateFunc {
+	l.accept("/")
+
+	l.acceptSourceCharacterRunExcept(lineTerminators + "/")
+	if !l.accept("/") {
+		l.errorf("regex did not close with '/' ")
+		return nil
+	}
+
+	for {
+		r := l.next()
+		if !isIdentifierPart(r) {
+			l.backup()
+			break
+		}
+	}
+
+	l.emit(RegEx)
+
+	return nil
+}
+
+//
+// ReservedWord
+//
+
+var currentReservedWords = []string{
+	"break", "do", "instanceof", "in",
+	"typeof", "case", "else", "var",
+	"catch", "export", "new", "void",
+	"class", "extends", "return", "while",
+	"const", "finally", "super", "with",
+	"continue", "for", "switch", "yield",
+	"debugger", "function", "this", "default",
+	"if", "throw", "delete", "import", "try"}
+var futureReservedWords = []string{"enum", "await"}
+var futureResdervedWordsStrict = []string{"implements", "package", "protected", "interface", "private", "public"}
+var literals = []string{"null", "true", "false"}
+
+func hasReservedWord(l *Lexer, str string) bool {
+	for _, word := range l.reservedWords {
+		if strings.HasPrefix(str, word) {
+			return true
+		}
+	}
+	return false
+}
+
+func lexReservedWord(l *Lexer) stateFunc {
+	l.acceptAnyString(l.reservedWords)
+	l.emit(ReservedWord)
+	return l.state
+}
+
+//
+// helper code
+//
+
+// copied from: https://gobyexample.com/sorting-by-functions
+type keywordSorter []string
+
+func (s keywordSorter) Len() int {
+	return len(s)
+}
+func (s keywordSorter) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s keywordSorter) Less(i, j int) bool {
+	return len(s[i]) > len(s[j]) // sorts reverse order
+}
+
+//
+// template literals
+//
+
+func lexTemplateLiteral(l *Lexer) stateFunc {
+	l.accept("`")
+	var r rune
+	for {
+		if strings.HasPrefix(l.input[l.pos:], "${") {
+			l.acceptString("${")
+			l.emit(TemplateHead)
+			return l.state
+		}
+		if strings.HasPrefix(l.input[l.pos:], "`") {
+			l.accept("`")
+			l.emit(NoSubstitutionTemplate)
+			return l.state
+		}
+		if r = l.next(); r == eof {
+			l.errorf("did not reach end of template literal reached eof")
+			return nil
+		}
+	}
+}
+
+func lexTemplateSubstitutionTail(l *Lexer) stateFunc {
+	l.accept("}")
+	var r rune
+	for {
+		if strings.HasPrefix(l.input[l.pos:], "${") {
+			l.acceptString("${")
+			l.emit(TemplateMiddle)
+			return l.state
+		}
+		if strings.HasPrefix(l.input[l.pos:], "`") {
+			l.accept("`")
+			l.emit(TemplateTail)
+			return l.state
+		}
+		if r = l.next(); r == eof {
+			l.errorf("did not reach TemplateMiddle or TemplateTail but reached eof")
+			return nil
+		}
+	}
+}
+
+//
+// WhiteSpace
+//
+
+// see 11.2
+
+func hasWhiteSpacePrefix(l *Lexer) bool {
+	defer l.reset()
+	return l.accept("\u0009\u000B\u000C\u0020\u00A0\uFEFF\uFEFF")
+}
+
+func lexWhiteSpace(l *Lexer) stateFunc {
+	l.acceptRun("\u0009\u000B\u000C\u0020\u00A0\uFEFF\uFEFF")
+	l.emit(WhiteSpace)
+	return l.state
+}
+
+
+//
+// StringLiteral
+//
+
+// See 11.8.4
+
+// lexStringLiteralDouble consumes a string literal surounded by
+// a double quotation marks
+func lexStringLiteralDouble(l *Lexer) stateFunc {
+	l.accept("\"")
+	var r rune
+	for {
+		if strings.HasPrefix(l.input[l.pos:], "\"") {
+			break
+		}
+		if r = l.next(); r == eof {
+			l.errorf("did not reach end of string literal reached eof")
+			break
+		}
+	}
+	l.accept("\"")
+	l.emit(StringLiteral)
+	return l.state
+}
+
+// lexStringLiteralSingle consumes a string literal surounded by
+// a single quotation marks
+func lexStringLiteralSingle(l *Lexer) stateFunc {
+	l.accept("'")
+	var r rune
+	for {
+		if l.accept("'") {
+			break
+		}
+		if r = l.next(); r == eof {
+			l.errorf("did not reach end of string literal reached eof")
+			break
+		}
+	}
+	l.accept("'")
+	l.emit(StringLiteral)
+	return l.state
+}
 
 // // EscapeSequence :: CharacterEscapeSequence || 0 [lookahead ∉ DecimalDigit] || HexEscapeSequence || UnicodeEscapeSequence
 // func lexEscapeSequence(l *Lexer) {
