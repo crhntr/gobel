@@ -9,6 +9,14 @@ type Token struct {
 	Value string
 }
 
+// Position ...
+type Position struct {
+	Filename string
+	Offset int
+	Line int
+	Column int
+}
+
 func (tok Token) String() string {
 	val := ""
 	if len(tok.Value) > 0 {

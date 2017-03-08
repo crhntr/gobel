@@ -161,6 +161,8 @@ func hasLineTerminatorPrefix(l *Lexer) bool {
 func lexLineTerminator(l *Lexer) stateFunc {
 	l.accept(lineTerminators)
 	l.emit(LineTerminatorToken)
+	l.line++
+	l.column = 0
 	return l.state
 }
 

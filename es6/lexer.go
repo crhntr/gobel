@@ -17,6 +17,8 @@ func Lex(name, input string, safe bool) *Lexer {
 		tokens: []Token{},
 		strict: true,
 		goal:   InputElementDiv,
+		line: 1,
+		column: 0,
 	}
 	if safe {
 		l.setStrict()
@@ -39,6 +41,9 @@ type Lexer struct {
 	reservedWords []string
 	strict        bool
 	goal          LexerGoal
+
+	line int
+	column int
 }
 
 // LexerGoal represents a lexing goal
@@ -81,7 +86,13 @@ func (goal LexerGoal) String() string {
 }
 
 // Next returns the next token
-func (l *Lexer) Next(goal LexerGoal) Token {
+func (l *Lexer) Next(goal LexerGoal) (Token, Position) {
+	pos := Position{
+		Filename: l.name,
+		Line: l.line,
+		Column: l.column,
+		Offset: l.pos,
+	}
 	l.goal = goal
 	l.state = lexInputElement
 	for len(l.tokens) < 1 {
@@ -89,7 +100,7 @@ func (l *Lexer) Next(goal LexerGoal) Token {
 	}
 	tok := l.tokens[0]
 	l.tokens = l.tokens[1:]
-	return tok
+	return tok, pos
 }
 
 const eof rune = -1

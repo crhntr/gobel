@@ -1,7 +1,6 @@
 package es6
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 )
@@ -9,23 +8,20 @@ import (
 // Parser ...
 type Parser func(Token) (ASTNode, error)
 
-// DecodeES6 ...
-func DecodeES6(r io.Reader) (*ASTNode, error) {
-	node := &ASTNode{}
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		return node, err
-	}
+// DecodeES6Script ...
+func DecodeES6Script(r io.Reader) (ASTNode, error) {
+	var err error
+	var node ASTNode
+	b, _ := ioutil.ReadAll(r)
 
 	l := Lex("", string(b), true)
 
 	for {
-		tok := l.Next(InputElementDiv)
+		tok, _ := l.Next(InputElementDiv)
 		if tok.Type == EOFToken {
 			break
 		}
 
-		fmt.Println(tok.String())
 	}
 	return node, err
 }
