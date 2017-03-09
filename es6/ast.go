@@ -825,7 +825,8 @@ func ParseExpressionNode(l *Lexer) (ASTNode, error) {
 	if child != nil {
 		node.child = child
 	}
-	return child, err
+	node.FilePosition = l.CurrentPosition()
+	return node, err
 }
 
 //
@@ -875,6 +876,7 @@ func ParseStatementNode(l *Lexer) (ASTNode, error) {
 	if child != nil {
 		node.child = child
 	}
+	node.FilePosition = l.CurrentPosition()
 	return node, err
 }
 
@@ -902,6 +904,7 @@ func ParseDeclarationNode(l *Lexer) (ASTNode, error) {
 	if child != nil {
 		node.child = child
 	}
+	node.FilePosition = l.CurrentPosition()
 	return node, nil
 }
 
@@ -927,6 +930,7 @@ func ParseHoistableDeclarationNode(l *Lexer) (ASTNode, error) {
 	if child != nil {
 		node.child = node
 	}
+	node.FilePosition = l.CurrentPosition()
 	return node, err
 }
 
@@ -1007,6 +1011,7 @@ func ParseStatementListItemNode(l *Lexer) (StatementListItemNode, error) {
 	if child != nil {
 		node.child = child
 	}
+	node.FilePosition = l.CurrentPosition()
 	return node, err
 }
 
@@ -1298,7 +1303,8 @@ func ParseExpressionStatementNode(l *Lexer) (ASTNode, error) {
 	if tok3.Type != PunctuatorToken || tok3.Value != ";" {
 		return nil, IncorrectTokenError(tok)
 	}
-	return node, nil
+	node.FilePosition = l.CurrentPosition()
+	return node, err
 }
 
 // IfStatementNode [Yield, Return] : [See 13.6]
@@ -1613,7 +1619,7 @@ type FunctionDeclarationNode struct {
 // ParseFunctionDeclarationNode ...
 func ParseFunctionDeclarationNode(l *Lexer) (ASTNode, error) {
 	var (
-		// node = FunctionDeclarationNode{}
+		node = FunctionDeclarationNode{}
 		// err error
 	)
 	tokPeek0 := l.Peek(InputElementDiv)
@@ -1626,7 +1632,10 @@ func ParseFunctionDeclarationNode(l *Lexer) (ASTNode, error) {
 	l.Next(InputElementDiv) // accept input token
 
 	tokPeek1 := l.Peek(InputElementDiv)
-	fmt.Print(tokPeek1)
+	node.FilePosition = l.CurrentPosition()
+	fmt.Println(tokPeek1)
+	fmt.Println(node)
+	fmt.Println()
 	panic("ParseFunctionDeclarationNode not implemented")
 	// // if next token is not "(" attempt BindingIdentifier
 	// if !(tokPeek1.Type == PunctuatorToken && tokPeek0.Value == "(") {
@@ -2033,7 +2042,11 @@ type ScriptBodyNode struct {
 // ParseScriptBodyNode ...
 func ParseScriptBodyNode(l *Lexer) (ASTNode, error) {
 	c, err := ParseStatementListNode(l)
-	return ScriptBodyNode{child: c}, err
+	node := ScriptBodyNode{
+		child: c,
+	}
+	node.FilePosition = l.CurrentPosition()
+	return node, err
 }
 
 // ModuleNode [See 15.2]
