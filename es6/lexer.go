@@ -118,8 +118,13 @@ func (l *Lexer) Peek(goal LexerGoal) Token {
 }
 
 // CurrentPosition returns the Lexer's current position
-func (l *Lexer) CurrentPosition() (offset, line, column int) {
-	return l.pos, l.line, l.column
+func (l *Lexer) CurrentPosition() FilePosition {
+	return FilePosition{
+		fileName: l.name,
+		offset: l.pos,
+		line: l.line,
+		column: l.column,
+	}
 }
 
 const eof rune = -1
