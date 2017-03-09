@@ -12,17 +12,17 @@ type Token struct {
 
 // FilePosition represents the source where
 type FilePosition struct {
-	fileName             string
-	offset, line, column int
+	FileName             string
+	Offset, Line, Column int
 }
 
 func (pos FilePosition) String() string {
-	return fmt.Sprintf("in %s at line: %d, column: %d", pos.fileName, pos.line, pos.column)
+	return fmt.Sprintf("in %s at line: %d, column: %d", pos.FileName, pos.Line, pos.Column)
 }
 
 // Position returns the Lexer's current position
 func (pos FilePosition) Position() (filename string, offset, line, column int) {
-	return pos.fileName, pos.offset, pos.line, pos.column
+	return pos.FileName, pos.Offset, pos.Line, pos.Column
 }
 
 func (tok Token) String() string {

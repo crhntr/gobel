@@ -120,10 +120,10 @@ func (l *Lexer) Peek(goal LexerGoal) Token {
 // CurrentPosition returns the Lexer's current position
 func (l *Lexer) CurrentPosition() FilePosition {
 	return FilePosition{
-		fileName: l.name,
-		offset: l.pos,
-		line: l.line,
-		column: l.column,
+		FileName: l.name,
+		Offset:   l.pos,
+		Line:     l.line,
+		Column:   l.column,
 	}
 }
 
@@ -163,10 +163,10 @@ func (l *Lexer) emit(typ TokenType) {
 			Type:  typ,
 			Value: val,
 			FilePosition: FilePosition{
-				fileName: l.name,
-				offset:   l.pos,
-				line:     l.line,
-				column:   l.column,
+				FileName: l.name,
+				Offset:   l.pos,
+				Line:     l.line,
+				Column:   l.column,
 			},
 		},
 	)
