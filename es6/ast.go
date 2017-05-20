@@ -3,6 +3,7 @@ package es6
 import (
 	"fmt"
 )
+
 // ASTNode ...
 type ASTNode interface {
 	Positioner
@@ -46,6 +47,7 @@ type node struct {
 // tokens recieved by function returning this error have only been peeked
 // so that the calling function may try another Parse* function
 type IncorrectTokenError Token
+
 func (tok IncorrectTokenError) Error() string {
 	return fmt.Sprintf("IncorrectTokenError at %s", tok.FilePosition.String())
 }
@@ -83,20 +85,6 @@ func ParseBindingIdentifierNode(l *Lexer) (ASTNode, error) {
 	// return nil, nil
 }
 
-// LabelIdentifierNode [Yield] : [See 12.1]
-//  Identifier
-//  [~Yield] yield
-// implements: Parser and ASTNode
-type LabelIdentifierNode struct {
-	node
-}
-
-// ParseLabelIdentifierNode ...
-func ParseLabelIdentifierNode(l *Lexer) (ASTNode, error) {
-	panic("ParseLabelIdentifierNode not implemented")
-	// return nil, nil
-}
-
 // IdentifierNode  : [See 12.1]
 //  IdentifierName but not ReservedWord
 // implements: Parser and ASTNode
@@ -108,42 +96,6 @@ type IdentifierNode struct {
 func ParseIdentifierNode(l *Lexer) (ASTNode, error) {
 	panic("ParseIdentifierNode not implemented")
 	// return nil, nil
-}
-
-// PrimaryExpressionNode [Yield] : [See 12.2]
-//  this
-//  IdentifierReference[?Yield]
-//  Literal
-//  ArrayLiteral[?Yield]
-//  ObjectLiteral[?Yield]
-//  FunctionExpression
-//  ClassExpression[?Yield]
-//  GeneratorExpression
-//  RegularExpressionLiteral
-//  TemplateLiteral[?Yield]
-//  CoverParenthesizedExpressionAndArrowParameterList[?Yield]
-// the interpretation of CoverParenthesizedExpressionAndArrowParameterList
-// is refined using the following grammar:
-// implements: Parser and ASTNode
-type PrimaryExpressionNode struct {
-	node
-}
-
-// ParsePrimaryExpressionNode ...
-func ParsePrimaryExpressionNode(l *Lexer) (ASTNode, error) {
-	panic("ParsePrimaryExpressionNode not implemented")
-	// return nil, nil
-}
-
-// CoverParenthesizedExpressionAndArrowParameterListNode [Yield] : [See 12.2]
-// ( Expression[In, ?Yield] )
-// ( )
-// ( ... BindingIdentifier[?Yield] )
-// ( Expression[In, ?Yield] , ... BindingIdentifier[?Yield] )
-//  When processing the production
-// implements: Parser and ASTNode
-type CoverParenthesizedExpressionAndArrowParameterListNode struct {
-	node
 }
 
 // ParseCoverParenthesizedExpressionAndArrowParameterListNode ...
@@ -162,37 +114,6 @@ type ParenthesizedExpressionNode struct {
 // ParseParenthesizedExpressionNode ...
 func ParseParenthesizedExpressionNode(l *Lexer) (ASTNode, error) {
 	panic("ParseParenthesizedExpressionNode not implemented")
-	// return nil, nil
-}
-
-// LiteralNode  : [See 12.2.4]
-//  NullLiteral
-//  BooleanLiteral
-//  NumericLiteral
-//  StringLiteral
-// implements: Parser and ASTNode
-type LiteralNode struct {
-	node
-}
-
-// ParseLiteralNode ...
-func ParseLiteralNode(l *Lexer) (ASTNode, error) {
-	panic("ParseLiteralNode not implemented")
-	// return nil, nil
-}
-
-// ArrayLiteralNode [Yield] : [See 12.2.5]
-//  [ Elisionopt ]
-//  [ ElementList[?Yield] ]
-//  [ ElementList[?Yield] , Elisionopt ]
-// implements: Parser and ASTNode
-type ArrayLiteralNode struct {
-	node
-}
-
-// ParseArrayLiteralNode ...
-func ParseArrayLiteralNode(l *Lexer) (ASTNode, error) {
-	panic("ParseArrayLiteralNode not implemented")
 	// return nil, nil
 }
 
@@ -236,21 +157,6 @@ type SpreadElementNode struct {
 // ParseSpreadElementNode ...
 func ParseSpreadElementNode(l *Lexer) (ASTNode, error) {
 	panic("ParseSpreadElementNode not implemented")
-	// return nil, nil
-}
-
-// ObjectLiteralNode [Yield] : [See 12.2.6]
-//  { }
-//  { PropertyDefinitionList[?Yield] }
-//  { PropertyDefinitionList[?Yield] , }
-// implements: Parser and ASTNode
-type ObjectLiteralNode struct {
-	node
-}
-
-// ParseObjectLiteralNode ...
-func ParseObjectLiteralNode(l *Lexer) (ASTNode, error) {
-	panic("ParseObjectLiteralNode not implemented")
 	// return nil, nil
 }
 
@@ -349,20 +255,6 @@ type InitializerNode struct {
 // ParseInitializerNode ...
 func ParseInitializerNode(l *Lexer) (ASTNode, error) {
 	panic("ParseInitializerNode not implemented")
-	// return nil, nil
-}
-
-// TemplateLiteralNode [Yield] : [See 12.2.9]
-//  NoSubstitutionTemplate
-//  TemplateHead Expression[In, ?Yield] TemplateSpans[?Yield]
-// implements: Parser and ASTNode
-type TemplateLiteralNode struct {
-	node
-}
-
-// ParseTemplateLiteralNode ...
-func ParseTemplateLiteralNode(l *Lexer) (ASTNode, error) {
-	panic("ParseTemplateLiteralNode not implemented")
 	// return nil, nil
 }
 
@@ -806,7 +698,7 @@ func ParseExpressionNode(l *Lexer) (ASTNode, error) {
 	var (
 		child ASTNode
 		err   error
-		node = ExpressionNode{}
+		node  = ExpressionNode{}
 	)
 	tok := l.Peek(InputElementDiv)
 	if tok.Type == ReservedWordToken && tok.Value == "this" {
@@ -1610,7 +1502,7 @@ func ParseDebuggerStatementNode(l *Lexer) (ASTNode, error) {
 //  [+Default] function ( FormalParameters ) { FunctionBody }
 // implements: Parser and ASTNode
 type FunctionDeclarationNode struct {
- 	BindingIdentifier BindingIdentifierNode
+	BindingIdentifier BindingIdentifierNode
 	FormalParameters  FormalParametersNode
 	FunctionBody      FunctionBodyNode
 	node
@@ -1652,19 +1544,6 @@ func ParseFunctionDeclarationNode(l *Lexer) (ASTNode, error) {
 	// 		return node, IncorrectTokenError(tokPeek1)
 	// 	}
 	// }
-	// return nil, nil
-}
-
-// FunctionExpressionNode  : [See 14.1]
-//  function BindingIdentifieropt ( FormalParameters ) { FunctionBody }
-// implements: Parser and ASTNode
-type FunctionExpressionNode struct {
-	node
-}
-
-// ParseFunctionExpressionNode ...
-func ParseFunctionExpressionNode(l *Lexer) (ASTNode, error) {
-	panic("ParseFunctionExpressionNode not implemented")
 	// return nil, nil
 }
 
@@ -1877,26 +1756,6 @@ func ParseGeneratorDeclarationNode(l *Lexer) (ASTNode, error) {
 	// return nil, nil
 }
 
-// GeneratorExpressionNode  : [See 14.4]
-//  function * BindingIdentifier[Yield]opt ( FormalParameters[Yield] ) { GeneratorBody }
-// implements: Parser and ASTNode
-type GeneratorExpressionNode struct {
-	node
-}
-
-// ParseGeneratorExpressionNode ...
-func ParseGeneratorExpressionNode(l *Lexer) (ASTNode, error) {
-	panic("ParseGeneratorExpressionNode not implemented")
-	// return nil, nil
-}
-
-// GeneratorBodyNode  : [See 14.4]
-//  FunctionBody[Yield]
-// implements: Parser and ASTNode
-type GeneratorBodyNode struct {
-	node
-}
-
 // ParseGeneratorBodyNode ...
 func ParseGeneratorBodyNode(l *Lexer) (ASTNode, error) {
 	panic("ParseGeneratorBodyNode not implemented")
@@ -1929,19 +1788,6 @@ type ClassDeclarationNode struct {
 // ParseClassDeclarationNode ...
 func ParseClassDeclarationNode(l *Lexer) (ASTNode, error) {
 	panic("ParseClassDeclarationNode not implemented")
-	// return nil, nil
-}
-
-// ClassExpressionNode [Yield] : [See 14.5]
-//  class BindingIdentifier[?Yield]opt ClassTail[?Yield]
-// implements: Parser and ASTNode
-type ClassExpressionNode struct {
-	node
-}
-
-// ParseClassExpressionNode ...
-func ParseClassExpressionNode(l *Lexer) (ASTNode, error) {
-	panic("ParseClassExpressionNode not implemented")
 	// return nil, nil
 }
 
