@@ -135,7 +135,7 @@ func ParseParenthesizedExpressionNode(l *Lexer) (ASTNode, error) {
 		return n, err
 	}
 
-	tt := l.Next(l.goal)
+	tt = l.Next(l.goal)
 	if tt.Value != ")" {
 		return n, errors.New("expected ')'")
 	}
