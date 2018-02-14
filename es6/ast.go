@@ -129,8 +129,8 @@ func ParseParenthesizedExpressionNode(l *Lexer) (ASTNode, error) {
 		return n, errors.New("expected '('")
 	}
 
-	var err error
-	n.ExpressionNode, err = ParseExpressionNode(l)
+	expressionNode, err := ParseExpressionNode(l)
+	n.ExpressionNode = expressionNode.(ExpressionNode)
 	if err != nil {
 		return n, err
 	}
