@@ -2,6 +2,8 @@ package es6
 
 import (
 	"fmt"
+
+	"github.com/pkg/errors"
 )
 
 // ASTNode ...
@@ -90,12 +92,18 @@ func ParseBindingIdentifierNode(l *Lexer) (ASTNode, error) {
 // implements: Parser and ASTNode
 type IdentifierNode struct {
 	node
+	Name string
 }
 
 // ParseIdentifierNode ...
 func ParseIdentifierNode(l *Lexer) (ASTNode, error) {
-	panic("ParseIdentifierNode not implemented")
-	// return nil, nil
+	n := IdentifierNode{node: node{l.CurrentPosition()}}
+	tt := l.Next(l.goal)
+	if tt.Type == ReservedWordToken {
+		return n, errors.Errorf("IdentifierNode must not be a ReservedWordToken found %q", tt.Value)
+	}
+	n.Name = tt.Value
+	return n, nil
 }
 
 // ParseCoverParenthesizedExpressionAndArrowParameterListNode ...
