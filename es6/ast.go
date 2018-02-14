@@ -970,12 +970,19 @@ func ParseLexicalDeclarationNode(l *Lexer) (ASTNode, error) {
 // implements: Parser and ASTNode
 type LetOrConstNode struct {
 	node
+	Value string
 }
 
 // ParseLetOrConstNode ...
 func ParseLetOrConstNode(l *Lexer) (ASTNode, error) {
-	panic("ParseLetOrConstNode not implemented")
-	// return nil, nil
+	n := LetOrConstNode{node: node{l.CurrentPosition()}}
+
+	tok := l.Next(l.goal)
+	if tok.Value == "const" || tok.Value == "let" {
+		n.Value = tok.Value
+		return n, nil
+	}
+	return n, errors.New("expected const or let")
 }
 
 // BindingListNode [In, Yield] : [See 13.3.1]

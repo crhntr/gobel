@@ -137,3 +137,49 @@ func TestParseExportSpecifierNode(t *testing.T) {
 		}
 	})
 }
+
+func TestParseLetOrConstNode(t *testing.T) {
+	t.Run("should set node value to 'const'", func(t *testing.T) {
+		cnst := "const"
+		lex := es6.Lex("", cnst, false)
+
+		node, err := es6.ParseLetOrConstNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+		n, ok := node.(es6.LetOrConstNode)
+		if !ok {
+			t.Error(`!ok`)
+		}
+		if n.Value != "const" {
+			t.Error(`n.Value != "const"`)
+		}
+	})
+
+	t.Run("should set node value to 'let'", func(t *testing.T) {
+		lt := "let"
+		lex := es6.Lex("", lt, false)
+
+		node, err := es6.ParseLetOrConstNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+		n, ok := node.(es6.LetOrConstNode)
+		if !ok {
+			t.Error(`!ok`)
+		}
+		if n.Value != "let" {
+			t.Error(`n.Value != "let"`)
+		}
+	})
+
+	t.Run("should not recognize other than foo or bar", func(t *testing.T) {
+		lt := "foo"
+		lex := es6.Lex("", lt, false)
+
+		_, err := es6.ParseLetOrConstNode(lex)
+		if err == nil {
+			t.Fail()
+		}
+	})
+}
