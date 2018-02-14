@@ -57,6 +57,15 @@ func TestParseExportsListNode(t *testing.T) {
 		}
 	})
 
+	t.Run("should varify Exports name is acceptable", func(t *testing.T) {
+		fooBarBaz := "foo, for"
+		lex := es6.Lex("", fooBarBaz, false)
+		_, err := es6.ParseExportsListNode(lex)
+		if err == nil {
+			t.Error("err == nil")
+		}
+	})
+
 	t.Run("should allow as Identifier", func(t *testing.T) {
 		fooBarBaz := "foo, bar, baz"
 		lex := es6.Lex("", fooBarBaz, false)
