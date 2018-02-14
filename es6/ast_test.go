@@ -38,7 +38,6 @@ func TestParseExportsListNode(t *testing.T) {
 	t.Run("should allow as Identifier", func(t *testing.T) {
 		foo := "foo"
 		lex := es6.Lex("", foo, false)
-		lex.SkipWhitespace = true
 		node, err := es6.ParseExportsListNode(lex)
 		if err != nil {
 			t.Error(err)
@@ -61,7 +60,6 @@ func TestParseExportsListNode(t *testing.T) {
 	t.Run("should allow as Identifier", func(t *testing.T) {
 		fooBarBaz := "foo, bar, baz"
 		lex := es6.Lex("", fooBarBaz, false)
-		lex.SkipWhitespace = true
 		node, err := es6.ParseExportsListNode(lex)
 		if err != nil {
 			t.Error(err)
@@ -86,7 +84,6 @@ func TestParseExportSpecifierNode(t *testing.T) {
 	t.Run("should allow as Identifier", func(t *testing.T) {
 		fooAsBar := "foo as bar"
 		lex := es6.Lex("", fooAsBar, false)
-		lex.SkipWhitespace = true
 
 		node, err := es6.ParseExportSpecifierNode(lex)
 		if err != nil {
@@ -107,7 +104,6 @@ func TestParseExportSpecifierNode(t *testing.T) {
 	t.Run("should allow as Identifier", func(t *testing.T) {
 		fooAsBar := " foo "
 		lex := es6.Lex("", fooAsBar, false)
-		lex.SkipWhitespace = true
 
 		node, err := es6.ParseExportSpecifierNode(lex)
 		if err != nil {
@@ -125,7 +121,6 @@ func TestParseExportSpecifierNode(t *testing.T) {
 	t.Run("should allow as Identifier", func(t *testing.T) {
 		fooAsBar := " for "
 		lex := es6.Lex("", fooAsBar, false)
-		lex.SkipWhitespace = true
 
 		_, err := es6.ParseExportSpecifierNode(lex)
 		if err == nil {

@@ -31,17 +31,17 @@ func Lex(name, input string, safe bool) *Lexer {
 // A Lexer represents the state of the lexing algorithm use func Lex to return
 // an initalized Lexer
 type Lexer struct {
-	name           string // used for error reports
-	state          stateFunc
-	input          string  // the string being scanned
-	start          int     // start position of this item
-	pos            int     // current position of this input
-	width          int     // width of last rune read
-	tokens         []Token // chan Token // channel if scanned tokens
-	reservedWords  []string
-	strict         bool
-	goal           LexerGoal
-	SkipWhitespace bool
+	name                    string // used for error reports
+	state                   stateFunc
+	input                   string  // the string being scanned
+	start                   int     // start position of this item
+	pos                     int     // current position of this input
+	width                   int     // width of last rune read
+	tokens                  []Token // chan Token // channel if scanned tokens
+	reservedWords           []string
+	strict                  bool
+	goal                    LexerGoal
+	CaptureWhitespaceTokens bool
 
 	line   int
 	column int
@@ -97,10 +97,9 @@ func (l *Lexer) Next(goal LexerGoal) Token {
 		tok := l.tokens[0]
 		l.tokens = l.tokens[1:]
 
-		if l.SkipWhitespace && tok.Type == WhiteSpaceToken {
-			continue
+		if tok.Type != WhiteSpaceToken || l.CaptureWhitespaceTokens {
+			return tok
 		}
-		return tok
 	}
 }
 
@@ -110,7 +109,7 @@ func (l *Lexer) Peek(goal LexerGoal) Token {
 		tok := l.Next(goal)
 		l.tokens = append(l.tokens, tok)
 
-		if l.SkipWhitespace && tok.Type == WhiteSpaceToken {
+		if !l.CaptureWhitespaceTokens && tok.Type == WhiteSpaceToken {
 			continue
 		}
 		return tok
