@@ -2122,12 +2122,27 @@ func ParseExportClauseNode(l *Lexer) (ASTNode, error) {
 // implements: Parser and ASTNode
 type ExportsListNode struct {
 	node
+	List []ExportSpecifierNode
 }
 
 // ParseExportsListNode ...
 func ParseExportsListNode(l *Lexer) (ASTNode, error) {
-	panic("ParseExportsListNode not implemented")
-	// return nil, nil
+	n := ExportsListNode{node: node{l.CurrentPosition()}}
+
+	n.List = []ExportSpecifierNode{}
+
+	for {
+		exportSpecifier, err := ParseExportSpecifierNode(l)
+		if err != nil {
+			return n, err
+		}
+		n.List = append(n.List, exportSpecifier.(ExportSpecifierNode))
+
+		if comma := l.Peek(l.goal); comma.Value != "," {
+			return n, err
+		}
+		l.Next(l.goal)
+	}
 }
 
 // ExportSpecifierNode [See 15.2.3]

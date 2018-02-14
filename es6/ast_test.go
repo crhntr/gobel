@@ -34,6 +34,54 @@ func TestParseIdentifierNode(t *testing.T) {
 	})
 }
 
+func TestParseExportsListNode(t *testing.T) {
+	t.Run("should allow as Identifier", func(t *testing.T) {
+		foo := "foo"
+		lex := es6.Lex("", foo, false)
+		lex.SkipWhitespace = true
+		node, err := es6.ParseExportsListNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+
+		n, ok := node.(es6.ExportsListNode)
+		if !ok {
+			t.Error(`!ok`)
+		}
+		if len(n.List) != 1 {
+			t.Error(`len(n.List) != 3"`)
+		}
+		for i, str := range []string{"foo"} {
+			if n.List[i].Name != str {
+				t.Error("n.List[%d].Name != %q", i, str)
+			}
+		}
+	})
+
+	t.Run("should allow as Identifier", func(t *testing.T) {
+		fooBarBaz := "foo, bar, baz"
+		lex := es6.Lex("", fooBarBaz, false)
+		lex.SkipWhitespace = true
+		node, err := es6.ParseExportsListNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+
+		n, ok := node.(es6.ExportsListNode)
+		if !ok {
+			t.Error(`!ok`)
+		}
+		if len(n.List) != 3 {
+			t.Error(`len(n.List) != 3"`)
+		}
+		for i, str := range []string{"foo", "bar", "baz"} {
+			if n.List[i].Name != str {
+				t.Error("n.List[%d].Name != %q", i, str)
+			}
+		}
+	})
+}
+
 func TestParseExportSpecifierNode(t *testing.T) {
 	t.Run("should allow as Identifier", func(t *testing.T) {
 		fooAsBar := "foo as bar"
