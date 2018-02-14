@@ -697,12 +697,30 @@ func ParseAssignmentExpressionNode(l *Lexer) (ASTNode, error) {
 // implements: Parser and ASTNode
 type AssignmentOperatorNode struct {
 	node
+	Operator string
 }
 
 // ParseAssignmentOperatorNode ...
 func ParseAssignmentOperatorNode(l *Lexer) (ASTNode, error) {
-	panic("ParseAssignmentOperatorNode not implemented")
-	// return nil, nil
+	n := AssignmentOperatorNode{node: node{l.CurrentPosition()}}
+
+	err := errors.New("Assignment operation expected one of: *= /= %= += -= <<= >>= >>>= &= ^= |=")
+	tok := l.Next(l.goal)
+	if tok.Type != PunctuatorToken {
+		return n, err
+	}
+
+	for _, op := range []string{"*=", "/=", "%=", "+=", "-=", "<=", ">>=", ">>>=", "&=", "^=", "|"} {
+		if tok.Value == op {
+			n.Operator = op
+			break
+		}
+	}
+
+	if n.Operator == "" {
+		return n, err
+	}
+	return n, nil
 }
 
 // ExpressionNode [In, Yield] : [See 12.15]
