@@ -2136,10 +2136,27 @@ func ParseExportsListNode(l *Lexer) (ASTNode, error) {
 // implements: Parser and ASTNode
 type ExportSpecifierNode struct {
 	node
+	IdentifierNode
+	As IdentifierNode
 }
 
 // ParseExportSpecifierNode ...
 func ParseExportSpecifierNode(l *Lexer) (ASTNode, error) {
-	panic("ParseExportSpecifierNode not implemented")
-	// return nil, nil
+	n := ExportSpecifierNode{node: node{l.CurrentPosition()}}
+
+	identifierNode, err := ParseIdentifierNode(l)
+	if err != nil {
+		return n, err
+	}
+	n.IdentifierNode = identifierNode.(IdentifierNode)
+
+	if as := l.Peek(l.goal); as.Value != "as" {
+		return n, err
+	}
+	l.Next(l.goal)
+
+	identifierNode, err = ParseIdentifierNode(l)
+	n.As = identifierNode.(IdentifierNode)
+
+	return n, err
 }

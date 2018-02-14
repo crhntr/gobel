@@ -33,3 +33,55 @@ func TestParseIdentifierNode(t *testing.T) {
 		}
 	})
 }
+
+func TestParseExportSpecifierNode(t *testing.T) {
+	t.Run("should allow as Identifier", func(t *testing.T) {
+		fooAsBar := "foo as bar"
+		lex := es6.Lex("", fooAsBar, false)
+		lex.SkipWhitespace = true
+
+		node, err := es6.ParseExportSpecifierNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+		n, ok := node.(es6.ExportSpecifierNode)
+		if !ok {
+			t.Error(`!ok`)
+		}
+		if n.Name != "foo" {
+			t.Error(`n.Name != "foo"`)
+		}
+		if n.As.Name != "bar" {
+			t.Error(`n.As.Name != "bar"`)
+		}
+	})
+
+	t.Run("should allow as Identifier", func(t *testing.T) {
+		fooAsBar := " foo "
+		lex := es6.Lex("", fooAsBar, false)
+		lex.SkipWhitespace = true
+
+		node, err := es6.ParseExportSpecifierNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+		n, ok := node.(es6.ExportSpecifierNode)
+		if !ok {
+			t.Error(`!ok`)
+		}
+		if n.Name != "foo" {
+			t.Error(`n.Name != "foo"`)
+		}
+	})
+
+	t.Run("should allow as Identifier", func(t *testing.T) {
+		fooAsBar := " for "
+		lex := es6.Lex("", fooAsBar, false)
+		lex.SkipWhitespace = true
+
+		_, err := es6.ParseExportSpecifierNode(lex)
+		if err == nil {
+			t.Error("should now allow reserved word as Name")
+		}
+	})
+}
