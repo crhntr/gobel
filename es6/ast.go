@@ -117,12 +117,30 @@ func ParseCoverParenthesizedExpressionAndArrowParameterListNode(l *Lexer) (ASTNo
 // implements: Parser and ASTNode
 type ParenthesizedExpressionNode struct {
 	node
+	ExpressionNode
 }
 
 // ParseParenthesizedExpressionNode ...
 func ParseParenthesizedExpressionNode(l *Lexer) (ASTNode, error) {
-	panic("ParseParenthesizedExpressionNode not implemented")
-	// return nil, nil
+	n := ParenthesizedExpressionNode{node: node{l.CurrentPosition()}}
+
+	tt := l.Next(l.goal)
+	if tt.Value != "(" {
+		return n, errors.New("expected '('")
+	}
+
+	var err error
+	n.ExpressionNode, err = ParseExpressionNode(l)
+	if err != nil {
+		return n, err
+	}
+
+	tt := l.Next(l.goal)
+	if tt.Value != ")" {
+		return n, errors.New("expected ')'")
+	}
+
+	return n, nil
 }
 
 // ElementListNode [Yield] : [See 12.2.5]
