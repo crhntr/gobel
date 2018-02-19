@@ -20,7 +20,7 @@ func TestParseIdentifierNode(t *testing.T) {
 			t.Fail()
 		}
 		if identifierNode.Name != justAnIdentifier {
-			t.Error("identifierNode.Name should be %q but got %q", justAnIdentifier, identifierNode.Name)
+			t.Errorf("identifierNode.Name should be %q but got %q", justAnIdentifier, identifierNode.Name)
 		}
 	})
 
@@ -52,7 +52,7 @@ func TestParseExportsListNode(t *testing.T) {
 		}
 		for i, str := range []string{"foo"} {
 			if n.List[i].Name != str {
-				t.Error("n.List[%d].Name != %q", i, str)
+				t.Errorf("n.List[%d].Name != %q", i, str)
 			}
 		}
 	})
@@ -83,7 +83,7 @@ func TestParseExportsListNode(t *testing.T) {
 		}
 		for i, str := range []string{"foo", "bar", "baz"} {
 			if n.List[i].Name != str {
-				t.Error("n.List[%d].Name != %q", i, str)
+				t.Errorf("n.List[%d].Name != %q", i, str)
 			}
 		}
 	})
