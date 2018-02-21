@@ -11,26 +11,6 @@ type ASTNode interface {
 	Positioner
 }
 
-// ParseFunc ...
-type parseFunc func(l *Lexer) (ASTNode, error)
-
-// TryParseFuncs
-func tryParseFuncs(l *Lexer, pfs ...parseFunc) (ASTNode, error) {
-	var (
-		child ASTNode
-		err   error
-	)
-	for _, pf := range pfs {
-		child, err = pf(l)
-		if err != nil {
-			if _, ok := err.(IncorrectTokenError); !ok {
-				break
-			}
-		}
-	}
-	return child, err
-}
-
 // Positioner ...
 type Positioner interface {
 	Position() (filename string, offset int, line int, column int)
@@ -67,7 +47,7 @@ type IdentifierReferenceNode struct {
 }
 
 // ParseIdentifierReferenceNode ...
-func ParseIdentifierReferenceNode(l *Lexer) (ASTNode, error) {
+func ParseIdentifierReferenceNode(l *Lexer) (IdentifierReferenceNode, error) {
 	panic("ParseIdentifierReferenceNode not implemented")
 	// return nil, nil
 }
@@ -82,7 +62,7 @@ type BindingIdentifierNode struct {
 }
 
 // ParseBindingIdentifierNode ...
-func ParseBindingIdentifierNode(l *Lexer) (ASTNode, error) {
+func ParseBindingIdentifierNode(l *Lexer) (BindingIdentifierNode, error) {
 	panic("ParseBindingIdentifierNode not implemented")
 	// return nil, nil
 }
@@ -96,7 +76,7 @@ type IdentifierNode struct {
 }
 
 // ParseIdentifierNode ...
-func ParseIdentifierNode(l *Lexer) (ASTNode, error) {
+func ParseIdentifierNode(l *Lexer) (IdentifierNode, error) {
 	n := IdentifierNode{node: node{l.CurrentPosition()}}
 	tt := l.Next(l.goal)
 	if tt.Type == ReservedWordToken {
@@ -107,7 +87,7 @@ func ParseIdentifierNode(l *Lexer) (ASTNode, error) {
 }
 
 // ParseCoverParenthesizedExpressionAndArrowParameterListNode ...
-func ParseCoverParenthesizedExpressionAndArrowParameterListNode(l *Lexer) (ASTNode, error) {
+func ParseCoverParenthesizedExpressionAndArrowParameterListNode(l *Lexer) (CoverParenthesizedExpressionAndArrowParameterListNode, error) {
 	panic("ParseCoverParenthesizedExpressionAndArrowParameterListNode not implemented")
 	// return nil, nil
 }
@@ -121,16 +101,15 @@ type ParenthesizedExpressionNode struct {
 }
 
 // ParseParenthesizedExpressionNode ...
-func ParseParenthesizedExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseParenthesizedExpressionNode(l *Lexer) (ParenthesizedExpressionNode, error) {
 	n := ParenthesizedExpressionNode{node: node{l.CurrentPosition()}}
 
 	tt := l.Next(l.goal)
 	if tt.Value != "(" {
 		return n, errors.New("expected '('")
 	}
-
-	expressionNode, err := ParseExpressionNode(l)
-	n.ExpressionNode = expressionNode.(ExpressionNode)
+	var err error
+	n.ExpressionNode, err = ParseExpressionNode(l)
 	if err != nil {
 		return n, err
 	}
@@ -154,7 +133,7 @@ type ElementListNode struct {
 }
 
 // ParseElementListNode ...
-func ParseElementListNode(l *Lexer) (ASTNode, error) {
+func ParseElementListNode(l *Lexer) (ElementListNode, error) {
 	panic("ParseElementListNode not implemented")
 	// return nil, nil
 }
@@ -168,7 +147,7 @@ type ElisionNode struct {
 }
 
 // ParseElisionNode ...
-func ParseElisionNode(l *Lexer) (ASTNode, error) {
+func ParseElisionNode(l *Lexer) (ElisionNode, error) {
 	panic("ParseElisionNode not implemented")
 	// return nil, nil
 }
@@ -181,7 +160,7 @@ type SpreadElementNode struct {
 }
 
 // ParseSpreadElementNode ...
-func ParseSpreadElementNode(l *Lexer) (ASTNode, error) {
+func ParseSpreadElementNode(l *Lexer) (SpreadElementNode, error) {
 	panic("ParseSpreadElementNode not implemented")
 	// return nil, nil
 }
@@ -195,7 +174,7 @@ type PropertyDefinitionListNode struct {
 }
 
 // ParsePropertyDefinitionListNode ...
-func ParsePropertyDefinitionListNode(l *Lexer) (ASTNode, error) {
+func ParsePropertyDefinitionListNode(l *Lexer) (PropertyDefinitionListNode, error) {
 	panic("ParsePropertyDefinitionListNode not implemented")
 	// return nil, nil
 }
@@ -211,7 +190,7 @@ type PropertyDefinitionNode struct {
 }
 
 // ParsePropertyDefinitionNode ...
-func ParsePropertyDefinitionNode(l *Lexer) (ASTNode, error) {
+func ParsePropertyDefinitionNode(l *Lexer) (PropertyDefinitionNode, error) {
 	panic("ParsePropertyDefinitionNode not implemented")
 	// return nil, nil
 }
@@ -225,7 +204,7 @@ type PropertyNameNode struct {
 }
 
 // ParsePropertyNameNode ...
-func ParsePropertyNameNode(l *Lexer) (ASTNode, error) {
+func ParsePropertyNameNode(l *Lexer) (PropertyNameNode, error) {
 	panic("ParsePropertyNameNode not implemented")
 	// return nil, nil
 }
@@ -240,7 +219,7 @@ type LiteralPropertyNameNode struct {
 }
 
 // ParseLiteralPropertyNameNode ...
-func ParseLiteralPropertyNameNode(l *Lexer) (ASTNode, error) {
+func ParseLiteralPropertyNameNode(l *Lexer) (LiteralPropertyNameNode, error) {
 	panic("ParseLiteralPropertyNameNode not implemented")
 	// return nil, nil
 }
@@ -253,7 +232,7 @@ type ComputedPropertyNameNode struct {
 }
 
 // ParseComputedPropertyNameNode ...
-func ParseComputedPropertyNameNode(l *Lexer) (ASTNode, error) {
+func ParseComputedPropertyNameNode(l *Lexer) (ComputedPropertyNameNode, error) {
 	panic("ParseComputedPropertyNameNode not implemented")
 	// return nil, nil
 }
@@ -266,7 +245,7 @@ type CoverInitializedNameNode struct {
 }
 
 // ParseCoverInitializedNameNode ...
-func ParseCoverInitializedNameNode(l *Lexer) (ASTNode, error) {
+func ParseCoverInitializedNameNode(l *Lexer) (CoverInitializedNameNode, error) {
 	panic("ParseCoverInitializedNameNode not implemented")
 	// return nil, nil
 }
@@ -279,7 +258,7 @@ type InitializerNode struct {
 }
 
 // ParseInitializerNode ...
-func ParseInitializerNode(l *Lexer) (ASTNode, error) {
+func ParseInitializerNode(l *Lexer) (InitializerNode, error) {
 	panic("ParseInitializerNode not implemented")
 	// return nil, nil
 }
@@ -293,7 +272,7 @@ type TemplateSpansNode struct {
 }
 
 // ParseTemplateSpansNode ...
-func ParseTemplateSpansNode(l *Lexer) (ASTNode, error) {
+func ParseTemplateSpansNode(l *Lexer) (TemplateSpansNode, error) {
 	panic("ParseTemplateSpansNode not implemented")
 	// return nil, nil
 }
@@ -307,7 +286,7 @@ type TemplateMiddleListNode struct {
 }
 
 // ParseTemplateMiddleListNode ...
-func ParseTemplateMiddleListNode(l *Lexer) (ASTNode, error) {
+func ParseTemplateMiddleListNode(l *Lexer) (TemplateMiddleListNode, error) {
 	panic("ParseTemplateMiddleListNode not implemented")
 	// return nil, nil
 }
@@ -326,7 +305,7 @@ type MemberExpressionNode struct {
 }
 
 // ParseMemberExpressionNode ...
-func ParseMemberExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseMemberExpressionNode(l *Lexer) (MemberExpressionNode, error) {
 	panic("ParseMemberExpressionNode not implemented")
 	// return nil, nil
 }
@@ -340,7 +319,7 @@ type SuperPropertyNode struct {
 }
 
 // ParseSuperPropertyNode ...
-func ParseSuperPropertyNode(l *Lexer) (ASTNode, error) {
+func ParseSuperPropertyNode(l *Lexer) (SuperPropertyNode, error) {
 	panic("ParseSuperPropertyNode not implemented")
 	// return nil, nil
 }
@@ -353,7 +332,7 @@ type MetaPropertyNode struct {
 }
 
 // ParseMetaPropertyNode ...
-func ParseMetaPropertyNode(l *Lexer) (ASTNode, error) {
+func ParseMetaPropertyNode(l *Lexer) (MetaPropertyNode, error) {
 	panic("ParseMetaPropertyNode not implemented")
 	// return nil, nil
 }
@@ -366,7 +345,7 @@ type NewTargetNode struct {
 }
 
 // ParseNewTargetNode ...
-func ParseNewTargetNode(l *Lexer) (ASTNode, error) {
+func ParseNewTargetNode(l *Lexer) (NewTargetNode, error) {
 	panic("ParseNewTargetNode not implemented")
 	// return nil, nil
 }
@@ -380,7 +359,7 @@ type NewExpressionNode struct {
 }
 
 // ParseNewExpressionNode ...
-func ParseNewExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseNewExpressionNode(l *Lexer) (NewExpressionNode, error) {
 	panic("ParseNewExpressionNode not implemented")
 	// return nil, nil
 }
@@ -398,7 +377,7 @@ type CallExpressionNode struct {
 }
 
 // ParseCallExpressionNode ...
-func ParseCallExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseCallExpressionNode(l *Lexer) (CallExpressionNode, error) {
 	panic("ParseCallExpressionNode not implemented")
 	// return nil, nil
 }
@@ -411,7 +390,7 @@ type SuperCallNode struct {
 }
 
 // ParseSuperCallNode ...
-func ParseSuperCallNode(l *Lexer) (ASTNode, error) {
+func ParseSuperCallNode(l *Lexer) (SuperCallNode, error) {
 	panic("ParseSuperCallNode not implemented")
 	// return nil, nil
 }
@@ -425,7 +404,7 @@ type ArgumentsNode struct {
 }
 
 // ParseArgumentsNode ...
-func ParseArgumentsNode(l *Lexer) (ASTNode, error) {
+func ParseArgumentsNode(l *Lexer) (ArgumentsNode, error) {
 	panic("ParseArgumentsNode not implemented")
 	// return nil, nil
 }
@@ -441,7 +420,7 @@ type ArgumentListNode struct {
 }
 
 // ParseArgumentListNode ...
-func ParseArgumentListNode(l *Lexer) (ASTNode, error) {
+func ParseArgumentListNode(l *Lexer) (ArgumentListNode, error) {
 	panic("ParseArgumentListNode not implemented")
 	// return nil, nil
 }
@@ -455,7 +434,7 @@ type LeftHandSideExpressionNode struct {
 }
 
 // ParseLeftHandSideExpressionNode ...
-func ParseLeftHandSideExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseLeftHandSideExpressionNode(l *Lexer) (LeftHandSideExpressionNode, error) {
 	panic("ParseLeftHandSideExpressionNode not implemented")
 	// return nil, nil
 }
@@ -470,7 +449,7 @@ type PostfixExpressionNode struct {
 }
 
 // ParsePostfixExpressionNode ...
-func ParsePostfixExpressionNode(l *Lexer) (ASTNode, error) {
+func ParsePostfixExpressionNode(l *Lexer) (PostfixExpressionNode, error) {
 	panic("ParsePostfixExpressionNode not implemented")
 	// return nil, nil
 }
@@ -492,7 +471,7 @@ type UnaryExpressionNode struct {
 }
 
 // ParseUnaryExpressionNode ...
-func ParseUnaryExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseUnaryExpressionNode(l *Lexer) (UnaryExpressionNode, error) {
 	panic("ParseUnaryExpressionNode not implemented")
 	// return nil, nil
 }
@@ -506,7 +485,7 @@ type MultiplicativeExpressionNode struct {
 }
 
 // ParseMultiplicativeExpressionNode ...
-func ParseMultiplicativeExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseMultiplicativeExpressionNode(l *Lexer) (MultiplicativeExpressionNode, error) {
 	panic("ParseMultiplicativeExpressionNode not implemented")
 	// return nil, nil
 }
@@ -519,7 +498,7 @@ type MultiplicativeOperatorNode struct {
 }
 
 // ParseMultiplicativeOperatorNode ...
-func ParseMultiplicativeOperatorNode(l *Lexer) (ASTNode, error) {
+func ParseMultiplicativeOperatorNode(l *Lexer) (MultiplicativeOperatorNode, error) {
 	panic("ParseMultiplicativeOperatorNode not implemented")
 	// return nil, nil
 }
@@ -534,7 +513,7 @@ type AdditiveExpressionNode struct {
 }
 
 // ParseAdditiveExpressionNode ...
-func ParseAdditiveExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseAdditiveExpressionNode(l *Lexer) (AdditiveExpressionNode, error) {
 	panic("ParseAdditiveExpressionNode not implemented")
 	// return nil, nil
 }
@@ -550,7 +529,7 @@ type ShiftExpressionNode struct {
 }
 
 // ParseShiftExpressionNode ...
-func ParseShiftExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseShiftExpressionNode(l *Lexer) (ShiftExpressionNode, error) {
 	panic("ParseShiftExpressionNode not implemented")
 	// return nil, nil
 }
@@ -569,7 +548,7 @@ type RelationalExpressionNode struct {
 }
 
 // ParseRelationalExpressionNode ...
-func ParseRelationalExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseRelationalExpressionNode(l *Lexer) (RelationalExpressionNode, error) {
 	panic("ParseRelationalExpressionNode not implemented")
 	// return nil, nil
 }
@@ -586,7 +565,7 @@ type EqualityExpressionNode struct {
 }
 
 // ParseEqualityExpressionNode ...
-func ParseEqualityExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseEqualityExpressionNode(l *Lexer) (EqualityExpressionNode, error) {
 	panic("ParseEqualityExpressionNode not implemented")
 	// return nil, nil
 }
@@ -600,7 +579,7 @@ type BitwiseANDExpressionNode struct {
 }
 
 // ParseBitwiseANDExpressionNode ...
-func ParseBitwiseANDExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseBitwiseANDExpressionNode(l *Lexer) (BitwiseANDExpressionNode, error) {
 	panic("ParseBitwiseANDExpressionNode not implemented")
 	// return nil, nil
 }
@@ -614,7 +593,7 @@ type BitwiseXORExpressionNode struct {
 }
 
 // ParseBitwiseXORExpressionNode ...
-func ParseBitwiseXORExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseBitwiseXORExpressionNode(l *Lexer) (BitwiseXORExpressionNode, error) {
 	panic("ParseBitwiseXORExpressionNode not implemented")
 	// return nil, nil
 }
@@ -628,7 +607,7 @@ type BitwiseORExpressionNode struct {
 }
 
 // ParseBitwiseORExpressionNode ...
-func ParseBitwiseORExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseBitwiseORExpressionNode(l *Lexer) (BitwiseORExpressionNode, error) {
 	panic("ParseBitwiseORExpressionNode not implemented")
 	// return nil, nil
 }
@@ -642,7 +621,7 @@ type LogicalANDExpressionNode struct {
 }
 
 // ParseLogicalANDExpressionNode ...
-func ParseLogicalANDExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseLogicalANDExpressionNode(l *Lexer) (LogicalANDExpressionNode, error) {
 	panic("ParseLogicalANDExpressionNode not implemented")
 	// return nil, nil
 }
@@ -656,7 +635,7 @@ type LogicalORExpressionNode struct {
 }
 
 // ParseLogicalORExpressionNode ...
-func ParseLogicalORExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseLogicalORExpressionNode(l *Lexer) (LogicalORExpressionNode, error) {
 	panic("ParseLogicalORExpressionNode not implemented")
 	// return nil, nil
 }
@@ -670,7 +649,7 @@ type ConditionalExpressionNode struct {
 }
 
 // ParseConditionalExpressionNode ...
-func ParseConditionalExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseConditionalExpressionNode(l *Lexer) (ConditionalExpressionNode, error) {
 	panic("ParseConditionalExpressionNode not implemented")
 	// return nil, nil
 }
@@ -687,7 +666,7 @@ type AssignmentExpressionNode struct {
 }
 
 // ParseAssignmentExpressionNode ...
-func ParseAssignmentExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseAssignmentExpressionNode(l *Lexer) (AssignmentExpressionNode, error) {
 	panic("ParseAssignmentExpressionNode not implemented")
 	// return nil, nil
 }
@@ -701,7 +680,7 @@ type AssignmentOperatorNode struct {
 }
 
 // ParseAssignmentOperatorNode ...
-func ParseAssignmentOperatorNode(l *Lexer) (ASTNode, error) {
+func ParseAssignmentOperatorNode(l *Lexer) (AssignmentOperatorNode, error) {
 	n := AssignmentOperatorNode{node: node{l.CurrentPosition()}}
 
 	err := errors.New("Assignment operation expected one of: *= /= %= += -= <<= >>= >>>= &= ^= |=")
@@ -729,39 +708,19 @@ func ParseAssignmentOperatorNode(l *Lexer) (ASTNode, error) {
 // implements: Parser and ASTNode
 type ExpressionNode struct {
 	node
-	child ASTNode
-}
-
-// ThisExpressionNode is a helper for ExpressionNode
-type ThisExpressionNode struct {
-	node
+	isThis bool
+	child  ASTNode
 }
 
 // ParseExpressionNode ...
-func ParseExpressionNode(l *Lexer) (ASTNode, error) {
-	var (
-		child ASTNode
-		err   error
-		node  = ExpressionNode{}
-	)
-	tok := l.Peek(InputElementDiv)
-	if tok.Type == ReservedWordToken && tok.Value == "this" {
-		this := ThisExpressionNode{}
-		this.FilePosition = tok.FilePosition
-		return this, nil
-	}
-	if child != nil {
-		node.child = child
+func ParseExpressionNode(l *Lexer) (node ExpressionNode, err error) {
+	if tok := l.Peek(l.goal); tok.Type == ReservedWordToken && tok.Value == "this" {
+		node.isThis = true
 		return node, nil
 	}
-	child, err = tryParseFuncs(l,
-		ParseAssignmentExpressionNode,
-	)
-
-	if child != nil {
+	if child, err := ParseAssignmentExpressionNode(l); err == nil {
 		node.child = child
 	}
-	node.FilePosition = l.CurrentPosition()
 	return node, err
 }
 
@@ -791,29 +750,39 @@ type StatementNode struct {
 }
 
 // ParseStatementNode ...
-func ParseStatementNode(l *Lexer) (ASTNode, error) {
-	node := StatementNode{}
-	child, err := tryParseFuncs(l,
-		ParseExpressionStatementNode,
-		// ParseBlockStatementNode,
-		// ParseVariableStatementNode,
-		// ParseIfStatementNode,
-		// ParseBreakableStatementNode,
-		// ParseContinueStatementNode,
-		// ParseBreakStatementNode,
-		// ParseReturnStatementNode,
-		// ParseWithStatementNode,
-		// ParseLabelledStatementNode,
-		// ParseThrowStatementNode,
-		// ParseTryStatementNode,
-		// ParseDebuggerStatementNode,
-		// ParseEmptyStatementNode,
-	)
-	if child != nil {
-		node.child = child
+func ParseStatementNode(l *Lexer) (node StatementNode, err error) {
+	defer func() { node.FilePosition = l.CurrentPosition() }()
+	if node.child, err = ParseExpressionStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseBlockStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseVariableStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseIfStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseBreakableStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseContinueStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseBreakStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseReturnStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseWithStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseLabelledStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseThrowStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseTryStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseDebuggerStatementNode(l); err == nil {
+		return
+	} else if node.child, err = ParseEmptyStatementNode(l); err == nil {
+		return
+	} else {
+		return node, err
 	}
-	node.FilePosition = l.CurrentPosition()
-	return node, err
 }
 
 // DeclarationNode [Yield] : [See clause 13]
@@ -827,21 +796,16 @@ type DeclarationNode struct {
 }
 
 // ParseDeclarationNode ...
-func ParseDeclarationNode(l *Lexer) (ASTNode, error) {
-	node := DeclarationNode{}
-	child, err := tryParseFuncs(l,
-		ParseHoistableDeclarationNode,
-		ParseClassDeclarationNode,
-		ParseLexicalDeclarationNode,
-	)
-	if err != nil {
-		return nil, err
+func ParseDeclarationNode(l *Lexer) (node DeclarationNode, err error) {
+	defer func() { node.FilePosition = l.CurrentPosition() }()
+	if node.child, err = ParseHoistableDeclarationNode(l); err == nil {
+		return
+	} else if node.child, err = ParseClassDeclarationNode(l); err == nil {
+		return
+	} else if node.child, err = ParseLexicalDeclarationNode(l); err == nil {
+		return
 	}
-	if child != nil {
-		node.child = child
-	}
-	node.FilePosition = l.CurrentPosition()
-	return node, nil
+	return
 }
 
 // HoistableDeclarationNode [Yield, Default] : [See clause 13]
@@ -854,20 +818,13 @@ type HoistableDeclarationNode struct {
 }
 
 // ParseHoistableDeclarationNode ...
-func ParseHoistableDeclarationNode(l *Lexer) (ASTNode, error) {
-	node := HoistableDeclarationNode{}
-	child, err := tryParseFuncs(l,
-		ParseFunctionDeclarationNode,
-		ParseGeneratorDeclarationNode,
-	)
-	if err != nil {
-		return nil, err
+func ParseHoistableDeclarationNode(l *Lexer) (node HoistableDeclarationNode, err error) {
+	defer func() { node.FilePosition = l.CurrentPosition() }()
+	if node.child, err = ParseFunctionDeclarationNode(l); err == nil {
+		return
 	}
-	if child != nil {
-		node.child = node
-	}
-	node.FilePosition = l.CurrentPosition()
-	return node, err
+	node.child, err = ParseGeneratorDeclarationNode(l)
+	return
 }
 
 // BreakableStatementNode [Yield, Return] : [See clause 13]
@@ -879,7 +836,7 @@ type BreakableStatementNode struct {
 }
 
 // ParseBreakableStatementNode ...
-func ParseBreakableStatementNode(l *Lexer) (ASTNode, error) {
+func ParseBreakableStatementNode(l *Lexer) (BreakableStatementNode, error) {
 	panic("ParseBreakableStatementNode not implemented")
 	// return nil, nil
 }
@@ -892,7 +849,7 @@ type BlockStatementNode struct {
 }
 
 // ParseBlockStatementNode ...
-func ParseBlockStatementNode(l *Lexer) (ASTNode, error) {
+func ParseBlockStatementNode(l *Lexer) (BlockStatementNode, error) {
 	panic("ParseBlockStatementNode not implemented")
 	// return nil, nil
 }
@@ -905,7 +862,7 @@ type BlockNode struct {
 }
 
 // ParseBlockNode ...
-func ParseBlockNode(l *Lexer) (ASTNode, error) {
+func ParseBlockNode(l *Lexer) (BlockNode, error) {
 	panic("ParseBlockNode not implemented")
 	// return nil, nil
 }
@@ -941,14 +898,13 @@ type StatementListItemNode struct {
 }
 
 // ParseStatementListItemNode ...
-func ParseStatementListItemNode(l *Lexer) (StatementListItemNode, error) {
-	node := StatementListItemNode{}
-	child, err := tryParseFuncs(l, ParseStatementNode, ParseDeclarationNode)
-	if child != nil {
-		node.child = child
+func ParseStatementListItemNode(l *Lexer) (node StatementListItemNode, err error) {
+	defer func() { node.FilePosition = l.CurrentPosition() }()
+	if node.child, err = ParseStatementNode(l); err == nil {
+		return
 	}
-	node.FilePosition = l.CurrentPosition()
-	return node, err
+	node.child, err = ParseDeclarationNode(l)
+	return
 }
 
 // LexicalDeclarationNode [In, Yield] : [See 13.3.1]
@@ -959,7 +915,7 @@ type LexicalDeclarationNode struct {
 }
 
 // ParseLexicalDeclarationNode ...
-func ParseLexicalDeclarationNode(l *Lexer) (ASTNode, error) {
+func ParseLexicalDeclarationNode(l *Lexer) (LexicalDeclarationNode, error) {
 	panic("ParseLexicalDeclarationNode not implemented")
 	// return nil, nil
 }
@@ -974,7 +930,7 @@ type LetOrConstNode struct {
 }
 
 // ParseLetOrConstNode ...
-func ParseLetOrConstNode(l *Lexer) (ASTNode, error) {
+func ParseLetOrConstNode(l *Lexer) (LetOrConstNode, error) {
 	n := LetOrConstNode{node: node{l.CurrentPosition()}}
 
 	tok := l.Next(l.goal)
@@ -994,7 +950,7 @@ type BindingListNode struct {
 }
 
 // ParseBindingListNode ...
-func ParseBindingListNode(l *Lexer) (ASTNode, error) {
+func ParseBindingListNode(l *Lexer) (BindingListNode, error) {
 	panic("ParseBindingListNode not implemented")
 	// return nil, nil
 }
@@ -1008,7 +964,7 @@ type LexicalBindingNode struct {
 }
 
 // ParseLexicalBindingNode ...
-func ParseLexicalBindingNode(l *Lexer) (ASTNode, error) {
+func ParseLexicalBindingNode(l *Lexer) (LexicalBindingNode, error) {
 	panic("ParseLexicalBindingNode not implemented")
 	// return nil, nil
 }
@@ -1021,7 +977,7 @@ type VariableStatementNode struct {
 }
 
 // ParseVariableStatementNode ...
-func ParseVariableStatementNode(l *Lexer) (ASTNode, error) {
+func ParseVariableStatementNode(l *Lexer) (VariableStatementNode, error) {
 	panic("ParseVariableStatementNode not implemented")
 	// return nil, nil
 }
@@ -1035,7 +991,7 @@ type VariableDeclarationListNode struct {
 }
 
 // ParseVariableDeclarationListNode ...
-func ParseVariableDeclarationListNode(l *Lexer) (ASTNode, error) {
+func ParseVariableDeclarationListNode(l *Lexer) (VariableDeclarationListNode, error) {
 	panic("ParseVariableDeclarationListNode not implemented")
 	// return nil, nil
 }
@@ -1049,7 +1005,7 @@ type VariableDeclarationNode struct {
 }
 
 // ParseVariableDeclarationNode ...
-func ParseVariableDeclarationNode(l *Lexer) (ASTNode, error) {
+func ParseVariableDeclarationNode(l *Lexer) (VariableDeclarationNode, error) {
 	panic("ParseVariableDeclarationNode not implemented")
 	// return nil, nil
 }
@@ -1063,7 +1019,7 @@ type BindingPatternNode struct {
 }
 
 // ParseBindingPatternNode ...
-func ParseBindingPatternNode(l *Lexer) (ASTNode, error) {
+func ParseBindingPatternNode(l *Lexer) (BindingPatternNode, error) {
 	panic("ParseBindingPatternNode not implemented")
 	// return nil, nil
 }
@@ -1078,7 +1034,7 @@ type ObjectBindingPatternNode struct {
 }
 
 // ParseObjectBindingPatternNode ...
-func ParseObjectBindingPatternNode(l *Lexer) (ASTNode, error) {
+func ParseObjectBindingPatternNode(l *Lexer) (ObjectBindingPatternNode, error) {
 	panic("ParseObjectBindingPatternNode not implemented")
 	// return nil, nil
 }
@@ -1093,7 +1049,7 @@ type ArrayBindingPatternNode struct {
 }
 
 // ParseArrayBindingPatternNode ...
-func ParseArrayBindingPatternNode(l *Lexer) (ASTNode, error) {
+func ParseArrayBindingPatternNode(l *Lexer) (ArrayBindingPatternNode, error) {
 	panic("ParseArrayBindingPatternNode not implemented")
 	// return nil, nil
 }
@@ -1107,7 +1063,7 @@ type BindingPropertyListNode struct {
 }
 
 // ParseBindingPropertyListNode ...
-func ParseBindingPropertyListNode(l *Lexer) (ASTNode, error) {
+func ParseBindingPropertyListNode(l *Lexer) (BindingPropertyListNode, error) {
 	panic("ParseBindingPropertyListNode not implemented")
 	// return nil, nil
 }
@@ -1121,7 +1077,7 @@ type BindingElementListNode struct {
 }
 
 // ParseBindingElementListNode ...
-func ParseBindingElementListNode(l *Lexer) (ASTNode, error) {
+func ParseBindingElementListNode(l *Lexer) (BindingElementListNode, error) {
 	panic("ParseBindingElementListNode not implemented")
 	// return nil, nil
 }
@@ -1134,7 +1090,7 @@ type BindingElisionElementNode struct {
 }
 
 // ParseBindingElisionElementNode ...
-func ParseBindingElisionElementNode(l *Lexer) (ASTNode, error) {
+func ParseBindingElisionElementNode(l *Lexer) (BindingElisionElementNode, error) {
 	panic("ParseBindingElisionElementNode not implemented")
 	// return nil, nil
 }
@@ -1148,7 +1104,7 @@ type BindingPropertyNode struct {
 }
 
 // ParseBindingPropertyNode ...
-func ParseBindingPropertyNode(l *Lexer) (ASTNode, error) {
+func ParseBindingPropertyNode(l *Lexer) (BindingPropertyNode, error) {
 	panic("ParseBindingPropertyNode not implemented")
 	// return nil, nil
 }
@@ -1162,7 +1118,7 @@ type BindingElementNode struct {
 }
 
 // ParseBindingElementNode ...
-func ParseBindingElementNode(l *Lexer) (ASTNode, error) {
+func ParseBindingElementNode(l *Lexer) (BindingElementNode, error) {
 	panic("ParseBindingElementNode not implemented")
 	// return nil, nil
 }
@@ -1175,7 +1131,7 @@ type SingleNameBindingNode struct {
 }
 
 // ParseSingleNameBindingNode ...
-func ParseSingleNameBindingNode(l *Lexer) (ASTNode, error) {
+func ParseSingleNameBindingNode(l *Lexer) (SingleNameBindingNode, error) {
 	panic("ParseSingleNameBindingNode not implemented")
 	// return nil, nil
 }
@@ -1188,7 +1144,7 @@ type BindingRestElementNode struct {
 }
 
 // ParseBindingRestElementNode ...
-func ParseBindingRestElementNode(l *Lexer) (ASTNode, error) {
+func ParseBindingRestElementNode(l *Lexer) (BindingRestElementNode, error) {
 	panic("ParseBindingRestElementNode not implemented")
 	// return nil, nil
 }
@@ -1201,7 +1157,7 @@ type EmptyStatementNode struct {
 }
 
 // ParseEmptyStatementNode ...
-func ParseEmptyStatementNode(l *Lexer) (ASTNode, error) {
+func ParseEmptyStatementNode(l *Lexer) (EmptyStatementNode, error) {
 	panic("ParseEmptyStatementNode not implemented")
 	// return nil, nil
 }
@@ -1215,36 +1171,33 @@ type ExpressionStatementNode struct {
 }
 
 // ParseExpressionStatementNode ...
-func ParseExpressionStatementNode(l *Lexer) (ASTNode, error) {
-	var err error
+func ParseExpressionStatementNode(l *Lexer) (node ExpressionStatementNode, err error) {
 	tok := l.Peek(InputElementDiv)
 	switch tok.Type {
 	case ReservedWordToken:
 		switch tok.Value {
 		case "function", "class":
-			return nil, IncorrectTokenError(tok)
+			return node, IncorrectTokenError(tok)
 		case "let":
 			tok2 := l.Peek(InputElementDiv)
 			if tok2.Type == PunctuatorToken && tok2.Value == "[" {
-				return nil, IncorrectTokenError(tok2)
+				return node, IncorrectTokenError(tok2)
 			}
 		default:
 		}
 	case PunctuatorToken:
 		if tok.Type == PunctuatorToken && tok.Value == "{" {
-			return nil, IncorrectTokenError(tok)
+			return node, IncorrectTokenError(tok)
 		}
 	default:
 	}
-	node := ExpressionStatementNode{}
-
 	node.child, err = ParseExpressionNode(l)
 	if err != nil {
-		return nil, err
+		return node, err
 	}
 	tok3 := l.Peek(InputElementDiv)
 	if tok3.Type != PunctuatorToken || tok3.Value != ";" {
-		return nil, IncorrectTokenError(tok)
+		return node, IncorrectTokenError(tok)
 	}
 	node.FilePosition = l.CurrentPosition()
 	return node, err
@@ -1259,7 +1212,7 @@ type IfStatementNode struct {
 }
 
 // ParseIfStatementNode ...
-func ParseIfStatementNode(l *Lexer) (ASTNode, error) {
+func ParseIfStatementNode(l *Lexer) (IfStatementNode, error) {
 	panic("ParseIfStatementNode not implemented")
 	// return nil, nil
 }
@@ -1282,7 +1235,7 @@ type IterationStatementNode struct {
 }
 
 // ParseIterationStatementNode ...
-func ParseIterationStatementNode(l *Lexer) (ASTNode, error) {
+func ParseIterationStatementNode(l *Lexer) (IterationStatementNode, error) {
 	panic("ParseIterationStatementNode not implemented")
 	// return nil, nil
 }
@@ -1295,7 +1248,7 @@ type ForDeclarationNode struct {
 }
 
 // ParseForDeclarationNode ...
-func ParseForDeclarationNode(l *Lexer) (ASTNode, error) {
+func ParseForDeclarationNode(l *Lexer) (ForDeclarationNode, error) {
 	panic("ParseForDeclarationNode not implemented")
 	// return nil, nil
 }
@@ -1309,7 +1262,7 @@ type ForBindingNode struct {
 }
 
 // ParseForBindingNode ...
-func ParseForBindingNode(l *Lexer) (ASTNode, error) {
+func ParseForBindingNode(l *Lexer) (ForBindingNode, error) {
 	panic("ParseForBindingNode not implemented")
 	// return nil, nil
 }
@@ -1323,7 +1276,7 @@ type ContinueStatementNode struct {
 }
 
 // ParseContinueStatementNode ...
-func ParseContinueStatementNode(l *Lexer) (ASTNode, error) {
+func ParseContinueStatementNode(l *Lexer) (ContinueStatementNode, error) {
 	panic("ParseContinueStatementNode not implemented")
 	// return nil, nil
 }
@@ -1337,7 +1290,7 @@ type BreakStatementNode struct {
 }
 
 // ParseBreakStatementNode ...
-func ParseBreakStatementNode(l *Lexer) (ASTNode, error) {
+func ParseBreakStatementNode(l *Lexer) (BreakStatementNode, error) {
 	panic("ParseBreakStatementNode not implemented")
 	// return nil, nil
 }
@@ -1351,7 +1304,7 @@ type ReturnStatementNode struct {
 }
 
 // ParseReturnStatementNode ...
-func ParseReturnStatementNode(l *Lexer) (ASTNode, error) {
+func ParseReturnStatementNode(l *Lexer) (ReturnStatementNode, error) {
 	panic("ParseReturnStatementNode not implemented")
 	// return nil, nil
 }
@@ -1364,7 +1317,7 @@ type WithStatementNode struct {
 }
 
 // ParseWithStatementNode ...
-func ParseWithStatementNode(l *Lexer) (ASTNode, error) {
+func ParseWithStatementNode(l *Lexer) (WithStatementNode, error) {
 	panic("ParseWithStatementNode not implemented")
 	// return nil, nil
 }
@@ -1377,7 +1330,7 @@ type SwitchStatementNode struct {
 }
 
 // ParseSwitchStatementNode ...
-func ParseSwitchStatementNode(l *Lexer) (ASTNode, error) {
+func ParseSwitchStatementNode(l *Lexer) (SwitchStatementNode, error) {
 	panic("ParseSwitchStatementNode not implemented")
 	// return nil, nil
 }
@@ -1391,7 +1344,7 @@ type CaseBlockNode struct {
 }
 
 // ParseCaseBlockNode ...
-func ParseCaseBlockNode(l *Lexer) (ASTNode, error) {
+func ParseCaseBlockNode(l *Lexer) (CaseBlockNode, error) {
 	panic("ParseCaseBlockNode not implemented")
 	// return nil, nil
 }
@@ -1405,7 +1358,7 @@ type CaseClausesNode struct {
 }
 
 // ParseCaseClausesNode ...
-func ParseCaseClausesNode(l *Lexer) (ASTNode, error) {
+func ParseCaseClausesNode(l *Lexer) (CaseClausesNode, error) {
 	panic("ParseCaseClausesNode not implemented")
 	// return nil, nil
 }
@@ -1418,7 +1371,7 @@ type CaseClauseNode struct {
 }
 
 // ParseCaseClauseNode ...
-func ParseCaseClauseNode(l *Lexer) (ASTNode, error) {
+func ParseCaseClauseNode(l *Lexer) (CaseClauseNode, error) {
 	panic("ParseCaseClauseNode not implemented")
 	// return nil, nil
 }
@@ -1431,7 +1384,7 @@ type DefaultClauseNode struct {
 }
 
 // ParseDefaultClauseNode ...
-func ParseDefaultClauseNode(l *Lexer) (ASTNode, error) {
+func ParseDefaultClauseNode(l *Lexer) (DefaultClauseNode, error) {
 	panic("ParseDefaultClauseNode not implemented")
 	// return nil, nil
 }
@@ -1444,7 +1397,7 @@ type LabelledStatementNode struct {
 }
 
 // ParseLabelledStatementNode ...
-func ParseLabelledStatementNode(l *Lexer) (ASTNode, error) {
+func ParseLabelledStatementNode(l *Lexer) (LabelledStatementNode, error) {
 	panic("ParseLabelledStatementNode not implemented")
 	// return nil, nil
 }
@@ -1458,7 +1411,7 @@ type LabelledItemNode struct {
 }
 
 // ParseLabelledItemNode ...
-func ParseLabelledItemNode(l *Lexer) (ASTNode, error) {
+func ParseLabelledItemNode(l *Lexer) (LabelledItemNode, error) {
 	panic("ParseLabelledItemNode not implemented")
 	// return nil, nil
 }
@@ -1471,7 +1424,7 @@ type ThrowStatementNode struct {
 }
 
 // ParseThrowStatementNode ...
-func ParseThrowStatementNode(l *Lexer) (ASTNode, error) {
+func ParseThrowStatementNode(l *Lexer) (ThrowStatementNode, error) {
 	panic("ParseThrowStatementNode not implemented")
 	// return nil, nil
 }
@@ -1486,7 +1439,7 @@ type TryStatementNode struct {
 }
 
 // ParseTryStatementNode ...
-func ParseTryStatementNode(l *Lexer) (ASTNode, error) {
+func ParseTryStatementNode(l *Lexer) (TryStatementNode, error) {
 	panic("ParseTryStatementNode not implemented")
 	// return nil, nil
 }
@@ -1499,7 +1452,7 @@ type CatchNode struct {
 }
 
 // ParseCatchNode ...
-func ParseCatchNode(l *Lexer) (ASTNode, error) {
+func ParseCatchNode(l *Lexer) (CatchNode, error) {
 	panic("ParseCatchNode not implemented")
 	// return nil, nil
 }
@@ -1512,7 +1465,7 @@ type FinallyNode struct {
 }
 
 // ParseFinallyNode ...
-func ParseFinallyNode(l *Lexer) (ASTNode, error) {
+func ParseFinallyNode(l *Lexer) (FinallyNode, error) {
 	panic("ParseFinallyNode not implemented")
 	// return nil, nil
 }
@@ -1526,7 +1479,7 @@ type CatchParameterNode struct {
 }
 
 // ParseCatchParameterNode ...
-func ParseCatchParameterNode(l *Lexer) (ASTNode, error) {
+func ParseCatchParameterNode(l *Lexer) (CatchParameterNode, error) {
 	panic("ParseCatchParameterNode not implemented")
 	// return nil, nil
 }
@@ -1539,7 +1492,7 @@ type DebuggerStatementNode struct {
 }
 
 // ParseDebuggerStatementNode ...
-func ParseDebuggerStatementNode(l *Lexer) (ASTNode, error) {
+func ParseDebuggerStatementNode(l *Lexer) (DebuggerStatementNode, error) {
 	panic("ParseDebuggerStatementNode not implemented")
 	// return nil, nil
 }
@@ -1560,17 +1513,17 @@ type FunctionDeclarationNode struct {
 }
 
 // ParseFunctionDeclarationNode ...
-func ParseFunctionDeclarationNode(l *Lexer) (ASTNode, error) {
+func ParseFunctionDeclarationNode(l *Lexer) (FunctionDeclarationNode, error) {
 	var (
 		node = FunctionDeclarationNode{}
 		// err error
 	)
 	tokPeek0 := l.Peek(InputElementDiv)
 	if tokPeek0.Type != ReservedWordToken {
-		return nil, IncorrectTokenError(tokPeek0)
+		return node, IncorrectTokenError(tokPeek0)
 	}
 	if tokPeek0.Value != "function" {
-		return nil, IncorrectTokenError(tokPeek0)
+		return node, IncorrectTokenError(tokPeek0)
 	}
 	l.Next(InputElementDiv) // accept input token
 
@@ -1606,7 +1559,7 @@ type StrictFormalParametersNode struct {
 }
 
 // ParseStrictFormalParametersNode ...
-func ParseStrictFormalParametersNode(l *Lexer) (ASTNode, error) {
+func ParseStrictFormalParametersNode(l *Lexer) (StrictFormalParametersNode, error) {
 	panic("ParseStrictFormalParametersNode not implemented")
 	// return nil, nil
 }
@@ -1620,7 +1573,7 @@ type FormalParametersNode struct {
 }
 
 // ParseFormalParametersNode ...
-func ParseFormalParametersNode(l *Lexer) (ASTNode, error) {
+func ParseFormalParametersNode(l *Lexer) (FormalParametersNode, error) {
 	panic("ParseFormalParametersNode not implemented")
 	// return nil, nil
 }
@@ -1635,7 +1588,7 @@ type FormalParameterListNode struct {
 }
 
 // ParseFormalParameterListNode ...
-func ParseFormalParameterListNode(l *Lexer) (ASTNode, error) {
+func ParseFormalParameterListNode(l *Lexer) (FormalParameterListNode, error) {
 	panic("ParseFormalParameterListNode not implemented")
 	// return nil, nil
 }
@@ -1649,7 +1602,7 @@ type FormalsListNode struct {
 }
 
 // ParseFormalsListNode ...
-func ParseFormalsListNode(l *Lexer) (ASTNode, error) {
+func ParseFormalsListNode(l *Lexer) (FormalsListNode, error) {
 	panic("ParseFormalsListNode not implemented")
 	// return nil, nil
 }
@@ -1662,7 +1615,7 @@ type FunctionRestParameterNode struct {
 }
 
 // ParseFunctionRestParameterNode ...
-func ParseFunctionRestParameterNode(l *Lexer) (ASTNode, error) {
+func ParseFunctionRestParameterNode(l *Lexer) (FunctionRestParameterNode, error) {
 	panic("ParseFunctionRestParameterNode not implemented")
 	// return nil, nil
 }
@@ -1675,7 +1628,7 @@ type FormalParameterNode struct {
 }
 
 // ParseFormalParameterNode ...
-func ParseFormalParameterNode(l *Lexer) (ASTNode, error) {
+func ParseFormalParameterNode(l *Lexer) (FormalParameterNode, error) {
 	panic("ParseFormalParameterNode not implemented")
 	// return nil, nil
 }
@@ -1688,7 +1641,7 @@ type FunctionBodyNode struct {
 }
 
 // ParseFunctionBodyNode ...
-func ParseFunctionBodyNode(l *Lexer) (ASTNode, error) {
+func ParseFunctionBodyNode(l *Lexer) (FunctionBodyNode, error) {
 	panic("ParseFunctionBodyNode not implemented")
 	// return nil, nil
 }
@@ -1701,7 +1654,7 @@ type FunctionStatementListNode struct {
 }
 
 // ParseFunctionStatementListNode ...
-func ParseFunctionStatementListNode(l *Lexer) (ASTNode, error) {
+func ParseFunctionStatementListNode(l *Lexer) (FunctionStatementListNode, error) {
 	panic("ParseFunctionStatementListNode not implemented")
 	// return nil, nil
 }
@@ -1714,7 +1667,7 @@ type ArrowFunctionNode struct {
 }
 
 // ParseArrowFunctionNode ...
-func ParseArrowFunctionNode(l *Lexer) (ASTNode, error) {
+func ParseArrowFunctionNode(l *Lexer) (ArrowFunctionNode, error) {
 	panic("ParseArrowFunctionNode not implemented")
 	// return nil, nil
 }
@@ -1730,7 +1683,7 @@ type ArrowParametersNode struct {
 }
 
 // ParseArrowParametersNode ...
-func ParseArrowParametersNode(l *Lexer) (ASTNode, error) {
+func ParseArrowParametersNode(l *Lexer) (ArrowParametersNode, error) {
 	panic("ParseArrowParametersNode not implemented")
 	// return nil, nil
 }
@@ -1746,7 +1699,7 @@ type ConciseBodyNode struct {
 }
 
 // ParseConciseBodyNode ...
-func ParseConciseBodyNode(l *Lexer) (ASTNode, error) {
+func ParseConciseBodyNode(l *Lexer) (ConciseBodyNode, error) {
 	panic("ParseConciseBodyNode not implemented")
 	// return nil, nil
 }
@@ -1762,7 +1715,7 @@ type MethodDefinitionNode struct {
 }
 
 // ParseMethodDefinitionNode ...
-func ParseMethodDefinitionNode(l *Lexer) (ASTNode, error) {
+func ParseMethodDefinitionNode(l *Lexer) (MethodDefinitionNode, error) {
 	panic("ParseMethodDefinitionNode not implemented")
 	// return nil, nil
 }
@@ -1775,7 +1728,7 @@ type PropertySetParameterListNode struct {
 }
 
 // ParsePropertySetParameterListNode ...
-func ParsePropertySetParameterListNode(l *Lexer) (ASTNode, error) {
+func ParsePropertySetParameterListNode(l *Lexer) (PropertySetParameterListNode, error) {
 	panic("ParsePropertySetParameterListNode not implemented")
 	// return nil, nil
 }
@@ -1788,7 +1741,7 @@ type GeneratorMethodNode struct {
 }
 
 // ParseGeneratorMethodNode ...
-func ParseGeneratorMethodNode(l *Lexer) (ASTNode, error) {
+func ParseGeneratorMethodNode(l *Lexer) (GeneratorMethodNode, error) {
 	panic("ParseGeneratorMethodNode not implemented")
 	// return nil, nil
 }
@@ -1802,13 +1755,13 @@ type GeneratorDeclarationNode struct {
 }
 
 // ParseGeneratorDeclarationNode ...
-func ParseGeneratorDeclarationNode(l *Lexer) (ASTNode, error) {
+func ParseGeneratorDeclarationNode(l *Lexer) (GeneratorDeclarationNode, error) {
 	panic("ParseGeneratorDeclarationNode not implemented")
 	// return nil, nil
 }
 
 // ParseGeneratorBodyNode ...
-func ParseGeneratorBodyNode(l *Lexer) (ASTNode, error) {
+func ParseGeneratorBodyNode(l *Lexer) (GeneratorBodyNode, error) {
 	panic("ParseGeneratorBodyNode not implemented")
 	// return nil, nil
 }
@@ -1823,7 +1776,7 @@ type YieldExpressionNode struct {
 }
 
 // ParseYieldExpressionNode ...
-func ParseYieldExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseYieldExpressionNode(l *Lexer) (YieldExpressionNode, error) {
 	panic("ParseYieldExpressionNode not implemented")
 	// return nil, nil
 }
@@ -1837,7 +1790,7 @@ type ClassDeclarationNode struct {
 }
 
 // ParseClassDeclarationNode ...
-func ParseClassDeclarationNode(l *Lexer) (ASTNode, error) {
+func ParseClassDeclarationNode(l *Lexer) (ClassDeclarationNode, error) {
 	panic("ParseClassDeclarationNode not implemented")
 	// return nil, nil
 }
@@ -1850,7 +1803,7 @@ type ClassTailNode struct {
 }
 
 // ParseClassTailNode ...
-func ParseClassTailNode(l *Lexer) (ASTNode, error) {
+func ParseClassTailNode(l *Lexer) (ClassTailNode, error) {
 	panic("ParseClassTailNode not implemented")
 	// return nil, nil
 }
@@ -1863,7 +1816,7 @@ type ClassHeritageNode struct {
 }
 
 // ParseClassHeritageNode ...
-func ParseClassHeritageNode(l *Lexer) (ASTNode, error) {
+func ParseClassHeritageNode(l *Lexer) (ClassHeritageNode, error) {
 	panic("ParseClassHeritageNode not implemented")
 	// return nil, nil
 }
@@ -1876,7 +1829,7 @@ type ClassBodyNode struct {
 }
 
 // ParseClassBodyNode ...
-func ParseClassBodyNode(l *Lexer) (ASTNode, error) {
+func ParseClassBodyNode(l *Lexer) (ClassBodyNode, error) {
 	panic("ParseClassBodyNode not implemented")
 	// return nil, nil
 }
@@ -1890,7 +1843,7 @@ type ClassElementListNode struct {
 }
 
 // ParseClassElementListNode ...
-func ParseClassElementListNode(l *Lexer) (ASTNode, error) {
+func ParseClassElementListNode(l *Lexer) (ClassElementListNode, error) {
 	panic("ParseClassElementListNode not implemented")
 	// return nil, nil
 }
@@ -1905,7 +1858,7 @@ type ClassElementNode struct {
 }
 
 // ParseClassElementNode ...
-func ParseClassElementNode(l *Lexer) (ASTNode, error) {
+func ParseClassElementNode(l *Lexer) (ClassElementNode, error) {
 	panic("ParseClassElementNode not implemented")
 	// return nil, nil
 }
@@ -1923,7 +1876,7 @@ type ScriptNode struct {
 }
 
 // ParseScriptNode ...
-func ParseScriptNode(l *Lexer) (ASTNode, error) {
+func ParseScriptNode(l *Lexer) (ScriptNode, error) {
 	c, err := ParseScriptBodyNode(l)
 	return ScriptNode{child: c}, err
 }
@@ -1937,7 +1890,7 @@ type ScriptBodyNode struct {
 }
 
 // ParseScriptBodyNode ...
-func ParseScriptBodyNode(l *Lexer) (ASTNode, error) {
+func ParseScriptBodyNode(l *Lexer) (ScriptBodyNode, error) {
 	c, err := ParseStatementListNode(l)
 	node := ScriptBodyNode{
 		child: c,
@@ -1954,7 +1907,7 @@ type ModuleNode struct {
 }
 
 // ParseModuleNode ...
-func ParseModuleNode(l *Lexer) (ASTNode, error) {
+func ParseModuleNode(l *Lexer) (ModuleNode, error) {
 	panic("ParseModuleNode not implemented")
 	// return nil, nil
 }
@@ -1967,7 +1920,7 @@ type ModuleBodyNode struct {
 }
 
 // ParseModuleBodyNode ...
-func ParseModuleBodyNode(l *Lexer) (ASTNode, error) {
+func ParseModuleBodyNode(l *Lexer) (ModuleBodyNode, error) {
 	panic("ParseModuleBodyNode not implemented")
 	// return nil, nil
 }
@@ -1981,7 +1934,7 @@ type ModuleItemListNode struct {
 }
 
 // ParseModuleItemListNode ...
-func ParseModuleItemListNode(l *Lexer) (ASTNode, error) {
+func ParseModuleItemListNode(l *Lexer) (ModuleItemListNode, error) {
 	panic("ParseModuleItemListNode not implemented")
 	// return nil, nil
 }
@@ -1996,7 +1949,7 @@ type ModuleItemNode struct {
 }
 
 // ParseModuleItemNode ...
-func ParseModuleItemNode(l *Lexer) (ASTNode, error) {
+func ParseModuleItemNode(l *Lexer) (ModuleItemNode, error) {
 	panic("ParseModuleItemNode not implemented")
 	// return nil, nil
 }
@@ -2010,7 +1963,7 @@ type ImportDeclarationNode struct {
 }
 
 // ParseImportDeclarationNode ...
-func ParseImportDeclarationNode(l *Lexer) (ASTNode, error) {
+func ParseImportDeclarationNode(l *Lexer) (ImportDeclarationNode, error) {
 	panic("ParseImportDeclarationNode not implemented")
 	// return nil, nil
 }
@@ -2027,7 +1980,7 @@ type ImportClauseNode struct {
 }
 
 // ParseImportClauseNode ...
-func ParseImportClauseNode(l *Lexer) (ASTNode, error) {
+func ParseImportClauseNode(l *Lexer) (ImportClauseNode, error) {
 	panic("ParseImportClauseNode not implemented")
 	// return nil, nil
 }
@@ -2061,7 +2014,7 @@ type ImportsListNode struct {
 }
 
 // ParseImportsListNode ...
-func ParseImportsListNode(l *Lexer) (ASTNode, error) {
+func ParseImportsListNode(l *Lexer) (ImportsListNode, error) {
 	panic("ParseImportsListNode not implemented")
 	// return nil, nil
 }
@@ -2075,7 +2028,7 @@ type ImportSpecifierNode struct {
 }
 
 // ParseImportSpecifierNode ...
-func ParseImportSpecifierNode(l *Lexer) (ASTNode, error) {
+func ParseImportSpecifierNode(l *Lexer) (ImportSpecifierNode, error) {
 	panic("ParseImportSpecifierNode not implemented")
 	// return nil, nil
 }
@@ -2088,7 +2041,7 @@ type ModuleSpecifierNode struct {
 }
 
 // ParseModuleSpecifierNode ...
-func ParseModuleSpecifierNode(l *Lexer) (ASTNode, error) {
+func ParseModuleSpecifierNode(l *Lexer) (ModuleSpecifierNode, error) {
 	panic("ParseModuleSpecifierNode not implemented")
 	// return nil, nil
 }
@@ -2101,7 +2054,7 @@ type ImportedBindingNode struct {
 }
 
 // ParseImportedBindingNode ...
-func ParseImportedBindingNode(l *Lexer) (ASTNode, error) {
+func ParseImportedBindingNode(l *Lexer) (ImportedBindingNode, error) {
 	panic("ParseImportedBindingNode not implemented")
 	// return nil, nil
 }
@@ -2121,7 +2074,7 @@ type ExportDeclarationNode struct {
 }
 
 // ParseExportDeclarationNode ...
-func ParseExportDeclarationNode(l *Lexer) (ASTNode, error) {
+func ParseExportDeclarationNode(l *Lexer) (ExportDeclarationNode, error) {
 	panic("ParseExportDeclarationNode not implemented")
 	// return nil, nil
 }
@@ -2136,7 +2089,7 @@ type ExportClauseNode struct {
 }
 
 // ParseExportClauseNode ...
-func ParseExportClauseNode(l *Lexer) (ASTNode, error) {
+func ParseExportClauseNode(l *Lexer) (ExportClauseNode, error) {
 	panic("ParseExportClauseNode not implemented")
 	// return nil, nil
 }
@@ -2151,7 +2104,7 @@ type ExportsListNode struct {
 }
 
 // ParseExportsListNode ...
-func ParseExportsListNode(l *Lexer) (ASTNode, error) {
+func ParseExportsListNode(l *Lexer) (ExportsListNode, error) {
 	n := ExportsListNode{node: node{l.CurrentPosition()}}
 
 	n.List = []ExportSpecifierNode{}
@@ -2161,7 +2114,7 @@ func ParseExportsListNode(l *Lexer) (ASTNode, error) {
 		if err != nil {
 			return n, err
 		}
-		n.List = append(n.List, exportSpecifier.(ExportSpecifierNode))
+		n.List = append(n.List, exportSpecifier)
 
 		if comma := l.Peek(l.goal); comma.Value != "," {
 			return n, err
@@ -2181,22 +2134,22 @@ type ExportSpecifierNode struct {
 }
 
 // ParseExportSpecifierNode ...
-func ParseExportSpecifierNode(l *Lexer) (ASTNode, error) {
+func ParseExportSpecifierNode(l *Lexer) (ExportSpecifierNode, error) {
 	n := ExportSpecifierNode{node: node{l.CurrentPosition()}}
 
 	identifierNode, err := ParseIdentifierNode(l)
 	if err != nil {
 		return n, err
 	}
-	n.IdentifierNode = identifierNode.(IdentifierNode)
+	n.IdentifierNode = identifierNode
 
 	if as := l.Peek(l.goal); as.Value != "as" {
-		return n, err
+		return n, nil
 	}
 	l.Next(l.goal)
 
 	identifierNode, err = ParseIdentifierNode(l)
-	n.As = identifierNode.(IdentifierNode)
+	n.As = identifierNode
 
 	return n, err
 }

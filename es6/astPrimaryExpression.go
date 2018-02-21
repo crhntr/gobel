@@ -20,7 +20,7 @@ type PrimaryExpressionNode struct {
 }
 
 // ParsePrimaryExpressionNode ...
-func ParsePrimaryExpressionNode(l *Lexer) (ASTNode, error) {
+func ParsePrimaryExpressionNode(l *Lexer) (PrimaryExpressionNode, error) {
 	panic("ParsePrimaryExpressionNode not implemented")
 	// return nil, nil
 }
@@ -34,7 +34,7 @@ type LabelIdentifierNode struct {
 }
 
 // ParseLabelIdentifierNode ...
-func ParseLabelIdentifierNode(l *Lexer) (ASTNode, error) {
+func ParseLabelIdentifierNode(l *Lexer) (LabelIdentifierNode, error) {
 	panic("ParseLabelIdentifierNode not implemented")
 	// return nil, nil
 }
@@ -50,7 +50,7 @@ type LiteralNode struct {
 }
 
 // ParseLiteralNode ...
-func ParseLiteralNode(l *Lexer) (ASTNode, error) {
+func ParseLiteralNode(l *Lexer) (LiteralNode, error) {
 	panic("ParseLiteralNode not implemented")
 	// return nil, nil
 }
@@ -65,7 +65,7 @@ type ArrayLiteralNode struct {
 }
 
 // ParseArrayLiteralNode ...
-func ParseArrayLiteralNode(l *Lexer) (ASTNode, error) {
+func ParseArrayLiteralNode(l *Lexer) (ArrayLiteralNode, error) {
 	panic("ParseArrayLiteralNode not implemented")
 	// return nil, nil
 }
@@ -80,7 +80,7 @@ type ObjectLiteralNode struct {
 }
 
 // ParseObjectLiteralNode ...
-func ParseObjectLiteralNode(l *Lexer) (ASTNode, error) {
+func ParseObjectLiteralNode(l *Lexer) (ObjectLiteralNode, error) {
 	panic("ParseObjectLiteralNode not implemented")
 	// return nil, nil
 }
@@ -93,7 +93,7 @@ type FunctionExpressionNode struct {
 }
 
 // ParseFunctionExpressionNode ...
-func ParseFunctionExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseFunctionExpressionNode(l *Lexer) (FunctionExpressionNode, error) {
 	panic("ParseFunctionExpressionNode not implemented")
 	// return nil, nil
 }
@@ -106,7 +106,7 @@ type ClassExpressionNode struct {
 }
 
 // ParseClassExpressionNode ...
-func ParseClassExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseClassExpressionNode(l *Lexer) (ClassExpressionNode, error) {
 	panic("ParseClassExpressionNode not implemented")
 	// return nil, nil
 }
@@ -130,7 +130,7 @@ type GeneratorExpressionNode struct {
 }
 
 // ParseGeneratorExpressionNode ...
-func ParseGeneratorExpressionNode(l *Lexer) (ASTNode, error) {
+func ParseGeneratorExpressionNode(l *Lexer) (GeneratorExpressionNode, error) {
 	panic("ParseGeneratorExpressionNode not implemented")
 	// return nil, nil
 }
@@ -151,7 +151,7 @@ type TemplateLiteralNode struct {
 }
 
 // ParseTemplateLiteralNode ...
-func ParseTemplateLiteralNode(l *Lexer) (ASTNode, error) {
+func ParseTemplateLiteralNode(l *Lexer) (TemplateLiteralNode, error) {
 	panic("ParseTemplateLiteralNode not implemented")
 	// return nil, nil
 }
