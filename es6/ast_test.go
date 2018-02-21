@@ -15,12 +15,8 @@ func TestParseIdentifierNode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		identifierNode, ok := node.(es6.IdentifierNode)
-		if !ok {
-			t.Fail()
-		}
-		if identifierNode.Name != justAnIdentifier {
-			t.Errorf("identifierNode.Name should be %q but got %q", justAnIdentifier, identifierNode.Name)
+		if node.Name != justAnIdentifier {
+			t.Errorf("identifierNode.Name should be %q but got %q", justAnIdentifier, node.Name)
 		}
 	})
 
@@ -42,17 +38,12 @@ func TestParseExportsListNode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-
-		n, ok := node.(es6.ExportsListNode)
-		if !ok {
-			t.Error(`!ok`)
-		}
-		if len(n.List) != 1 {
-			t.Error(`len(n.List) != 3"`)
+		if len(node.List) != 1 {
+			t.Error(`len(node.List) != 3"`)
 		}
 		for i, str := range []string{"foo"} {
-			if n.List[i].Name != str {
-				t.Errorf("n.List[%d].Name != %q", i, str)
+			if node.List[i].Name != str {
+				t.Errorf("node.List[%d].Name != %q", i, str)
 			}
 		}
 	})
@@ -73,17 +64,12 @@ func TestParseExportsListNode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-
-		n, ok := node.(es6.ExportsListNode)
-		if !ok {
-			t.Error(`!ok`)
-		}
-		if len(n.List) != 3 {
-			t.Error(`len(n.List) != 3"`)
+		if len(node.List) != 3 {
+			t.Error(`len(node.List) != 3"`)
 		}
 		for i, str := range []string{"foo", "bar", "baz"} {
-			if n.List[i].Name != str {
-				t.Errorf("n.List[%d].Name != %q", i, str)
+			if node.List[i].Name != str {
+				t.Errorf("node.List[%d].Name != %q", i, str)
 			}
 		}
 	})
@@ -98,15 +84,11 @@ func TestParseExportSpecifierNode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		n, ok := node.(es6.ExportSpecifierNode)
-		if !ok {
-			t.Error(`!ok`)
+		if node.Name != "foo" {
+			t.Error(`node.Name != "foo"`)
 		}
-		if n.Name != "foo" {
-			t.Error(`n.Name != "foo"`)
-		}
-		if n.As.Name != "bar" {
-			t.Error(`n.As.Name != "bar"`)
+		if node.As.Name != "bar" {
+			t.Error(`node.As.Name != "bar"`)
 		}
 	})
 
@@ -118,12 +100,8 @@ func TestParseExportSpecifierNode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		n, ok := node.(es6.ExportSpecifierNode)
-		if !ok {
-			t.Error(`!ok`)
-		}
-		if n.Name != "foo" {
-			t.Error(`n.Name != "foo"`)
+		if node.Name != "foo" {
+			t.Error(`node.Name != "foo"`)
 		}
 	})
 
@@ -147,12 +125,8 @@ func TestParseLetOrConstNode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		n, ok := node.(es6.LetOrConstNode)
-		if !ok {
-			t.Error(`!ok`)
-		}
-		if n.Value != "const" {
-			t.Error(`n.Value != "const"`)
+		if node.Value != "const" {
+			t.Error(`node.Value != "const"`)
 		}
 	})
 
@@ -164,12 +138,8 @@ func TestParseLetOrConstNode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		n, ok := node.(es6.LetOrConstNode)
-		if !ok {
-			t.Error(`!ok`)
-		}
-		if n.Value != "let" {
-			t.Error(`n.Value != "let"`)
+		if node.Value != "let" {
+			t.Error(`node.Value != "let"`)
 		}
 	})
 
