@@ -153,3 +153,51 @@ func TestParseLetOrConstNode(t *testing.T) {
 		}
 	})
 }
+
+func TestParseContinueStatementNode(t *testing.T) {
+	t.Run("continue;", func(t *testing.T) {
+		js := "continue;"
+		lex := es6.Lex("", js, false)
+
+		node, err := es6.ParseContinueStatementNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+		if node.LabelIdentifier != "" {
+			t.Error("should be empty")
+		}
+	})
+	t.Run("continue ;", func(t *testing.T) {
+		js := "continue;"
+		lex := es6.Lex("", js, false)
+
+		node, err := es6.ParseContinueStatementNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+		if node.LabelIdentifier != "" {
+			t.Error("should be empty")
+		}
+	})
+	t.Run("continue foo;", func(t *testing.T) {
+		js := "continue foo;"
+		lex := es6.Lex("", js, false)
+
+		node, err := es6.ParseContinueStatementNode(lex)
+		if err != nil {
+			t.Error(err)
+		}
+		if node.LabelIdentifier != "foo" {
+			t.Error("should be empty")
+		}
+	})
+	t.Run("function foo;", func(t *testing.T) {
+		js := "function foo;"
+		lex := es6.Lex("", js, false)
+
+		_, err := es6.ParseContinueStatementNode(lex)
+		if err == nil {
+			t.Error("should error")
+		}
+	})
+}
