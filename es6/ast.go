@@ -1273,12 +1273,21 @@ func ParseForBindingNode(l *Lexer) (ForBindingNode, error) {
 // implements: Parser and ASTNode
 type ContinueStatementNode struct {
 	node
+	LabelIdentifier string
 }
 
 // ParseContinueStatementNode ...
 func ParseContinueStatementNode(l *Lexer) (ContinueStatementNode, error) {
-	panic("ParseContinueStatementNode not implemented")
-	// return nil, nil
+	node := ContinueStatementNode{}
+	if token := l.Next(l.goal); token.Type != ReservedWordToken || token.Value != "continue" {
+		return node, errors.Errorf("expected keyword %q", "continue")
+	}
+	idToken := l.Peek(l.goal)
+	if idToken.Type == IdentifierNameToken {
+		l.Next(l.goal)
+		node.LabelIdentifier = idToken.Value
+	}
+	return node, nil
 }
 
 // BreakStatementNode [Yield] : [See 13.9]
