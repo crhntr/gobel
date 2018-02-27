@@ -191,6 +191,7 @@ func TestParseContinueStatementNode(t *testing.T) {
 			t.Error("should be empty")
 		}
 	})
+<<<<<<< HEAD
 	t.Run("function foo;", func(t *testing.T) {
 		js := "function foo;"
 		lex := es6.Lex("", js, false)
@@ -200,4 +201,6 @@ func TestParseContinueStatementNode(t *testing.T) {
 			t.Error("should error")
 		}
 	})
+=======
+>>>>>>> db41ba12d8d05390dc249611576aea852866d918
 }
